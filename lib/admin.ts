@@ -1,0 +1,1 @@
+export const ADMIN_SECRET = "fadenfab_secure_admin_2026";

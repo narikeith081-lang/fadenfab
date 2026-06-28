@@ -1,6 +1,27 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://jfthlhkzcyyhdubepfor.supabase.co";
-const supabaseKey = "sb_publishable_LFOJICuU1f6lQORjGe-LfQ_PE_sAbKR";
+// ✅ Environment variables
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+// ✅ Validation
+if (!supabaseUrl) {
+  throw new Error(
+    "Missing NEXT_PUBLIC_SUPABASE_URL"
+  );
+}
+
+if (!supabaseAnonKey) {
+  throw new Error(
+    "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY"
+  );
+}
+
+// ✅ Create client
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseAnonKey
+);

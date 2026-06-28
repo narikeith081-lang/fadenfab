@@ -2,64 +2,110 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
+    // ✅ Parse body safely
     const body = await req.json();
-    const { name, phone, email, company, quantity, message } = body;
 
-    // ✅ Validation (phone required, email optional)
-    if (!name || !phone || !company || !quantity || !message) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 }
-      );
-    }
+    const {
+      name,
+      phone,
+      email,
+      company,
+      quantity,
+      message,
+    } = body;
 
-if (!/^\d{10}$/.test(phone)) {
-  return new Response(
-    JSON.stringify({ error: "Invalid phone number (must be 10 digits)" }),
-    { status: 400 }
-  );
-}
-    const { name, phone, email, company, quantity, message } = body;
-
-    // ✅ Validation (phone required, email optional)
-    if (!name || !phone || !company || !quantity || !message) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 }
-      );
-    }
-
-    const { data, error } = await supabase
-      .from("leads")
-      .insert([
+    // ✅ Validation
+    if (
+      !name ||
+      !phone ||
+      !company ||
+      !quantity ||
+      !message
+    ) {
+      return Response.json(
         {
-          name,
-          phone,
-          email: email || null,
-          company,
-          quantity,
-          message,
+          error: "Missing required fields",
         },
-      ])
-      .select();
-
-    if (error) {
-      console.error("DB Error:", error);
-      return new Response(JSON.stringify({ error: "Database error" }), {
-        status: 500,
-      });
+        {
+          status: 400,
+        }
+      );
     }
 
-    return new Response(
-      JSON.stringify({ message: "Saved successfully", data }),
-      { status: 200 }
+    // ✅ Phone validation
+    if (!/^\d{10}$/.test(phone)) {
+      return Response.json(
+        {
+          error:
+            "Phone number must be 10 digits",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // ✅ Insert into Supabase
+    const { data, error } =
+      await supabase
+        .from("leads")
+        .insert([
+          {
+            name,
+            phone,
+            email: email || null,
+            company,
+            quantity,
+            message,
+            status: "new",
+          },
+        ])
+        .select();
+
+    // ✅ DB Error
+    if (error) {
+      console.error(
+        "Supabase Error:",
+        error
+      );
+
+      return Response.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    // ✅ Success
+    return Response.json(
+      {
+        success: true,
+        message:
+          "Inquiry submitted successfully",
+        data,
+      },
+      {
+        status: 200,
+      }
     );
 
   } catch (err) {
-    console.error("Server Error:", err);
-    return new Response(
-      JSON.stringify({ error: "Server error" }),
-      { status: 500 }
+    console.error(
+      "Server Error:",
+      err
+    );
+
+    return Response.json(
+      {
+        error:
+          "Internal server error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
