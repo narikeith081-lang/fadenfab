@@ -2,8 +2,25 @@
 
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
-const collections = {
+type Product = {
+  id: number;
+  name: string;
+  image: string;
+  color: string;
+  fabric: string;
+  gsm: string;
+};
+
+type Collection = {
+  title: string;
+  description: string;
+  banner: string;
+  products: Product[];
+};
+
+const collections: Record<string, Collection> = {
 
   // ================= OVERSIZED T-SHIRTS =================
 
@@ -153,7 +170,15 @@ export default function CollectionPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <motion.main
+  className="min-h-screen bg-slate-50"
+  initial={{ opacity: 0, y: 60 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{
+    duration: 0.8,
+    ease: "easeOut",
+  }}
+>
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-6 py-16">
@@ -203,9 +228,16 @@ export default function CollectionPage() {
 
           {collection.products.map((product) => (
 
-<div
+<motion.div
   key={product.id}
   className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{
+    duration: 0.5,
+    delay: product.id * 0.08,
+  }}
 >
   <div className="relative h-[420px] bg-gray-100 flex items-center justify-center p-4">
 
@@ -241,7 +273,7 @@ export default function CollectionPage() {
     </p>
 
   </div>
-</div>
+</motion.div>
 
           ))}
 
@@ -249,6 +281,6 @@ export default function CollectionPage() {
 
       </section>
 
-    </main>
+    </motion.main>
   );
 }
