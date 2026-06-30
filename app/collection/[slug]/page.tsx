@@ -18,6 +18,7 @@ const collections = {
         id: 1,
         name: "Classic Never Dies",
         image: "/classicneverdies.png",
+        color: "Color: Faded Black",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -25,6 +26,7 @@ const collections = {
         id: 2,
         name: "Find Your Canvas",
         image: "/findyourcanvas2.png",
+        color: "Color: Faded Olive Green",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -32,6 +34,7 @@ const collections = {
         id: 3,
         name: "Timeless & Resilient",
         image: "/Timeless3.png",
+        color: "Color: Faded Orange",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -39,6 +42,7 @@ const collections = {
         id: 4,
         name: "Journeys of Endurance",
         image: "/Journeys4.png",
+        color: "Color: Faded Sand Beige",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -46,6 +50,7 @@ const collections = {
         id: 5,
         name: "Raw Power & Endurance",
         image: "/RawPower5.png",
+        color: "Color: White",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -53,6 +58,7 @@ const collections = {
         id: 6,
         name: "Precision & Steadfast",
         image: "/Precision6.png",
+        color: "Color: Faded Navy",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
       },
@@ -67,13 +73,13 @@ const collections = {
     description:
       "Luxury hoodies crafted with premium fleece for ultimate comfort, warmth and modern streetwear aesthetics.",
 
-    banner: "/FutureVision1.png",
+    banner: "/FutureVision_1.png",
 
     products: [
       {
         id: 1,
         name: "Future Vision",
-        image: "/FutureVision1.png",
+        image: "/FutureVision_1.png",
         color: "Color: Sand Beige",
         fabric: "Material: Premium Brushed Fleece Cotton",
         gsm: "420 GSM",
@@ -91,7 +97,7 @@ const collections = {
       {
         id: 3,
         name: "Discipline",
-        image: "/Discipline3.png",
+        image: "/3Discipline.png",
         color: "Color: Charcoal Black",
         fabric: "Material: Heavy Premium Terry Cotton",
         gsm: "380 GSM",
@@ -176,7 +182,7 @@ export default function CollectionPage() {
               src={collection.banner}
               alt={collection.title}
               fill
-              className="object-cover"
+              className="object-contain"
             />
 
           </div>
@@ -193,45 +199,49 @@ export default function CollectionPage() {
           Available Designs
         </h2>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
 
           {collection.products.map((product) => (
 
-            <div
-              key={product.id}
-              className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
-            >
+<div
+  key={product.id}
+  className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+>
+  <div className="relative h-[420px] bg-gray-100 flex items-center justify-center p-4">
 
-              <div className="relative h-80">
+    <Image
+      src={product.image}
+      alt={product.name}
+      fill
+      className="object-contain"
+      sizes="(max-width:768px) 100vw,
+             (max-width:1200px) 50vw,
+             33vw"
+      priority
+    />
 
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                />
+  </div>
 
-              </div>
+  <div className="p-6">
 
-              <div className="p-6">
+    <h3 className="text-xl font-bold text-[#0D4A86]">
+      {product.name}
+    </h3>
 
-                <h3 className="text-xl font-bold text-[#0D4A86]">
-                  {product.name}
-                </h3>
-                 <p className="mt-3 text-slate-600">
-                  {product.color}
-                </p>
-                <p className="mt-3 text-slate-600">
-                  {product.fabric}
-                </p>
+    {product.color && (
+  <p className="mt-3 text-slate-600">
+    {product.color}
+  </p>
+)}
 
-                <p className="text-slate-500">
-                  {product.gsm}
-                </p>
+    <p className="mt-2 text-slate-600">{product.fabric}</p>
 
-              </div>
+    <p className="mt-2 text-slate-500 font-medium">
+      {product.gsm}
+    </p>
 
-            </div>
+  </div>
+</div>
 
           ))}
 

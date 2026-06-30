@@ -14,7 +14,7 @@ const products = [
 {
   title: "Premium Hoodies",
   slug: "hoodies",
-  image: "/FutureVision1.png",
+  image: "/FutureVision_1.png",
 },
 
   {
