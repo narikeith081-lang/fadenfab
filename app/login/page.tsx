@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Footer from "../components/Footer";
-import Contact from "../components/Contact";
+import Footer from "../../components/Footer";
+import Contact from "../../components/Contact";
+import Gallery from "../../components/Gallery";
+import Testimonials from "../../components/Testimonials";
 
 export default function LoginPage() {
   const router = useRouter();
