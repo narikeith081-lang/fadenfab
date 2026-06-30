@@ -84,7 +84,7 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p>Email: fadenfab22@gmail.com</p>
-            <p>Phone: +91 90803 83384</p>
+            <p>Phone: +91 63749 98042</p>
             <p>Location: Chennai, Tamil Nadu, India</p>
           </section>
 
