@@ -1,11 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect } from "react";
 import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
 import Contact from "../components/Contact";
 import Testimonials from "../components/Testimonials";
+import { HiMenu, HiX } from "react-icons/hi";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const fadeUp = {
   hidden: {
@@ -29,7 +31,7 @@ export default function Home() {
       behavior: "instant",
     });
   }, []);
-
+const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
 <main className="min-h-screen overflow-x-hidden text-slate-900
 bg-gradient-to-br
@@ -104,62 +106,155 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
   FADENFAB
 </button>
 
-          {/* MENU */}
-          <div className="hidden md:flex items-center gap-8 text-lg font-medium text-slate-700">
 
+{/* Mobile Menu */}
+<AnimatePresence>
+  {mobileMenuOpen && (
+    <>
+      {/* Background Overlay */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setMobileMenuOpen(false)}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+      />
+
+      {/* Right Side Drawer */}
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.35, ease: "easeInOut" }}
+        className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 md:hidden"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b">
+
+          <h2 className="text-2xl font-bold text-[#0D4A86]">
+            FADENFAB
+          </h2>
+
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-3xl text-slate-700 hover:text-[#0D4A86]"
+          >
+            ×
+          </button>
+
+        </div>
+
+        {/* Menu */}
+        <div className="flex flex-col mt-8">
+
+          {[
+            { name: "Services", id: "services" },
+            { name: "Collection", id: "collection" },
+            { name: "Why Us", id: "why" },
+            { name: "Contact", id: "contact" },
+          ].map((item) => (
             <button
+              key={item.id}
               onClick={() => {
                 document
-                  .getElementById("services")
+                  .getElementById(item.id)
                   ?.scrollIntoView({
                     behavior: "smooth",
+                    block: "start",
                   });
-              }}
-              className="hover:text-[#0D4A86] transition"
-            >
-              Services
-            </button>
 
-            <button
-              onClick={() => {
-                document
-                  .getElementById("collection")
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                  });
+                setMobileMenuOpen(false);
               }}
-              className="hover:text-[#0D4A86] transition"
+              className="
+                text-left
+                px-8
+                py-5
+                text-lg
+                font-semibold
+                text-slate-700
+                hover:bg-[#0D4A86]
+                hover:text-white
+                transition-all
+                duration-300
+              "
             >
-              Collection
+              {item.name}
             </button>
+          ))}
 
-            <button
-              onClick={() => {
-                document
-                  .getElementById("why")
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                  });
-              }}
-              className="hover:text-[#0D4A86] transition"
-            >
-              Why Us
-            </button>
+        </div>
 
-            <button
-              onClick={() => {
-                document
-                  .getElementById("contact")
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                  });
-              }}
-              className="hover:text-[#0D4A86] transition"
-            >
-              Contact
-            </button>
+        {/* Bottom Button */}
+        <div className="absolute bottom-8 left-0 w-full px-6">
 
-            {/* ADMIN */}
+          <button
+            onClick={() => {
+              document
+                .getElementById("contact")
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                });
+
+              setMobileMenuOpen(false);
+            }}
+            className="w-full bg-[#0D4A86] text-white py-4 rounded-full font-bold hover:bg-[#083A6B]"
+          >
+            Get Quote
+          </button>
+
+        </div>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
+
+          {/* Desktop Menu */}
+<div className="hidden md:flex items-center gap-8 text-lg font-medium text-slate-700">
+
+  <button
+    onClick={() =>
+      document.getElementById("services")?.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+    className="hover:text-[#0D4A86]"
+  >
+    Services
+  </button>
+
+  <button
+    onClick={() =>
+      document.getElementById("collection")?.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+    className="hover:text-[#0D4A86]"
+  >
+    Collection
+  </button>
+
+  <button
+    onClick={() =>
+      document.getElementById("why")?.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+    className="hover:text-[#0D4A86]"
+  >
+    Why Us
+  </button>
+
+  <button
+    onClick={() =>
+      document.getElementById("contact")?.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+    className="hover:text-[#0D4A86]"
+  >
+    Contact
+  </button>
+{/* ADMIN */}
             <button
               onClick={() => {
                 window.location.href = "/login";
@@ -168,8 +263,20 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
             >
               
             </button>
+</div>
 
-          </div>
+{/* Mobile Hamburger */}
+<button
+  className="md:hidden text-3xl text-[#0D4A86]"
+  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+>
+  {mobileMenuOpen ? <HiX /> : <HiMenu />}
+</button>
+
+
+
+
+
 
           {/* CTA */}
           <button
@@ -247,17 +354,18 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
           Get Instant Quote
         </button>
 
-        <button
-          onClick={() =>
-            document.getElementById("collection")?.scrollIntoView({
+       <button
+        onClick={() => {
+          document
+            .getElementById("collection")
+            ?.scrollIntoView({
               behavior: "smooth",
-            })
-          }
-          className="border border-slate-300 hover:bg-slate-100 px-10 py-4 rounded-full transition"
-        >
-          Explore Collection
-        </button>
-
+            });
+        }}
+        className="border border-slate-300 hover:bg-slate-100 px-10 py-4 rounded-full font-semibold transition"
+      >
+        Explore Collection
+      </button>
       </motion.div>
 
     </div>
@@ -733,7 +841,11 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
   href="https://wa.me/916374998042"
   target="_blank"
   rel="noopener noreferrer"
-  className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-400 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl text-3xl transition"
+  className={`fixed bottom-6 right-6 transition-all duration-300 ${
+    mobileMenuOpen
+      ? "opacity-0 pointer-events-none"
+      : "opacity-100"
+  } z-40 bg-green-500 hover:bg-green-400 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl text-3xl`}
 >
   💬
 </a>
