@@ -1,14 +1,64 @@
-export default function Navbar() {
-  return (
-    <nav className="sticky top-0 z-50 bg-black border-b border-gray-800 px-8 py-5 flex justify-between items-center text-white">
-      <h1 className="text-3xl font-bold text-yellow-400">FADENFAB</h1>
+"use client";
 
-      <div className="hidden md:flex gap-8">
-        <a href="#">Home</a>
-        <a href="#">Services</a>
-        <a href="#">Portfolio</a>
-        <a href="#">Contact</a>
-      </div>
-    </nav>
-  );
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import UserNavbar from "@/components/UserNavbar";
+
+export default function UserNavbar(){
+
+    const [user,setUser]=useState<any>(null);
+
+    useEffect(()=>{
+
+        supabase.auth.getUser().then(({data})=>{
+            setUser(data.user);
+        });
+
+    },[]);
+
+    const logout=async()=>{
+
+        await supabase.auth.signOut();
+
+        window.location.reload();
+
+    }
+
+    return(
+
+        <>
+            {user ? (
+
+                <div className="flex items-center gap-4">
+
+                    <span className="font-semibold">
+
+                        {user.email}
+
+                    </span>
+
+                    <button
+                        onClick={logout}
+                        className="bg-red-500 text-white px-5 py-2 rounded-full"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            ) : (
+
+                <UserNavbar
+                    href="/userlogin"
+                    className="bg-[#0D4A86] text-white px-6 py-3 rounded-full font-bold"
+                >
+                    Login
+                </UserNavbar>
+
+            )}
+        </>
+
+    )
+
 }

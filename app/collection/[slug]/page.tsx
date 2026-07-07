@@ -1,8 +1,11 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { motion } from "framer-motion";
+
+
 
 type Product = {
   id: number;
@@ -154,6 +157,7 @@ const collections: Record<string, Collection> = {
 
 export default function CollectionPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
 
   const collection =
@@ -170,7 +174,7 @@ export default function CollectionPage() {
   }
 
   return (
-    <motion.main
+  <motion.main
   className="min-h-screen bg-slate-50"
   initial={{ opacity: 0, y: 60 }}
   animate={{ opacity: 1, y: 0 }}
@@ -180,45 +184,89 @@ export default function CollectionPage() {
   }}
 >
 
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
+  {/* ================= BACK BUTTON ================= */}
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+  <div className="max-w-7xl mx-auto px-6 pt-6">
 
-          <div>
+    <button
+      onClick={() => {
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push("/collection");
+        }
+      }}
+      className="
+        inline-flex
+        items-center
+        gap-2
+        rounded-full
+        border
+        border-slate-300
+        bg-white
+        px-5
+        py-2.5
+        text-slate-700
+        shadow-sm
+        transition-all
+        duration-300
+        hover:bg-[#0D4A86]
+        hover:text-white
+        hover:border-[#0D4A86]
+      "
+    >
+      <ArrowLeftIcon className="w-5 h-5" />
 
-            <span className="text-[#0D4A86] font-semibold uppercase tracking-wider">
-              Our Collection
-            </span>
+      <span className="font-medium">
+        Back
+      </span>
 
-            <h1 className="text-5xl font-extrabold mt-4 text-black">
-              {collection.title}
-            </h1>
+    </button>
 
-            <p className="mt-6 text-lg text-slate-600">
-              {collection.description}
-            </p>
+  </div>
 
-          </div>
+  {/* ================= HERO ================= */}
 
-          <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-xl">
+  <section className="max-w-7xl mx-auto px-6 pt-10 pb-20">
 
-            <Image
-              src={collection.banner}
-              alt={collection.title}
-              fill
-              className="object-contain"
-            />
+    <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-          </div>
+      <div>
 
-        </div>
+        <span className="text-[#0D4A86] font-semibold uppercase tracking-wider">
+          Our Collection
+        </span>
 
-      </section>
+        <h1 className="text-5xl font-extrabold mt-4 text-black">
+          {collection.title}
+        </h1>
+
+        <p className="mt-6 text-lg text-slate-600">
+          {collection.description}
+        </p>
+
+      </div>
+
+      <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-xl">
+
+        <Image
+          src={collection.banner}
+          alt={collection.title}
+          fill
+          className="object-contain"
+        />
+
+      </div>
+
+    </div>
+
+  </section>
+
+
 
       {/* Products */}
 
-      <section className="max-w-7xl mx-auto px-6 pb-20">
+      <section className="max-w-7xl mx-auto px-6 pb-32">
 
         <h2 className="text-3xl font-bold mb-10 text-black">
           Available Designs

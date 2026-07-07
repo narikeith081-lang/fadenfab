@@ -8,6 +8,8 @@ import Testimonials from "../components/Testimonials";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation"; 
 
 const fadeUp = {
   hidden: {
@@ -79,137 +81,37 @@ to-amber-50">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.12),transparent_60%)]" />
 
       {/* ================= NAVBAR ================= */}
-      <motion.nav
-        initial={{
-          y: -80,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          duration: 0.5,
-        }}
-className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200"      >
-
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-{/* LOGO */}
-<button
-  onClick={() => {
-    window.location.href = "/";
-  }}
-className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={{
-    fontFamily: '"American Typewriter", "American Typewriter Std", serif',
-  }}
+<motion.nav
+  initial={{ y: -80, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5 }}
+  className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200"
 >
-  FADENFAB
-</button>
+  <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
 
+    {/* Logo */}
 
-{/* Mobile Menu */}
-<AnimatePresence>
-  {mobileMenuOpen && (
-    <>
-      {/* Background Overlay */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={() => setMobileMenuOpen(false)}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-      />
+    <button
+      onClick={() => (window.location.href = "/")}
+      className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"
+      style={{
+        fontFamily:
+          '"American Typewriter","American Typewriter Std",serif',
+      }}
+    >
+      FADENFAB
+    </button>
 
-      {/* Right Side Drawer */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 md:hidden"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b">
+    {/* Desktop Menu */}
 
-          <h2 className="text-2xl font-bold text-[#0D4A86]">
-            FADENFAB
-          </h2>
+    <div className="hidden md:flex items-center gap-8 text-lg font-medium">
 
-          <button
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-3xl text-slate-700 hover:text-[#0D4A86]"
-          >
-            ×
-          </button>
-
-        </div>
-
-        {/* Menu */}
-        <div className="flex flex-col mt-8">
-
-          {[
-            { name: "Services", id: "services" },
-            { name: "Collection", id: "collection" },
-            { name: "Why Us", id: "why" },
-            { name: "Contact", id: "contact" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                document
-                  .getElementById(item.id)
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-
-                setMobileMenuOpen(false);
-              }}
-              className="
-                text-left
-                px-8
-                py-5
-                text-lg
-                font-semibold
-                text-slate-700
-                hover:bg-[#0D4A86]
-                hover:text-white
-                transition-all
-                duration-300
-              "
-            >
-              {item.name}
-            </button>
-          ))}
-
-        </div>
-
-        {/* Bottom Button */}
-        <div className="absolute bottom-8 left-0 w-full px-6">
-
-          <button
-            onClick={() => {
-              document
-                .getElementById("contact")
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                });
-
-              setMobileMenuOpen(false);
-            }}
-            className="w-full bg-[#0D4A86] text-white py-4 rounded-full font-bold hover:bg-[#083A6B]"
-          >
-            Get Quote
-          </button>
-
-        </div>
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
-
-          {/* Desktop Menu */}
-<div className="hidden md:flex items-center gap-8 text-lg font-medium text-slate-700">
+  <button
+    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+    className="hover:text-[#0D4A86] transition"
+  >
+    Home
+  </button>
 
   <button
     onClick={() =>
@@ -217,7 +119,7 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
         behavior: "smooth",
       })
     }
-    className="hover:text-[#0D4A86]"
+    className="hover:text-[#0D4A86] transition"
   >
     Services
   </button>
@@ -228,7 +130,7 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
         behavior: "smooth",
       })
     }
-    className="hover:text-[#0D4A86]"
+    className="hover:text-[#0D4A86] transition"
   >
     Collection
   </button>
@@ -239,7 +141,7 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
         behavior: "smooth",
       })
     }
-    className="hover:text-[#0D4A86]"
+    className="hover:text-[#0D4A86] transition"
   >
     Why Us
   </button>
@@ -250,51 +152,124 @@ className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86]"  style={
         behavior: "smooth",
       })
     }
-    className="hover:text-[#0D4A86]"
+    className="hover:text-[#0D4A86] transition"
   >
     Contact
   </button>
-{/* ADMIN */}
-            <button
-              onClick={() => {
-                window.location.href = "/login";
-              }}
-              className="hover:text-[#0D4A86] transition"
-            >
-              
-            </button>
-</div>
 
-{/* Mobile Hamburger */}
 <button
-  className="md:hidden text-3xl text-[#0D4A86]"
-  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+  onClick={() => router.push("/userlogin")}
+  className="bg-[#0D4A86] text-white px-6 py-3 rounded-full font-bold hover:bg-[#083A6B] transition"
 >
-  {mobileMenuOpen ? <HiX /> : <HiMenu />}
+  Login
 </button>
 
+</div>
 
+    {/* Mobile */}
 
+    <button
+      className="md:hidden text-3xl text-[#0D4A86]"
+      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+    >
+      {mobileMenuOpen ? <HiX /> : <HiMenu />}
+    </button>
 
+  </div>
 
+  <AnimatePresence>
+    {mobileMenuOpen && (
+      <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/50 z-40"
+        />
 
-          {/* CTA */}
-          <button
-            onClick={() => {
-              document
-                .getElementById("contact")
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                });
-            }}
-            className="hidden md:block bg-[#0D4A86] hover:bg-[#083A6B]  text-white px-6 py-3 rounded-full font-bold transition"
-          >
-            Get Quote
-          </button>
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ duration: 0.3 }}
+          className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50"
+        >
+          <div className="flex items-center justify-between p-6 border-b">
 
-        </div>
+            <h2 className="text-2xl font-bold text-[#0D4A86]">
+              FADENFAB
+            </h2>
 
-      </motion.nav>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-3xl"
+            >
+              ×
+            </button>
+
+          </div>
+
+          <div className="flex flex-col mt-8">
+
+            {[
+  ["Home", "home"],
+  ["Services", "services"],
+  ["Collection", "collection"],
+  ["Why Us", "why"],
+  ["Contact", "contact"],
+].map(([label, id]) => (
+  <button
+    key={id}
+    onClick={() => {
+
+      if (id === "home") {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      } else {
+        document.getElementById(id)?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      setMobileMenuOpen(false);
+    }}
+    className="text-left px-8 py-5 hover:bg-[#0D4A86] hover:text-white transition"
+  >
+    {label}
+  </button>
+))}
+
+            <button
+              onClick={() => (window.location.href = "/login")}
+              className="text-left px-8 py-5 hover:bg-[#0D4A86] hover:text-white"
+            >
+              Login
+            </button>
+
+          </div>
+
+          <div className="absolute bottom-8 left-0 w-full px-6">
+
+<button
+  onClick={() => {
+    router.push("/userlogin");
+    setMobileMenuOpen(false);
+  }}
+  className="w-full bg-[#0D4A86] text-white py-4 rounded-full font-bold"
+>
+  Login
+</button>
+
+          </div>
+
+        </motion.div>
+      </>
+    )}
+  </AnimatePresence>
+</motion.nav>
 
 {/* ================= HERO ================= */}
 <section className="relative px-6 pt-40 pb-36 overflow-hidden">
