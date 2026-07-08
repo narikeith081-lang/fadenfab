@@ -39,89 +39,78 @@ export default function UserSignup() {
   // ============================
 
   const handleSignup = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
 
-    setError("");
-    setSuccess("");
+  setError("");
+  setSuccess("");
 
-    if (!fullName.trim()) {
-      setError("Please enter your full name.");
-      return;
-    }
+  if (!fullName.trim()) {
+    setError("Please enter your full name.");
+    return;
+  }
 
-    if (!email.trim()) {
-      setError("Please enter your email.");
-      return;
-    }
+  if (!email.trim()) {
+    setError("Please enter your email.");
+    return;
+  }
 
-    if (!mobile.trim()) {
-      setError("Please enter your mobile number.");
-      return;
-    }
+  if (!mobile.trim()) {
+    setError("Please enter your mobile number.");
+    return;
+  }
 
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-      setError("Please enter a valid 10-digit mobile number.");
-      return;
-    }
+  if (!/^[6-9]\d{9}$/.test(mobile)) {
+    setError("Please enter a valid 10-digit mobile number.");
+    return;
+  }
 
-    if (!password) {
-      setError("Please enter your password.");
-      return;
-    }
+  if (!password) {
+    setError("Please enter your password.");
+    return;
+  }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
+  if (password.length < 6) {
+    setError("Password must be at least 6 characters.");
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+  if (password !== confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const { data, error } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          mobile: mobile,
+        },
+      },
+    });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      if (!data.user) {
-        throw new Error("Unable to create account.");
-      }
+    setSuccess(
+      "Account created successfully. Please check your email and login."
+    );
 
-      const { error: profileError } =
-        await supabase
-          .from("profiles")
-          .insert({
-            id: data.user.id,
-            full_name: fullName,
-            email: email,
-            mobile: mobile,
-          });
+    setTimeout(() => {
+      router.push("/userlogin");
+    }, 2000);
 
-      if (profileError) throw profileError;
-
-      setSuccess(
-        "Account created successfully! Redirecting..."
-      );
-
-      setTimeout(() => {
-        router.push("/userlogin");
-      }, 2000);
-
-    } catch (err: any) {
-      setError(err.message || "Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err: any) {
+    setError(err.message || "Something went wrong.");
+  } finally {
+    setLoading(false);
+  }
+};
 
     return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 flex items-center justify-center px-5 py-12">

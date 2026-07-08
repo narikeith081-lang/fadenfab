@@ -33,25 +33,72 @@ const handleLogin = async (
   setLoading(true);
 
   try {
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    // Login
+    const {
+      data: authData,
+      error: loginError,
+    } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (error) throw error;
+    if (loginError) throw loginError;
+
+    if (!authData.user) {
+      throw new Error("Unable to login.");
+    }
+
+    // Check if profile already exists
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    // Create profile only if it doesn't exist
+    if (!profile) {
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert({
+          id: authData.user.id,
+          full_name:
+            authData.user.user_metadata?.full_name ?? "",
+          email: authData.user.email,
+          mobile:
+            authData.user.user_metadata?.mobile ?? "",
+        });
+
+      if (insertError) throw insertError;
+    }
 
     router.push("/");
     router.refresh();
 
   } catch (err: any) {
-    setError(err.message);
+    setError(err.message || "Login failed.");
   } finally {
     setLoading(false);
   }
 };
 
+const handleForgotPassword = async () => {
+  if (!email) {
+    setError("Please enter your email address first.");
+    return;
+  }
 
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "http://localhost:3000/reset-password",
+  });
+
+  if (error) {
+    setError(error.message);
+  } else {
+    alert(
+      "Password reset email has been sent. Please check your inbox."
+    );
+  }
+};
 
   return (
   <main className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 flex items-center justify-center px-5 py-12">
@@ -126,6 +173,16 @@ const handleLogin = async (
           </div>
 
         </div>
+
+        <div className="flex justify-end mt-2">
+  <button
+    type="button"
+    onClick={handleForgotPassword}
+    className="text-sm font-medium text-[#0D4A86] hover:underline"
+  >
+    Forgot Password?
+  </button>
+</div>
 
         {error && (
           <div className="bg-red-100 border border-red-300 text-red-700 rounded-xl p-3">
