@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
@@ -9,7 +10,6 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import { useRouter } from "next/navigation"; 
 
 const fadeUp = {
   hidden: {
@@ -25,15 +25,17 @@ const fadeUp = {
 
 export default function Home() {
 
-  // ✅ Proper refresh handling
-  useEffect(() => {
+  const router = useRouter();   // <-- HERE
 
+  useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "instant",
     });
   }, []);
-const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
 <main className="min-h-screen overflow-x-hidden text-slate-900
 bg-gradient-to-br
@@ -156,13 +158,14 @@ to-amber-50">
   >
     Contact
   </button>
+ 
+  <button
+    onClick={() => router.push("/userlogin")}
+    className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-6 py-2 rounded-full font-semibold transition"
+  >
+    Login
+  </button>
 
-<button
-  onClick={() => router.push("/userlogin")}
-  className="bg-[#0D4A86] text-white px-6 py-3 rounded-full font-bold hover:bg-[#083A6B] transition"
->
-  Login
-</button>
 
 </div>
 
@@ -243,7 +246,10 @@ to-amber-50">
 ))}
 
             <button
-              onClick={() => (window.location.href = "/login")}
+              onClick={() => {
+  router.push("/userlogin");
+  setMobileMenuOpen(false);
+}}
               className="text-left px-8 py-5 hover:bg-[#0D4A86] hover:text-white"
             >
               Login

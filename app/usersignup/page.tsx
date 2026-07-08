@@ -153,13 +153,13 @@ export default function UserSignup() {
               Full Name
             </label>
 
-            <input
-              type="text"
-              placeholder="John Doe"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full mt-2 border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-[#0D4A86]"
-            />
+          <input
+  type="text"
+  placeholder="John Doe"
+  value={fullName}
+  onChange={(e) => setFullName(e.target.value)}
+  className="w-full mt-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20"
+/>
 
           </div>
 
@@ -172,12 +172,12 @@ export default function UserSignup() {
             </label>
 
             <input
-              type="email"
-              placeholder="john@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-2 border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-[#0D4A86]"
-            />
+  type="email"
+  placeholder="john@gmail.com"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className="w-full mt-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20"
+/>
 
           </div>
 
@@ -190,12 +190,12 @@ export default function UserSignup() {
             </label>
 
             <input
-              type="tel"
-              placeholder="9876543210"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              className="w-full mt-2 border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-[#0D4A86]"
-            />
+  type="tel"
+  placeholder="9876543210"
+  value={mobile}
+  onChange={(e) => setMobile(e.target.value)}
+  className="w-full mt-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20"
+/>
 
           </div>
 
@@ -210,12 +210,12 @@ export default function UserSignup() {
             <div className="relative">
 
               <input
-                type={showPassword ? "text" : "password"}
-                placeholder="********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-2 border border-slate-300 rounded-xl px-4 py-3 pr-12 outline-none focus:border-[#0D4A86]"
-              />
+  type={showPassword ? "text" : "password"}
+  placeholder="********"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="w-full mt-2 rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20"
+/>
 
               <button
                 type="button"
@@ -246,18 +246,12 @@ export default function UserSignup() {
             <div className="relative">
 
               <input
-                type={
-                  showConfirmPassword
-                    ? "text"
-                    : "password"
-                }
-                placeholder="********"
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
-                }
-                className="w-full mt-2 border border-slate-300 rounded-xl px-4 py-3 pr-12 outline-none focus:border-[#0D4A86]"
-              />
+  type={showConfirmPassword ? "text" : "password"}
+  placeholder="********"
+  value={confirmPassword}
+  onChange={(e) => setConfirmPassword(e.target.value)}
+  className="w-full mt-2 rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20"
+/>
 
               <button
                 type="button"
@@ -292,33 +286,26 @@ export default function UserSignup() {
           )}
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3 rounded-xl font-bold transition disabled:opacity-50"
-          >
-            {loading
-              ? "Creating Account..."
-              : "Create Account"}
-          </button>
+  type="submit"
+  disabled={loading}
+  className="w-full rounded-xl bg-[#0D4A86] py-3 font-bold text-white transition hover:bg-[#083A6B] disabled:opacity-50"
+>
+  {loading ? "Creating Account..." : "Create Account"}
+</button>
 
         </form>
 
         <div className="mt-8 text-center">
-
-          <p className="text-slate-600">
-
-            Already have an account?
-
-            <Link
-              href="/userlogin"
-              className="text-[#0D4A86] font-bold ml-2"
-            >
-              Login
-            </Link>
-
-          </p>
-
-        </div>
+  <p className="text-gray-600">
+    Already have an account?
+    <Link
+      href="/userlogin"
+      className="ml-2 font-semibold text-[#0D4A86] hover:underline"
+    >
+      Login
+    </Link>
+  </p>
+</div>
 
       </div>
 

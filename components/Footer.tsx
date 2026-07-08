@@ -107,14 +107,14 @@ export default function Footer() {
 
               <a
                 href="tel:+916374998042"
-                className="hover:text-yellow-400 transition"
+                className="hover:text-[#0D4A86] transition"
               >
                 📞 +91 63749 98042
               </a>
 
               <a
                 href="mailto:fadenfab22@gmail.com"
-                className="hover:text-yellow-400 transition"
+                className="hover:text-[#0D4A86] transition"
               >
                 ✉️ fadenfab22@gmail.com
               </a>
