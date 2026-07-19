@@ -176,8 +176,23 @@ export default function CheckoutPage() {
 
       // 1. Save order to Supabase
       const { data, error } = await supabase
-        .from("orders")
-        .insert([orderData])
+        .from("leads")
+        .insert([
+          {
+            name: fullName,
+            email: user.email,
+            phone: mobile,
+            company: JSON.stringify({
+              items: cart,
+              shipping_address: orderAddress,
+              payment_method: method,
+              transaction_id: txId || null
+            }),
+            quantity: total.toString(),
+            message: "Processing",
+            status: "order"
+          }
+        ])
         .select()
         .single();
 
@@ -193,7 +208,17 @@ export default function CheckoutPage() {
         localOrders.push(placedOrder);
         localStorage.setItem("fadenfab_orders", JSON.stringify(localOrders));
       } else {
-        placedOrder = data;
+        placedOrder = {
+          id: data.id.toString(),
+          user_id: user.id,
+          created_at: data.created_at,
+          total: parseFloat(data.quantity) || 0,
+          status: data.message,
+          items: cart,
+          shipping_address: orderAddress,
+          payment_method: method,
+          transaction_id: txId || null
+        };
       }
 
       // 2. Increment coupon usage

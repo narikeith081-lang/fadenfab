@@ -136,9 +136,29 @@ export default function AdminPage() {
 
     // Query Supabase orders for real-time sales stats
     const fetchSupabaseOrders = async () => {
-      const { data } = await supabase.from("orders").select("*");
+      const { data } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("status", "order");
       if (data && data.length > 0) {
-        setOrdersData(data);
+        const mapped = data.map((lead: any) => {
+          let companyObj: any = {};
+          try {
+            companyObj = JSON.parse(lead.company);
+          } catch (e) {}
+          return {
+            id: lead.id.toString(),
+            user_id: lead.email,
+            created_at: lead.created_at,
+            total: parseFloat(lead.quantity) || 0,
+            status: lead.message,
+            items: companyObj.items || [],
+            shipping_address: companyObj.shipping_address || {},
+            payment_method: companyObj.payment_method || "N/A",
+            transaction_id: companyObj.transaction_id || null
+          };
+        });
+        setOrdersData(mapped);
       }
     };
     fetchSupabaseOrders();

@@ -113,17 +113,39 @@ function ProfileContent() {
 
   // ================= FETCH ORDERS =================
   const fetchOrders = useCallback(async () => {
-    if (!user) return;
+    if (!user || !user.email) return;
     try {
       setLoadingOrders(true);
       const { data, error } = await supabase
-        .from("orders")
+        .from("leads")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("email", user.email)
+        .eq("status", "order")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+
+      const mappedOrders = (data || []).map((lead: any) => {
+        let companyObj: any = {};
+        try {
+          companyObj = JSON.parse(lead.company);
+        } catch (e) {
+          console.error("Parse error for lead company order:", e);
+        }
+        return {
+          id: lead.id.toString(),
+          user_id: user.id,
+          created_at: lead.created_at,
+          total: parseFloat(lead.quantity) || 0,
+          status: lead.message,
+          items: companyObj.items || [],
+          shipping_address: companyObj.shipping_address || {},
+          payment_method: companyObj.payment_method || "N/A",
+          transaction_id: companyObj.transaction_id || null
+        };
+      });
+
+      setOrders(mappedOrders);
     } catch (err) {
       console.log("Supabase orders error, checking local storage:", err);
       // Fallback

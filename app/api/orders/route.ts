@@ -18,15 +18,36 @@ export async function GET(req: Request) {
     });
 
     const { data, error } = await supabase
-      .from("orders")
+      .from("leads")
       .select("*")
+      .eq("status", "order")
       .order("created_at", { ascending: false });
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });
     }
 
-    return Response.json(data || []);
+    const mappedOrders = (data || []).map((lead: any) => {
+      let companyObj: any = {};
+      try {
+        companyObj = JSON.parse(lead.company);
+      } catch (e) {
+        console.error("Parse error for lead company order:", e);
+      }
+      return {
+        id: lead.id.toString(),
+        user_id: lead.email,
+        created_at: lead.created_at,
+        total: parseFloat(lead.quantity) || 0,
+        status: lead.message,
+        items: companyObj.items || [],
+        shipping_address: companyObj.shipping_address || {},
+        payment_method: companyObj.payment_method || "N/A",
+        transaction_id: companyObj.transaction_id || null
+      };
+    });
+
+    return Response.json(mappedOrders);
   } catch (err: any) {
     return Response.json({ error: err?.message || String(err) }, { status: 500 });
   }
@@ -53,9 +74,10 @@ export async function PATCH(req: Request) {
     });
 
     const { data, error } = await supabase
-      .from("orders")
-      .update({ status })
+      .from("leads")
+      .update({ message: status })
       .eq("id", id)
+      .eq("status", "order")
       .select();
 
     if (error) {
@@ -89,9 +111,10 @@ export async function DELETE(req: Request) {
     });
 
     const { error } = await supabase
-      .from("orders")
+      .from("leads")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .eq("status", "order");
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });
