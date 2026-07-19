@@ -126,8 +126,7 @@ export default function AdminPage() {
     }
 
     // Orders fallback
-    const ords = JSON.parse(localStorage.getItem("fadenfab_orders") || "[]");
-    setOrdersData(ords);
+    setOrdersData([]);
   }, []);
 
   useEffect(() => {
@@ -140,7 +139,7 @@ export default function AdminPage() {
         .from("leads")
         .select("*")
         .eq("status", "order");
-      if (data && data.length > 0) {
+      if (data) {
         const mapped = data.map((lead: any) => {
           let companyObj: any = {};
           try {
@@ -159,6 +158,8 @@ export default function AdminPage() {
           };
         });
         setOrdersData(mapped);
+      } else {
+        setOrdersData([]);
       }
     };
     fetchSupabaseOrders();
@@ -250,6 +251,7 @@ export default function AdminPage() {
       const data = await res.json();
       setOrdersList(data || []);
       setFilteredOrdersList(data || []);
+      setOrdersData(data || []);
     } catch (err) {
       console.error("Fetch Orders Error:", err);
     } finally {
