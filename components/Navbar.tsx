@@ -127,6 +127,35 @@ export default function Navbar({
     window.location.href = "/";
   };
 
+  // ================= INACTIVITY TIMEOUT LOGOUT =================
+  useEffect(() => {
+    if (!user) return;
+
+    let timer: any;
+
+    const resetTimer = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(async () => {
+        await handleLogout();
+        alert("Session expired due to 30 minutes of inactivity. Please login again.");
+      }, 30 * 60 * 1000); // 30 minutes
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach(event => {
+      window.addEventListener(event, resetTimer);
+    });
+
+    resetTimer();
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      events.forEach(event => {
+        window.removeEventListener(event, resetTimer);
+      });
+    };
+  }, [user]);
+
   // ================= NAVIGATION =================
   const handleNavClick = (sectionId: string, href: string) => {
     if (pathname === "/") {

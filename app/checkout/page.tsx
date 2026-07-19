@@ -48,6 +48,9 @@ export default function CheckoutPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [orderSuccess, setOrderSuccess] = useState<any>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
+  const [trnxError, setTrnxError] = useState("");
 
   // ================= LOAD DATA =================
   useEffect(() => {
@@ -119,6 +122,35 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (paymentMethod === "upi") {
+      setTrnxError("");
+      setTransactionId("");
+      setShowPaymentModal(true);
+      return;
+    }
+
+    // Otherwise COD order confirms immediately
+    await executeOrderSubmission("Cash on Delivery", "");
+  };
+
+  const handleConfirmPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTrnxError("");
+
+    if (!transactionId.trim()) {
+      setTrnxError("Please enter your UPI Ref number / Transaction UTR ID.");
+      return;
+    }
+
+    if (transactionId.trim().length < 6) {
+      setTrnxError("Please enter a valid Transaction Ref Number.");
+      return;
+    }
+
+    await executeOrderSubmission("UPI Online Payment", transactionId.trim());
+  };
+
+  const executeOrderSubmission = async (method: string, txId: string) => {
     try {
       setIsSubmitting(true);
       const orderAddress = {
@@ -135,7 +167,9 @@ export default function CheckoutPage() {
         status: "Processing",
         total,
         items: cart,
-        shipping_address: orderAddress
+        shipping_address: orderAddress,
+        payment_method: method,
+        transaction_id: txId || null
       };
 
       let placedOrder: any = null;
@@ -223,8 +257,9 @@ export default function CheckoutPage() {
       localStorage.removeItem("fadenfab_cart");
       window.dispatchEvent(new Event("cart-updated"));
       
-      // 3. Show Success Screen
+      // 5. Show Success Screen
       setOrderSuccess(placedOrder);
+      setShowPaymentModal(false);
     } catch (err: any) {
       setErrorMessage(err.message || "Something went wrong while placing your order.");
     } finally {
@@ -544,6 +579,103 @@ export default function CheckoutPage() {
 
         <Footer />
       </main>
+
+      {/* Online Payment Verification Modal */}
+      <AnimatePresence>
+        {showPaymentModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowPaymentModal(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800 z-10"
+            >
+              <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                Scan & Pay via UPI
+              </h3>
+              <p className="text-xs text-slate-500 mb-5 leading-relaxed font-semibold">
+                Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, BHIM) to pay <span className="text-[#0D4A86] font-bold">₹{total}</span> to confirm your custom order.
+              </p>
+
+              {/* QR Code Container */}
+              <div className="flex flex-col items-center bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-5">
+                <img
+                  src="/gpay-qr.jpg"
+                  alt="Naresh Kumar UPI QR Code"
+                  className="w-52 h-auto object-contain rounded-lg shadow-sm border border-slate-200 bg-white p-2"
+                />
+                <p className="text-xs font-extrabold text-slate-800 mt-3 font-mono">
+                  UPI ID: narikeith081-2@okhdfcbank
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText("narikeith081-2@okhdfcbank");
+                    alert("UPI ID copied to clipboard!");
+                  }}
+                  className="text-[10px] text-blue-500 hover:text-blue-700 mt-1 font-semibold transition cursor-pointer"
+                >
+                  Click to copy UPI ID
+                </button>
+              </div>
+
+              {/* Mobile Deep Link Redirect */}
+              <div className="mb-5">
+                <a
+                  href={`upi://pay?pa=narikeith081-2@okhdfcbank&pn=Naresh%20Kumar&am=${total}&cu=INR&tn=Fadenfab%20Order`}
+                  className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 text-sm text-center shadow-lg shadow-blue-500/10 cursor-pointer"
+                >
+                  <span>Pay via UPI App Directly</span>
+                </a>
+              </div>
+
+              {/* Verification Form */}
+              <form onSubmit={handleConfirmPayment} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">
+                    UTR / Transaction Ref No. (12 Digits)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter 12-digit UPI Transaction No."
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 outline-none text-slate-800 focus:border-[#0D4A86] text-sm"
+                  />
+                  {trnxError && (
+                    <p className="text-xs text-red-500 font-semibold mt-1">{trnxError}</p>
+                  )}
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowPaymentModal(false)}
+                    className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-500 py-3 rounded-xl text-sm font-semibold transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm font-bold transition cursor-pointer shadow-lg shadow-green-500/10"
+                  >
+                    {isSubmitting ? "Verifying..." : "Confirm Order"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </ProtectedRoute>
   );
 }

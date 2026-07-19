@@ -14,7 +14,8 @@ import {
   PencilIcon,
   TrashIcon,
   UsersIcon,
-  TicketIcon
+  TicketIcon,
+  ShoppingBagIcon
 } from "@heroicons/react/24/outline";
 
 type Lead = {
@@ -34,7 +35,7 @@ export default function AdminPage() {
 
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"leads" | "inventory" | "users" | "coupons">("leads");
+  const [activeTab, setActiveTab] = useState<"leads" | "inventory" | "users" | "coupons" | "orders">("leads");
 
   // Leads state
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -50,6 +51,12 @@ export default function AdminPage() {
   const [usersAnalytics, setUsersAnalytics] = useState<any[]>([]);
   const [couponsData, setCouponsData] = useState<any[]>([]);
   const [ordersData, setOrdersData] = useState<any[]>([]);
+
+  // Orders management states
+  const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [filteredOrdersList, setFilteredOrdersList] = useState<any[]>([]);
+  const [ordersSearch, setOrdersSearch] = useState("");
+  const [ordersStatusFilter, setOrdersStatusFilter] = useState("all");
 
   // CRUD Product Forms State
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -209,6 +216,27 @@ export default function AdminPage() {
     }
   }, [lastLeadCount]);
 
+  // ================= FETCH ORDERS =================
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/orders", {
+        method: "GET",
+        headers: {
+          "x-admin-secret": "fadenfab_secure_admin_2026"
+        }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setOrdersList(data || []);
+      setFilteredOrdersList(data || []);
+    } catch (err) {
+      console.error("Fetch Orders Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // ================= INITIAL LOAD =================
   useEffect(() => {
     if (!authorized) return;
@@ -218,13 +246,15 @@ export default function AdminPage() {
     }
 
     fetchLeads();
+    fetchOrders();
 
     const interval = setInterval(() => {
       fetchLeads();
+      fetchOrders();
     }, 60000); // Check for new leads every minute
 
     return () => clearInterval(interval);
-  }, [authorized, fetchLeads]);
+  }, [authorized, fetchLeads, fetchOrders]);
 
   // ================= FILTER LEADS =================
   useEffect(() => {
@@ -328,6 +358,114 @@ export default function AdminPage() {
       }
     });
   };
+
+
+
+  // ================= UPDATE ORDER STATUS =================
+  const updateOrderStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": "fadenfab_secure_admin_2026"
+        },
+        body: JSON.stringify({ id, status })
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      setModalConfig({
+        isOpen: true,
+        type: "success",
+        title: "Order Updated",
+        message: `Order status successfully changed to "${status}".`,
+        onConfirm: () => {
+          setModalConfig(null);
+          fetchOrders();
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      setModalConfig({
+        isOpen: true,
+        type: "error",
+        title: "Update Failed",
+        message: "Could not update order status.",
+        onConfirm: () => setModalConfig(null)
+      });
+    }
+  };
+
+  // ================= CANCEL/DELETE ORDER =================
+  const cancelOrder = (id: string) => {
+    setModalConfig({
+      isOpen: true,
+      type: "confirm",
+      title: "Cancel Order?",
+      message: `Are you sure you want to permanently cancel and delete order: "${id}"? This action cannot be undone.`,
+      confirmText: "Cancel Order",
+      cancelText: "Keep Order",
+      onCancel: () => setModalConfig(null),
+      onConfirm: async () => {
+        try {
+          const res = await fetch("/api/orders", {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-secret": "fadenfab_secure_admin_2026"
+            },
+            body: JSON.stringify({ id })
+          });
+
+          if (!res.ok) throw new Error("Cancel failed");
+
+          setModalConfig({
+            isOpen: true,
+            type: "success",
+            title: "Order Cancelled",
+            message: "The order has been cancelled and deleted successfully.",
+            onConfirm: () => {
+              setModalConfig(null);
+              fetchOrders();
+            }
+          });
+        } catch (err) {
+          console.error(err);
+          setModalConfig({
+            isOpen: true,
+            type: "error",
+            title: "Cancellation Failed",
+            message: "Could not cancel order. Please try again.",
+            onConfirm: () => setModalConfig(null)
+          });
+        }
+      }
+    });
+  };
+
+  // ================= FILTER ORDERS =================
+  useEffect(() => {
+    let updated = [...ordersList];
+
+    if (ordersStatusFilter !== "all") {
+      updated = updated.filter((o) => o.status === ordersStatusFilter);
+    }
+
+    if (ordersSearch.trim()) {
+      const q = ordersSearch.toLowerCase();
+      updated = updated.filter(
+        (o) =>
+          o.id.toString().toLowerCase().includes(q) ||
+          (o.shipping_address?.fullName || "").toLowerCase().includes(q) ||
+          (o.shipping_address?.mobile || "").includes(q) ||
+          (o.payment_method || "").toLowerCase().includes(q) ||
+          (o.transaction_id || "").toLowerCase().includes(q)
+      );
+    }
+
+    setFilteredOrdersList(updated);
+  }, [ordersSearch, ordersStatusFilter, ordersList]);
 
   // ================= ADD PRODUCT (CREATE) =================
   const handleAddProduct = (e: React.FormEvent) => {
@@ -578,6 +716,17 @@ export default function AdminPage() {
           >
             <TicketIcon className="w-5 h-5" />
             <span>🎟️ Coupon Redemptions</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+              activeTab === "orders"
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/20"
+                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            <ShoppingBagIcon className="w-5 h-5" />
+            <span>📦 Order Management ({ordersList.length})</span>
           </button>
         </div>
 
@@ -858,7 +1007,7 @@ export default function AdminPage() {
                 </div>
               )}
             </motion.div>
-          ) : (
+          ) : activeTab === "coupons" ? (
             /* ================= COUPONS TAB ================= */
             <motion.div
               key="coupons-tab"
@@ -911,6 +1060,141 @@ export default function AdminPage() {
                   </div>
                 ))}
               </div>
+            </motion.div>
+          ) : (
+            /* ================= ORDERS TAB ================= */
+            <motion.div
+              key="orders-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              {/* FILTERS */}
+              <div className="bg-gradient-to-r from-[#111827] to-[#172033] border border-white/10 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(34,197,94,0.08)]">
+                <div className="flex flex-col lg:flex-row gap-4">
+                  <input
+                    type="text"
+                    placeholder="Search by Order ID, Recipient name, mobile, payment method, or transaction ID..."
+                    value={ordersSearch}
+                    onChange={(e) => setOrdersSearch(e.target.value)}
+                    className="flex-1 bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none text-slate-200 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-sm"
+                  />
+                  <select
+                    value={ordersStatusFilter}
+                    onChange={(e) => setOrdersStatusFilter(e.target.value)}
+                    className="bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none text-slate-200 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-sm font-semibold"
+                  >
+                    <option value="all">All Order Statuses</option>
+                    <option value="Processing">🟡 Processing</option>
+                    <option value="Shipped">🔵 Shipped</option>
+                    <option value="Delivered">🟢 Delivered</option>
+                    <option value="Cancelled">🔴 Cancelled</option>
+                  </select>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold text-green-300">📦 Order Management Directory</h3>
+              {filteredOrdersList.length === 0 ? (
+                <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-10 text-center text-gray-400">
+                  No orders found.
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {filteredOrdersList.map((order) => (
+                    <div
+                      key={order.id}
+                      className="bg-slate-900/60 border border-white/10 rounded-3xl p-6 hover:border-green-400/20 transition-all duration-300"
+                    >
+                      {/* Order Info Row */}
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-white/5 pb-4 mb-4 text-sm">
+                        <div>
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Order ID</span>
+                          <span className="font-bold text-slate-200 block break-all text-xs font-mono">{order.id}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Customer & Address</span>
+                          <span className="font-bold text-slate-200 block">
+                            {order.shipping_address?.fullName || "N/A"}
+                          </span>
+                          <span className="text-xs text-gray-400 block mt-0.5 font-semibold">
+                            Mobile: {order.shipping_address?.mobile || "N/A"}
+                          </span>
+                          <span className="text-[11px] text-gray-400 block mt-1 leading-relaxed">
+                            {order.shipping_address?.street || "N/A"}, {order.shipping_address?.city || "N/A"}, {order.shipping_address?.state || "N/A"} - {order.shipping_address?.pincode || "N/A"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Payment & Total</span>
+                          <span className="font-bold text-slate-200 block">
+                            {order.payment_method || "N/A"}
+                          </span>
+                          {order.transaction_id && (
+                            <span className="text-xs text-yellow-400 font-mono block mt-1 font-semibold">
+                              UTR: {order.transaction_id}
+                            </span>
+                          )}
+                          <span className="text-sm text-green-400 font-extrabold block mt-1">
+                            Total Paid: ₹{order.total}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Status Management</span>
+                          <div className="flex gap-2 items-center mt-1">
+                            <select
+                              value={order.status}
+                              onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                              className="bg-[#0b1220] border border-white/10 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-slate-200 font-bold"
+                            >
+                              <option value="Processing">🟡 Processing</option>
+                              <option value="Shipped">🔵 Shipped</option>
+                              <option value="Delivered">🟢 Delivered</option>
+                              <option value="Cancelled">🔴 Cancelled</option>
+                            </select>
+                            <button
+                              onClick={() => cancelOrder(order.id)}
+                              className="p-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition cursor-pointer"
+                              title="Delete/Cancel Order"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Items Row */}
+                      <div className="space-y-3">
+                        <span className="text-xs text-gray-400 font-bold uppercase block">Items Ordered</span>
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {order.items && order.items.map((item: any, i: number) => (
+                            <div key={i} className="flex gap-3 bg-white/5 border border-white/5 rounded-2xl p-3 items-center">
+                              <div className="w-12 h-14 bg-white/5 border border-white/10 rounded-lg p-1 shrink-0 flex items-center justify-center">
+                                {item.image ? (
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="object-contain w-full h-full"
+                                  />
+                                ) : (
+                                  <span className="text-xl">👕</span>
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-grow">
+                                <p className="text-xs font-bold text-slate-200 truncate">{item.name}</p>
+                                <p className="text-[10px] text-gray-400 mt-0.5">
+                                  Qty: {item.quantity} | {item.fabric || "Premium Fabric"}
+                                </p>
+                                <p className="text-[10px] text-gray-500">{item.color || "Selected Color"}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}`
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

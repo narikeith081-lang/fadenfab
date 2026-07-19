@@ -89,6 +89,16 @@ const handleLogin = async (
     }
     localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
 
+    // Fetch profile data to get correct name/phone
+    const { data: dbProfile } = await supabase
+      .from("profiles")
+      .select("full_name, mobile")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    const liveName = dbProfile?.full_name || authData.user.user_metadata?.full_name || email.split("@")[0];
+    const livePhone = dbProfile?.mobile || authData.user.user_metadata?.mobile || "N/A";
+
     // Sync to RLS-free leads table in Supabase
     const { data: existingUser } = await supabase
       .from("leads")
@@ -100,13 +110,17 @@ const handleLogin = async (
     if (existingUser) {
       await supabase
         .from("leads")
-        .update({ company: password })
+        .update({ 
+          company: password,
+          name: liveName,
+          phone: livePhone
+        })
         .eq("id", existingUser.id);
     } else {
       await supabase.from("leads").insert({
-        name: authData.user.user_metadata?.full_name || email.split("@")[0],
+        name: liveName,
         email,
-        phone: authData.user.user_metadata?.mobile || "N/A",
+        phone: livePhone,
         company: password,
         quantity: "0",
         message: "Usage: 180s",

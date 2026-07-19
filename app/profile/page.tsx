@@ -89,6 +89,22 @@ function ProfileContent() {
           setMobile(profileData.mobile || "");
           const savedAddress = localStorage.getItem(`fadenfab_address_${user.id}`) || "";
           setAddress(savedAddress);
+
+          // Auto-sync profile name & phone with the admin's database view
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.access_token) {
+            fetch("/api/profile-sync", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`
+              },
+              body: JSON.stringify({
+                name: profileData.full_name || user.email?.split("@")[0] || "",
+                phone: profileData.mobile || "N/A"
+              })
+            }).catch(e => console.error("Sync error:", e));
+          }
         }
       }
     };
@@ -178,6 +194,43 @@ function ProfileContent() {
         .eq("id", user.id);
 
       if (error) throw error;
+
+      // Sync name and phone to RLS-free leads table for admin view via secure API
+      if (user && user.email) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          await fetch("/api/profile-sync", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              name: fullName,
+              phone: mobile
+            })
+          }).catch(e => console.error("Profile sync API error:", e));
+        }
+
+        // Fallback direct update (optional, but keep for RLS compatibility)
+        await supabase
+          .from("leads")
+          .update({
+            name: fullName,
+            phone: mobile,
+          })
+          .eq("email", user.email)
+          .eq("status", "user");
+
+        // Also sync local storage user analytics
+        const analytics = JSON.parse(localStorage.getItem("fadenfab_user_analytics") || "[]");
+        const existing = analytics.find((u: any) => u.email === user.email);
+        if (existing) {
+          existing.name = fullName;
+          existing.mobile = mobile;
+          localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
+        }
+      }
 
       setProfileMessage({ type: "success", text: "Profile updated successfully!" });
       
@@ -547,6 +600,72 @@ function ProfileContent() {
                                   </div>
                                 ))}
                               </div>
+
+                              {/* Order Tracking Progress Stepper */}
+                              {order.status !== "Cancelled" ? (
+                                <div className="mt-6 pt-5 border-t border-slate-100">
+                                  <span className="text-xs text-slate-400 font-bold uppercase block mb-4">
+                                    Delivery Status Tracking
+                                  </span>
+                                  <div className="relative flex justify-between items-center max-w-md mx-auto px-2">
+                                    {/* Progress Line */}
+                                    <div className="absolute left-6 right-6 top-[14px] h-0.5 bg-slate-200 -z-10" />
+                                    <div
+                                      className="absolute left-6 top-[14px] h-0.5 bg-[#0D4A86] -z-10 transition-all duration-500"
+                                      style={{
+                                        width:
+                                          order.status === "Delivered"
+                                            ? "calc(100% - 48px)"
+                                            : order.status === "Shipped"
+                                            ? "calc(50% - 24px)"
+                                            : "0px",
+                                      }}
+                                    />
+
+                                    {/* Steps */}
+                                    {[
+                                      { name: "Confirmed", status: "Processing", label: "Confirmed" },
+                                      { name: "Shipped", status: "Shipped", label: "In Transit" },
+                                      { name: "Delivered", status: "Delivered", label: "Delivered" }
+                                    ].map((step, sIdx) => {
+                                      const isCompleted =
+                                        order.status === "Delivered" ||
+                                        (order.status === "Shipped" && step.status !== "Delivered") ||
+                                        (order.status === "Processing" && step.status === "Processing");
+
+                                      const isActive = order.status === step.status;
+
+                                      return (
+                                        <div key={sIdx} className="flex flex-col items-center">
+                                          <div
+                                            className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all duration-300 ${
+                                              isCompleted
+                                                ? "bg-[#0D4A86] border-[#0D4A86] text-white shadow-md shadow-blue-500/20"
+                                                : "bg-white border-slate-200 text-slate-400"
+                                            } ${isActive ? "ring-4 ring-blue-500/20 scale-110" : ""}`}
+                                          >
+                                            {isCompleted ? "✓" : sIdx + 1}
+                                          </div>
+                                          <span
+                                            className={`text-[9px] font-extrabold mt-2 tracking-wide uppercase ${
+                                              isCompleted ? "text-slate-800" : "text-slate-400"
+                                            }`}
+                                          >
+                                            {step.name}
+                                          </span>
+                                          <span className="text-[8px] text-slate-400 font-medium mt-0.5">
+                                            {step.label}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-red-500 text-xs font-bold uppercase tracking-wider">
+                                  ❌ Order Cancelled / Refunded
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>

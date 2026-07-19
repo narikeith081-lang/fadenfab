@@ -53,24 +53,39 @@ export default function Home() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !user.email) return;
 
-      // 1. Initial check & insert if user not in RLS-free leads table
+      // 1. Fetch live user profile from Supabase profiles table
+      const { data: dbProfile } = await supabase
+        .from("profiles")
+        .select("full_name, mobile")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const liveName = dbProfile?.full_name || user.user_metadata?.full_name || user.email.split("@")[0];
+      const livePhone = dbProfile?.mobile || user.user_metadata?.mobile || "N/A";
+
+      // 2. Initial check & insert/update in RLS-free leads table
       const { data: existingUser } = await supabase
         .from("leads")
-        .select("id, message")
+        .select("id, name, phone")
         .eq("email", user.email)
         .eq("status", "user")
         .maybeSingle();
 
-      if (!existingUser) {
-        await supabase.from("leads").insert({
-          name: user.user_metadata?.full_name || user.email.split("@")[0],
-          email: user.email,
-          phone: user.user_metadata?.mobile || "N/A",
-          company: "••••••••",
-          quantity: "0",
-          message: "Usage: 10s",
-          status: "user"
-        });
+      if (!existingUser || existingUser.name !== liveName || existingUser.phone !== livePhone) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          await fetch("/api/profile-sync", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              name: liveName,
+              phone: livePhone
+            })
+          }).catch(e => console.error("Sync API error on home:", e));
+        }
       }
 
       // 2. Local telemetry + Supabase sync interval
