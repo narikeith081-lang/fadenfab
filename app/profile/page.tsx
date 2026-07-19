@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import CustomModal from "@/components/CustomModal";
 import {
   UserIcon,
   ShoppingBagIcon,
@@ -56,6 +57,7 @@ function ProfileContent() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState({ type: "", text: "" });
+  const [modalConfig, setModalConfig] = useState<any>(null);
 
   // eCommerce states
   const [orders, setOrders] = useState<Order[]>([]);
@@ -348,7 +350,13 @@ function ProfileContent() {
     localStorage.setItem("fadenfab_cart", JSON.stringify(cart));
     // Trigger navbar updates
     window.dispatchEvent(new Event("cart-updated"));
-    alert(`${product.product_name} added to cart!`);
+    setModalConfig({
+      isOpen: true,
+      type: "success",
+      title: "Added to Cart",
+      message: `"${product.product_name}" has been successfully added to your shopping cart!`,
+      onConfirm: () => setModalConfig(null)
+    });
   };
 
   return (
@@ -841,6 +849,16 @@ function ProfileContent() {
             </div>
           </div>
         </div>
+
+        {modalConfig && (
+          <CustomModal
+            isOpen={modalConfig.isOpen}
+            type={modalConfig.type}
+            title={modalConfig.title}
+            message={modalConfig.message}
+            onConfirm={modalConfig.onConfirm}
+          />
+        )}
 
         <Footer />
       </main>

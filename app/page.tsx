@@ -11,6 +11,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Navbar from "@/components/Navbar";
 import { getCatalog } from "@/lib/products";
 import { supabase } from "@/lib/supabase";
+import CustomModal from "@/components/CustomModal";
 
 const fadeUp = {
   hidden: {
@@ -26,7 +27,16 @@ const fadeUp = {
 
 export default function Home() {
 
-  const router = useRouter();   // <-- HERE
+  const router = useRouter();
+  const [showExpiredModal, setShowExpiredModal] = useState(false);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("expired") === "true") {
+      setShowExpiredModal(true);
+      router.replace("/");
+    }
+  }, [router]);   // <-- HERE
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -810,6 +820,16 @@ to-amber-50">
 
 {/* ================= FOOTER ================= */}
 <Footer />
+
+      {showExpiredModal && (
+        <CustomModal
+          isOpen={showExpiredModal}
+          type="info"
+          title="Session Expired"
+          message="Your session has expired due to 30 minutes of inactivity. Please login again."
+          onConfirm={() => setShowExpiredModal(false)}
+        />
+      )}
 
     </main>
   );

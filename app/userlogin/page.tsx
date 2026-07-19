@@ -21,7 +21,7 @@ export default function UserLogin() {
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
-
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
 const handleLogin = async (
@@ -30,6 +30,7 @@ const handleLogin = async (
   e.preventDefault();
 
   setError("");
+  setSuccess("");
   setLoading(true);
 
   try {
@@ -151,7 +152,7 @@ const handleForgotPassword = async () => {
   if (error) {
     setError(error.message);
   } else {
-    alert(
+    setSuccess(
       "Password reset email has been sent. Please check your inbox."
     );
   }
@@ -244,6 +245,12 @@ const handleForgotPassword = async () => {
         {error && (
           <div className="bg-red-100 border border-red-300 text-red-700 rounded-xl p-3">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-green-100 border border-green-300 text-green-700 rounded-xl p-3">
+            {success}
           </div>
         )}
 

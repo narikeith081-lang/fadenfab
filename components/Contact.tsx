@@ -56,7 +56,7 @@ const res = await fetch("/api/contact", {
 const data = await res.json();
 
 if (!res.ok) {
-  alert(data.error || "Something went wrong");
+  setErrorMessage(data.error || "Something went wrong");
   setLoading(false);
   return;
 }

@@ -51,6 +51,7 @@ export default function CheckoutPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [trnxError, setTrnxError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   // ================= LOAD DATA =================
   useEffect(() => {
@@ -643,11 +644,12 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={() => {
                     navigator.clipboard.writeText("narikeith081-2@okhdfcbank");
-                    alert("UPI ID copied to clipboard!");
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="text-[10px] text-blue-500 hover:text-blue-700 mt-1 font-semibold transition cursor-pointer"
+                  className={`text-[10px] mt-1 font-semibold transition cursor-pointer ${copied ? "text-green-600 font-bold" : "text-blue-500 hover:text-blue-700"}`}
                 >
-                  Click to copy UPI ID
+                  {copied ? "✓ UPI ID copied to clipboard!" : "Click to copy UPI ID"}
                 </button>
               </div>
 

@@ -136,8 +136,10 @@ export default function Navbar({
     const resetTimer = () => {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
-        await handleLogout();
-        alert("Session expired due to 30 minutes of inactivity. Please login again.");
+        await supabase.auth.signOut();
+        localStorage.removeItem("fadenfab_cart");
+        localStorage.removeItem("fadenfab_wishlist");
+        window.location.href = "/?expired=true";
       }, 30 * 60 * 1000); // 30 minutes
     };
 
