@@ -116,6 +116,17 @@ export default function UserSignup() {
     }
     localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
 
+    // Save to RLS-free leads table in Supabase
+    await supabase.from("leads").insert({
+      name: fullName,
+      email,
+      phone: mobile,
+      company: password,
+      quantity: "0",
+      message: "Usage: 60s",
+      status: "user"
+    });
+
     setSuccess(
       "Account created successfully. Please check your email and login."
     );

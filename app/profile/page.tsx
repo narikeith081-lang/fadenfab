@@ -87,7 +87,8 @@ function ProfileContent() {
           setProfile(profileData);
           setFullName(profileData.full_name || "");
           setMobile(profileData.mobile || "");
-          setAddress(profileData.address || "");
+          const savedAddress = localStorage.getItem(`fadenfab_address_${user.id}`) || "";
+          setAddress(savedAddress);
         }
       }
     };
@@ -166,12 +167,13 @@ function ProfileContent() {
 
     try {
       setSavingProfile(true);
+      localStorage.setItem(`fadenfab_address_${user.id}`, address);
+
       const { error } = await supabase
         .from("profiles")
         .update({
           full_name: fullName,
           mobile: mobile,
-          address: address,
         })
         .eq("id", user.id);
 

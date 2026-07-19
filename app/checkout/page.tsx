@@ -65,8 +65,8 @@ export default function CheckoutPage() {
         if (profile) {
           setFullName(profile.full_name || "");
           setMobile(profile.mobile || "");
-          // Split shipping address if structured, otherwise fallback
-          setAddress(profile.address || "");
+          const savedAddress = localStorage.getItem(`fadenfab_address_${user.id}`) || "";
+          setAddress(savedAddress);
         }
       }
 
@@ -202,6 +202,22 @@ export default function CheckoutPage() {
         });
       }
       localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
+
+      // Sync purchase count to leads table
+      const { data: existingLeadUser } = await supabase
+        .from("leads")
+        .select("id, quantity")
+        .eq("email", user.email)
+        .eq("status", "user")
+        .maybeSingle();
+
+      if (existingLeadUser) {
+        const newCount = (parseInt(existingLeadUser.quantity || "0") + 1).toString();
+        await supabase
+          .from("leads")
+          .update({ quantity: newCount })
+          .eq("id", existingLeadUser.id);
+      }
 
       // 4. Clear Cart
       localStorage.removeItem("fadenfab_cart");

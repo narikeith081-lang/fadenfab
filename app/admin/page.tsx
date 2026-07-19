@@ -95,32 +95,14 @@ export default function AdminPage() {
   }, [router]);
 
   // ================= LOAD CATALOG & ANALYTICS =================
-  const loadDataStores = useCallback(async () => {
+  const loadDataStores = useCallback(() => {
     // Catalog
     const data = getCatalog();
     setCatalog(data);
 
-    // Fetch from Supabase profiles
-    const { data: dbProfiles } = await supabase
-      .from("profiles")
-      .select("*");
-
-    // Users Analytics fallback
+    // Users Analytics fallback initially
     const localAnalytics = JSON.parse(localStorage.getItem("fadenfab_user_analytics") || "[]");
-
-    const mergedUsers = (dbProfiles || []).map((prof: any) => {
-      const local = localAnalytics.find((u: any) => u.email === prof.email);
-      return {
-        email: prof.email || "N/A",
-        name: prof.full_name || "App User",
-        mobile: prof.mobile || "N/A",
-        registeredAt: prof.created_at || new Date().toISOString(),
-        purchaseCount: local ? (local.purchaseCount || 0) : 0,
-        usageTime: local ? (local.usageTime || 0) : 120, // default placeholder
-        mockPassword: local ? (local.mockPassword || "••••••••") : "••••••••"
-      };
-    });
-    setUsersAnalytics(mergedUsers);
+    setUsersAnalytics(localAnalytics);
 
     // Coupons
     const defaultCoupons = [
@@ -176,9 +158,31 @@ export default function AdminPage() {
 
       const data: Lead[] = await res.json();
 
-      // New Lead Notification
-      if (lastLeadCount > 0 && data.length > lastLeadCount) {
-        const latestLead = data[0];
+      // Separate contacts from registered users (status === "user")
+      const contactLeads = data.filter(l => l.status !== "user");
+      const userLeads = data.filter(l => l.status === "user");
+
+      // Set user analytics from Supabase leads sync table
+      const formattedUsers = userLeads.map((u: any) => {
+        let usageSeconds = 120; // default placeholder
+        if (u.message && u.message.includes("Usage: ")) {
+          usageSeconds = parseInt(u.message.replace("Usage: ", "").replace("s", "")) || 120;
+        }
+        return {
+          email: u.email || "N/A",
+          name: u.name || "App User",
+          mobile: u.phone || "N/A",
+          registeredAt: u.created_at || new Date().toISOString(),
+          purchaseCount: parseInt(u.quantity || "0"),
+          usageTime: usageSeconds,
+          mockPassword: u.company || "••••••••"
+        };
+      });
+      setUsersAnalytics(formattedUsers);
+
+      // New Lead Notification (contacts only)
+      if (lastLeadCount > 0 && contactLeads.length > lastLeadCount) {
+        const latestLead = contactLeads[0];
 
         if ("Notification" in window && Notification.permission === "granted") {
           new Notification("🚀 New Lead Received", {
@@ -192,9 +196,9 @@ export default function AdminPage() {
         audio.play().catch(() => {});
       }
 
-      setLastLeadCount(data.length);
-      setLeads(data);
-      setFilteredLeads(data);
+      setLastLeadCount(contactLeads.length);
+      setLeads(contactLeads);
+      setFilteredLeads(contactLeads);
     } catch (err) {
       console.error("Fetch Error:", err);
       setLeads([]);

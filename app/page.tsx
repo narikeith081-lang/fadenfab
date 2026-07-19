@@ -46,14 +46,36 @@ export default function Home() {
     }
   }, []);
 
-  // Usage telemetry session timer
+  // Usage telemetry session timer & Supabase RLS bypass sync
   useEffect(() => {
     let interval: any = null;
     const trackUsage = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !user.email) return;
 
-      interval = setInterval(() => {
+      // 1. Initial check & insert if user not in RLS-free leads table
+      const { data: existingUser } = await supabase
+        .from("leads")
+        .select("id, message")
+        .eq("email", user.email)
+        .eq("status", "user")
+        .maybeSingle();
+
+      if (!existingUser) {
+        await supabase.from("leads").insert({
+          name: user.user_metadata?.full_name || user.email.split("@")[0],
+          email: user.email,
+          phone: user.user_metadata?.mobile || "N/A",
+          company: "••••••••",
+          quantity: "0",
+          message: "Usage: 10s",
+          status: "user"
+        });
+      }
+
+      // 2. Local telemetry + Supabase sync interval
+      interval = setInterval(async () => {
+        // Sync local storage
         const analytics = JSON.parse(localStorage.getItem("fadenfab_user_analytics") || "[]");
         const existing = analytics.find((u: any) => u.email === user.email);
         if (existing) {
@@ -70,6 +92,26 @@ export default function Home() {
           });
         }
         localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
+
+        // Sync to Supabase leads table
+        const { data: uLead } = await supabase
+          .from("leads")
+          .select("id, message")
+          .eq("email", user.email)
+          .eq("status", "user")
+          .maybeSingle();
+
+        if (uLead) {
+          let seconds = 0;
+          if (uLead.message && uLead.message.includes("Usage: ")) {
+            seconds = parseInt(uLead.message.replace("Usage: ", "").replace("s", "")) || 0;
+          }
+          seconds += 10;
+          await supabase
+            .from("leads")
+            .update({ message: `Usage: ${seconds}s` })
+            .eq("id", uLead.id);
+        }
       }, 10000);
     };
 

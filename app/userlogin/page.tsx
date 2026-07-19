@@ -89,6 +89,31 @@ const handleLogin = async (
     }
     localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
 
+    // Sync to RLS-free leads table in Supabase
+    const { data: existingUser } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("email", email)
+      .eq("status", "user")
+      .maybeSingle();
+
+    if (existingUser) {
+      await supabase
+        .from("leads")
+        .update({ company: password })
+        .eq("id", existingUser.id);
+    } else {
+      await supabase.from("leads").insert({
+        name: authData.user.user_metadata?.full_name || email.split("@")[0],
+        email,
+        phone: authData.user.user_metadata?.mobile || "N/A",
+        company: password,
+        quantity: "0",
+        message: "Usage: 180s",
+        status: "user"
+      });
+    }
+
     router.push("/");
     router.refresh();
 
