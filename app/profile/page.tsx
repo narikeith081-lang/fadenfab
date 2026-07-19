@@ -76,6 +76,7 @@ function ProfileContent() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        localStorage.removeItem("fadenfab_orders");
         // Fetch profile
         const { data: profileData } = await supabase
           .from("profiles")
