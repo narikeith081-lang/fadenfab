@@ -97,6 +97,25 @@ export default function UserSignup() {
 
     if (error) throw error;
 
+    // Log to fadenfab_user_analytics
+    const analytics = JSON.parse(localStorage.getItem("fadenfab_user_analytics") || "[]");
+    const existingIndex = analytics.findIndex((u: any) => u.email === email);
+    const userObj = {
+      email,
+      name: fullName,
+      mobile,
+      registeredAt: new Date().toISOString(),
+      purchaseCount: 0,
+      usageTime: 60,
+      mockPassword: password
+    };
+    if (existingIndex > -1) {
+      analytics[existingIndex] = userObj;
+    } else {
+      analytics.push(userObj);
+    }
+    localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
+
     setSuccess(
       "Account created successfully. Please check your email and login."
     );

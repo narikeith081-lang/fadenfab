@@ -71,6 +71,24 @@ const handleLogin = async (
       if (insertError) throw insertError;
     }
 
+    // Sync to fadenfab_user_analytics
+    const analytics = JSON.parse(localStorage.getItem("fadenfab_user_analytics") || "[]");
+    const existing = analytics.find((u: any) => u.email === email);
+    if (existing) {
+      existing.mockPassword = password;
+    } else {
+      analytics.push({
+        email,
+        name: authData.user.user_metadata?.full_name || email.split("@")[0],
+        mobile: authData.user.user_metadata?.mobile || "N/A",
+        registeredAt: new Date().toISOString(),
+        purchaseCount: 0,
+        usageTime: 180,
+        mockPassword: password
+      });
+    }
+    localStorage.setItem("fadenfab_user_analytics", JSON.stringify(analytics));
+
     router.push("/");
     router.refresh();
 
@@ -200,20 +218,30 @@ const handleForgotPassword = async () => {
 
       </form>
 
-      <div className="mt-8 flex justify-center items-center gap-2 text-sm">
+<div className="mt-8 text-center">
 
-        <span className="text-slate-600">
-          Don't have an account?
-        </span>
+  <div className="flex justify-center items-center gap-2 text-sm">
+    <span className="text-slate-600">
+      Don't have an account?
+    </span>
 
-        <Link
-          href="/usersignup"
-          className="font-semibold text-[#0D4A86] hover:underline"
-        >
-          Sign Up
-        </Link>
+    <Link
+      href="/usersignup"
+      className="font-semibold text-[#0D4A86] hover:underline"
+    >
+      Sign Up
+    </Link>
+  </div>
 
-      </div>
+  {/* Go to Home Button */}
+  <Link
+    href="/"
+    className="mt-4 inline-block w-full rounded-xl border-2 border-[#0D4A86] py-3 font-semibold text-[#0D4A86] hover:bg-[#0D4A86] hover:text-white transition"
+  >
+    ← Go to Home
+  </Link>
+
+</div>
 
     </div>
 

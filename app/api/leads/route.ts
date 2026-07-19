@@ -127,3 +127,82 @@ export async function GET(req: Request) {
     );
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const secret = req.headers.get("x-admin-secret");
+    if (secret !== ADMIN_SECRET) {
+      return Response.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { id, status } = await req.json();
+    if (!id || !status) {
+      return Response.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("leads")
+      .update({ status })
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      return Response.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return Response.json(data);
+  } catch (err: any) {
+    return Response.json(
+      { error: err?.message || String(err) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const secret = req.headers.get("x-admin-secret");
+    if (secret !== ADMIN_SECRET) {
+      return Response.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await req.json();
+    if (!id) {
+      return Response.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase
+      .from("leads")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      return Response.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return Response.json({ success: true });
+  } catch (err: any) {
+    return Response.json(
+      { error: err?.message || String(err) },
+      { status: 500 }
+    );
+  }
+}
