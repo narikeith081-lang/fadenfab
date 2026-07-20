@@ -8,19 +8,19 @@ const products = [
   {
     title: "Oversized T-Shirts",
     slug: "oversized-tshirts",
-    image: "/classicneverdies.png", // Cover image shown on homepage
+    image: "/classicneverdies.webp", // Cover image shown on homepage
   },
 
 {
   title: "Premium Hoodies",
   slug: "hoodies",
-  image: "/FutureVision_1.png",
+  image: "/FutureVision_1.webp",
 },
 
   {
     title: "Corporate Wear",
     slug: "corporate-wear",
-    image: "/streetculture.png",
+    image: "/Precision6.webp",
     comingSoon: true,
   },
 

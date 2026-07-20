@@ -521,7 +521,7 @@ export default function AdminPage() {
     const newProduct: Product = {
       id: newId,
       name: addName,
-      image: addImage.trim() || "/classicneverdies.png",
+      image: addImage.trim() || "/classicneverdies.webp",
       color: addColor.trim() ? `Color: ${addColor}` : "",
       fabric: addFabric.trim() ? `Material: ${addFabric}` : "",
       gsm: addGsm.trim() ? `${addGsm} GSM` : "240–280 GSM",
@@ -1319,7 +1319,7 @@ export default function AdminPage() {
                     <label className="block text-xs text-gray-400 mb-1.5 font-bold">Image URL Path</label>
                     <input
                       type="text"
-                      placeholder="e.g. /classicneverdies.png"
+                      placeholder="e.g. /classicneverdies.webp"
                       value={addImage}
                       onChange={(e) => setAddImage(e.target.value)}
                       className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
@@ -1433,7 +1433,7 @@ export default function AdminPage() {
                     <label className="block text-xs text-gray-400 mb-1.5 font-bold">Image URL Path</label>
                     <input
                       type="text"
-                      placeholder="e.g. /classicneverdies.png"
+                      placeholder="e.g. /classicneverdies.webp"
                       value={editImage}
                       onChange={(e) => setEditImage(e.target.value)}
                       className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"

@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "C:\\Naresh\\Devops\\fadenfab\\app\\favicon.ico",
+    icon: "/favicon.webp",
   },
 };
 

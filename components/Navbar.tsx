@@ -352,8 +352,9 @@ export default function Navbar({
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-3xl text-[#0D4A86] cursor-pointer"
+          className="md:hidden w-12 h-12 flex items-center justify-center text-3xl text-[#0D4A86] cursor-pointer"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {mobileMenuOpen ? <HiX /> : <HiMenu />}
         </button>

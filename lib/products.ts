@@ -19,12 +19,12 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
   "oversized-tshirts": {
     title: "Oversized T-Shirts",
     description: "Premium oversized collection for street wear lovers.",
-    banner: "/classicneverdies.png",
+    banner: "/classicneverdies.webp",
     products: [
       {
         id: 1,
         name: "Classic Never Dies",
-        image: "/classicneverdies.png",
+        image: "/classicneverdies.webp",
         color: "Color: Faded Black",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -33,7 +33,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 2,
         name: "Find Your Canvas",
-        image: "/findyourcanvas2.png",
+        image: "/findyourcanvas2.webp",
         color: "Color: Faded Olive Green",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -42,7 +42,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 3,
         name: "Timeless & Resilient",
-        image: "/Timeless3.png",
+        image: "/Timeless3.webp",
         color: "Color: Faded Orange",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -51,7 +51,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 4,
         name: "Journeys of Endurance",
-        image: "/Journeys4.png",
+        image: "/Journeys4.webp",
         color: "Color: Faded Sand Beige",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -60,7 +60,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 5,
         name: "Raw Power & Endurance",
-        image: "/RawPower5.png",
+        image: "/RawPower5.webp",
         color: "Color: White",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -69,7 +69,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 6,
         name: "Precision & Steadfast",
-        image: "/Precision6.png",
+        image: "/Precision6.webp",
         color: "Color: Faded Navy",
         fabric: "Material: 100% Premium Heavyweight Mineral-Wash Cotton",
         gsm: "240–280 GSM",
@@ -80,12 +80,12 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
   "hoodies": {
     title: "Premium Hoodies",
     description: "Luxury hoodies crafted with premium fleece for ultimate comfort, warmth and modern streetwear aesthetics.",
-    banner: "/FutureVision_1.png",
+    banner: "/FutureVision_1.webp",
     products: [
       {
         id: 1,
         name: "Future Vision",
-        image: "/FutureVision_1.png",
+        image: "/FutureVision_1.webp",
         color: "Color: Sand Beige",
         fabric: "Material: Premium Brushed Fleece Cotton",
         gsm: "420 GSM",
@@ -94,7 +94,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 2,
         name: "Elevate",
-        image: "/Elevate2.png",
+        image: "/Elevate2.webp",
         color: "Color: Forest Green",
         fabric: "Material: Organic French Terry Cotton",
         gsm: "400 GSM",
@@ -103,7 +103,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 3,
         name: "Discipline",
-        image: "/3Discipline.png",
+        image: "/3Discipline.webp",
         color: "Color: Charcoal Black",
         fabric: "Material: Heavy Premium Terry Cotton",
         gsm: "380 GSM",
@@ -112,7 +112,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 4,
         name: "Shadow Ronin",
-        image: "/Shadow_ronin4.png",
+        image: "/Shadow_ronin4.webp",
         color: "Color: Burgundy",
         fabric: "Material: Cotton-Poly Premium Fleece Blend",
         gsm: "430 GSM",
@@ -121,7 +121,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 5,
         name: "Midnight Rally",
-        image: "/MidnightRally5.png",
+        image: "/MidnightRally5.webp",
         color: "Color: Midnight Navy",
         fabric: "Material: Heavyweight Loopback French Terry Cotton",
         gsm: "390 GSM",
@@ -130,7 +130,7 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
       {
         id: 6,
         name: "Atlas Explorer",
-        image: "/AtlasExplorer6.png",
+        image: "/AtlasExplorer6.webp",
         color: "Color: Olive Green",
         fabric: "Material: Premium Sherpa-Lined Brushed Fleece Cotton",
         gsm: "450 GSM",
@@ -142,10 +142,14 @@ const DEFAULT_PRODUCTS: Record<string, Collection> = {
 
 export const getCatalog = (): Record<string, Collection> => {
   if (typeof window === "undefined") return DEFAULT_PRODUCTS;
-  const stored = localStorage.getItem("fadenfab_catalog");
+  let stored = localStorage.getItem("fadenfab_catalog");
   if (!stored) {
     localStorage.setItem("fadenfab_catalog", JSON.stringify(DEFAULT_PRODUCTS));
     return DEFAULT_PRODUCTS;
+  }
+  if (stored.includes(".png")) {
+    stored = stored.replace(/\.png/g, ".webp");
+    localStorage.setItem("fadenfab_catalog", stored);
   }
   return JSON.parse(stored);
 };
