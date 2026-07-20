@@ -352,7 +352,7 @@ export default function Navbar({
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden w-12 h-12 flex items-center justify-center text-3xl text-[#0D4A86] cursor-pointer"
+          className="md:hidden w-12 h-12 flex items-center justify-center text-3xl text-[#0D4A86] cursor-pointer touch-manipulation"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
@@ -368,16 +368,17 @@ export default function Navbar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40"
+              className="fixed inset-0 bg-black/50 z-40 transform-gpu will-change-[opacity]"
             />
 
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ duration: 0.3 }}
-              className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col justify-between"
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col justify-between transform-gpu will-change-transform"
             >
               <div>
                 <div className="flex items-center justify-between p-6 border-b">
