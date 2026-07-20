@@ -1,17 +1,61 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
 import Contact from "../components/Contact";
 import Testimonials from "../components/Testimonials";
 import { HiMenu, HiX } from "react-icons/hi";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { getCatalog } from "@/lib/products";
 import { supabase } from "@/lib/supabase";
 import CustomModal from "@/components/CustomModal";
+
+// Reusable Hardware-Accelerated 3D Tilt Card component
+function TiltCard({ children, className, isDesktop, ...props }: any) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  
+  // Subtle 15-degree maximum rotation for elegant feel
+  const rX = useTransform(rotateX, [-0.5, 0.5], [12, -12]);
+  const rY = useTransform(rotateY, [-0.5, 0.5], [-12, 12]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDesktop || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    rotateX.set(mouseY);
+    rotateY.set(mouseX);
+  };
+
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isDesktop ? rX : 0,
+        rotateY: isDesktop ? rY : 0,
+        transformStyle: "preserve-3d",
+      }}
+      className={className}
+      {...props}
+    >
+      <div style={{ transform: isDesktop ? "translateZ(25px)" : "none", transformStyle: "preserve-3d" }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
 
 const fadeUp = {
   hidden: {
@@ -155,6 +199,16 @@ export default function Home() {
   const heroTextY = useTransform(scrollY, [0, 800], [0, 50]);
   const heroImageY = useTransform(scrollY, [0, 800], [0, -80]);
 
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Slideshow images matching catalog designs
@@ -191,7 +245,7 @@ to-amber-50">
 <div className="fixed inset-0 -z-10 overflow-hidden">
 
   <motion.div
-    style={{ y: bgGlowY1 }}
+    style={{ y: isDesktop ? bgGlowY1 : 0 }}
     className="
       absolute
       -top-40
@@ -205,7 +259,7 @@ to-amber-50">
   />
 
   <motion.div
-    style={{ y: bgGlowY2 }}
+    style={{ y: isDesktop ? bgGlowY2 : 0 }}
     className="
       absolute
       top-1/3
@@ -219,7 +273,7 @@ to-amber-50">
   />
 
   <motion.div
-    style={{ y: bgGlowY3 }}
+    style={{ y: isDesktop ? bgGlowY3 : 0 }}
     className="
       absolute
       bottom-0
@@ -250,7 +304,7 @@ to-amber-50">
 
     {/* ================= LEFT SIDE (STATIC) ================= */}
     <motion.div
-      style={{ y: heroTextY }}
+      style={{ y: isDesktop ? heroTextY : 0 }}
       className="text-center lg:text-left animate-fadeIn"
     >
       <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-slate-900">
@@ -297,7 +351,7 @@ to-amber-50">
 
     {/* ================= RIGHT SIDE (IMAGE SLIDESHOW) ================= */}
     <motion.div
-      style={{ y: heroImageY }}
+      style={{ y: isDesktop ? heroImageY : 0 }}
       className="flex flex-col items-center justify-center relative w-full group/slider"
     >
       {/* Left Navigation Arrow */}
@@ -389,7 +443,7 @@ to-amber-50">
   </motion.div>
 
   {/* Cards */}
-  <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+  <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto" style={{ perspective: 1000 }}>
 
     {[
       {
@@ -408,8 +462,9 @@ to-amber-50">
         icon: "🚀",
       },
     ].map((service, i) => (
-      <motion.div
+      <TiltCard
         key={i}
+        isDesktop={isDesktop}
         initial={{
           opacity: 0,
           y: 50,
@@ -423,29 +478,30 @@ to-amber-50">
           delay: i * 0.15,
           duration: 0.5,
         }}
-        whileHover={{
+        whileHover={isDesktop ? {
           y: -10,
-        }}
-        className="group bg-white border border-slate-200 rounded-[32px] p-10 shadow-lg hover:shadow-2xl transition-all duration-500"
+          scale: 1.02,
+        } : {}}
+        className="group bg-white border border-slate-200 rounded-[32px] p-6 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
       >
         {/* Icon */}
-        <div className="w-20 h-20 rounded-2xl bg-[#0D4A86]/10 flex items-center justify-center text-4xl group-hover:scale-110 transition">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#0D4A86]/10 flex items-center justify-center text-3xl sm:text-4xl group-hover:scale-110 transition">
           {service.icon}
         </div>
 
         {/* Title */}
-        <h3 className="text-2xl font-bold text-slate-900 mt-8">
+        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-6 sm:mt-8">
           {service.title}
         </h3>
 
         {/* Desc */}
-        <p className="text-slate-600 mt-5 leading-8">
+        <p className="text-slate-600 mt-3 sm:mt-5 text-sm sm:text-base leading-7 sm:leading-8">
           {service.desc}
         </p>
 
         {/* Bottom Line */}
-        <div className="mt-8 h-[3px] w-12 bg-[#0D4A86] rounded-full group-hover:w-24 transition-all duration-500" />
-      </motion.div>
+        <div className="mt-6 sm:mt-8 h-[3px] w-12 bg-[#0D4A86] rounded-full group-hover:w-24 transition-all duration-500" />
+      </TiltCard>
     ))}
   </div>
 </section>

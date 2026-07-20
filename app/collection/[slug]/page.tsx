@@ -4,11 +4,54 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeftIcon, HeartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { getCatalog } from "@/lib/products";
 import CustomModal from "@/components/CustomModal";
+
+// Reusable Hardware-Accelerated 3D Tilt Card component
+function TiltCard({ children, className, isDesktop, ...props }: any) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  
+  const rX = useTransform(rotateX, [-0.5, 0.5], [8, -8]);
+  const rY = useTransform(rotateY, [-0.5, 0.5], [-8, 8]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDesktop || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    rotateX.set(mouseY);
+    rotateY.set(mouseX);
+  };
+
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isDesktop ? rX : 0,
+        rotateY: isDesktop ? rY : 0,
+        transformStyle: "preserve-3d",
+      }}
+      className={className}
+      {...props}
+    >
+      <div style={{ transform: isDesktop ? "translateZ(15px)" : "none", transformStyle: "preserve-3d" }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
 
 type Product = {
   id: number;
@@ -28,6 +71,7 @@ export default function CollectionPage() {
   const [collection, setCollection] = useState<any>(null);
   const [wishlistedIds, setWishlistedIds] = useState<number[]>([]);
   const [cart, setCart] = useState<any[]>([]);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   // Professional Modal State
   const [modalConfig, setModalConfig] = useState<{
@@ -61,6 +105,12 @@ export default function CollectionPage() {
     window.addEventListener("cart-updated", loadData);
     window.addEventListener("catalog-updated", loadData);
 
+    setIsDesktop(window.innerWidth >= 1024);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener("resize", handleResize);
+
     const fetchWishlistIds = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user && user.email) {
@@ -79,6 +129,7 @@ export default function CollectionPage() {
     return () => {
       window.removeEventListener("cart-updated", loadData);
       window.removeEventListener("catalog-updated", loadData);
+      window.removeEventListener("resize", handleResize);
     };
   }, [slug]);
 
@@ -297,7 +348,7 @@ export default function CollectionPage() {
           Available Designs
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10" style={{ perspective: 1000 }}>
           {collection.products && collection.products.length === 0 ? (
             <div className="col-span-full bg-white border border-slate-200 rounded-3xl p-16 text-center text-slate-500 font-medium">
               No designs currently available in this collection.
@@ -308,9 +359,10 @@ export default function CollectionPage() {
               const currentQty = cartItem ? cartItem.quantity : 0;
 
               return (
-                <motion.div
+                <TiltCard
                   key={product.id}
-                  className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                  isDesktop={isDesktop}
+                  className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -318,8 +370,12 @@ export default function CollectionPage() {
                     duration: 0.5,
                     delay: product.id * 0.08,
                   }}
+                  whileHover={isDesktop ? {
+                    y: -10,
+                    scale: 1.02
+                  } : {}}
                 >
-                  <div className="relative h-[420px] bg-gray-100 flex items-center justify-center p-4">
+                  <div className="relative h-[280px] sm:h-[420px] bg-gray-100 flex items-center justify-center p-4">
                     {product.image ? (
                       <Image
                         src={product.image}
@@ -362,6 +418,7 @@ export default function CollectionPage() {
                       <span className="text-2xl font-extrabold text-[#0D4A86]">
                         ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
                       </span>
+
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleAddToWishlist(product)}
@@ -406,7 +463,7 @@ export default function CollectionPage() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </TiltCard>
               );
             })
           )}

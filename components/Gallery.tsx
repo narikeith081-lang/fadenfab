@@ -2,7 +2,51 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+
+// Reusable Hardware-Accelerated 3D Tilt Card component
+function TiltCard({ children, className, isDesktop, ...props }: any) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  
+  const rX = useTransform(rotateX, [-0.5, 0.5], [10, -10]);
+  const rY = useTransform(rotateY, [-0.5, 0.5], [-10, 10]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDesktop || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    rotateX.set(mouseY);
+    rotateY.set(mouseX);
+  };
+
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isDesktop ? rX : 0,
+        rotateY: isDesktop ? rY : 0,
+        transformStyle: "preserve-3d",
+      }}
+      className={className}
+      {...props}
+    >
+      <div style={{ transform: isDesktop ? "translateZ(20px)" : "none", transformStyle: "preserve-3d" }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
 
 const products = [
   {
@@ -27,6 +71,16 @@ const products = [
 ];
 export default function Gallery() {
   const router = useRouter();
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <section
@@ -48,57 +102,58 @@ export default function Gallery() {
           
         </motion.div>
         {/* Products Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10" style={{ perspective: 1000 }}>
           {products.map((item, i) => (
-            <motion.div
-  key={i}
-  onClick={() => {
-    if (!item.comingSoon) {
-      router.push(`/collection/${item.slug}`);
-    }
-  }}
-  initial={{ opacity: 0, y: 50 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{
-    duration: 0.5,
-    delay: i * 0.08,
-  }}
-  whileHover={{
-    y: item.comingSoon ? 0 : -10,
-    scale: item.comingSoon ? 1 : 1.02,
-  }}
-  className={`group relative overflow-hidden rounded-[32px] bg-white border border-slate-200 shadow-lg transition-all duration-500 ${
-    item.comingSoon
-      ? "cursor-not-allowed opacity-90"
-      : "cursor-pointer hover:shadow-2xl"
-  }`}
->
+            <TiltCard
+              key={i}
+              isDesktop={isDesktop}
+              onClick={() => {
+                if (!item.comingSoon) {
+                  router.push(`/collection/${item.slug}`);
+                }
+              }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: i * 0.08,
+              }}
+              whileHover={isDesktop ? {
+                y: item.comingSoon ? 0 : -10,
+                scale: item.comingSoon ? 1 : 1.02,
+              } : {}}
+              className={`group relative overflow-hidden rounded-[32px] bg-white border border-slate-200 shadow-lg transition-all duration-500 ${
+                item.comingSoon
+                  ? "cursor-not-allowed opacity-90"
+                  : "cursor-pointer hover:shadow-2xl"
+              }`}
+            >
               {/* Image */}
-<div className="relative h-[420px] overflow-hidden">
-  <Image
-    src={item.image}
-    alt={item.title}
-    fill
-    sizes="(max-width:768px) 100vw,
-           (max-width:1200px) 50vw,
-           33vw"
-    className={`object-cover transition-transform duration-700 ${
-      item.comingSoon
-        ? "grayscale brightness-75"
-        : "group-hover:scale-110"
-    }`}
-  />
+              <div className="relative h-[280px] sm:h-[420px] overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width:768px) 100vw,
+                         (max-width:1200px) 50vw,
+                         33vw"
+                  className={`object-cover transition-transform duration-700 ${
+                    item.comingSoon
+                      ? "grayscale brightness-75"
+                      : "group-hover:scale-110"
+                  }`}
+                />
 
-  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
-  {item.comingSoon && (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <span className="bg-[#0D4A86]/10 text-[#0D4A86] font-bold px-6 py-3 rounded-full text-lg shadow-xl">
-        🚀 Coming Soon
-      </span>
-    </div>
-  )}
-</div>
+                {item.comingSoon && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="bg-[#0D4A86]/10 text-[#0D4A86] font-bold px-6 py-3 rounded-full text-lg shadow-xl">
+                      🚀 Coming Soon
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {/* Content */}
               <div className="absolute bottom-0 left-0 p-8">
@@ -106,24 +161,24 @@ export default function Gallery() {
                   {item.title}
                 </h3>
 
-<p className="text-white/80 mt-3">
-  {item.comingSoon
-    ? "Launching Soon"
-    : "Premium quality custom printing"}
-</p>
+                <p className="text-white/80 mt-3">
+                  {item.comingSoon
+                    ? "Launching Soon"
+                    : "Premium quality custom printing"}
+                </p>
               </div>
 
               {/* Premium Badge */}
-<div
-  className={`absolute top-5 right-5 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold shadow-md ${
-    item.comingSoon
-      ? "bg-[#0D4A86]/10 text-[#0D4A86]"
-      : "bg-white/90 text-[#0D4A86]"
-  }`}
->
-  {item.comingSoon ? "" : "PREMIUM"}
-</div>
-            </motion.div>
+              <div
+                className={`absolute top-5 right-5 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold shadow-md ${
+                  item.comingSoon
+                    ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                    : "bg-white/90 text-[#0D4A86]"
+                }`}
+              >
+                {item.comingSoon ? "" : "PREMIUM"}
+              </div>
+            </TiltCard>
           ))}
         </div>
       </div>
