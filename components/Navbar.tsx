@@ -360,175 +360,167 @@ export default function Navbar({
         </button>
       </div>
 
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18, ease: "easeOut" }}
+      {/* Mobile Drawer Backdrop */}
+      <div
+        onClick={() => setMobileMenuOpen(false)}
+        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-200 ease-out transform-gpu will-change-[opacity] ${
+          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
+      {/* Mobile Drawer Panel */}
+      <div
+        className={`fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col justify-between transition-transform duration-200 ease-out transform-gpu will-change-transform ${
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div>
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-2xl font-bold text-[#0D4A86]">
+              FADENFAB
+            </h2>
+            <button
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40 transform-gpu will-change-[opacity]"
-            />
-
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              className="fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col justify-between transform-gpu will-change-transform"
+              className="text-3xl text-[#0D4A86] cursor-pointer touch-manipulation w-10 h-10 flex items-center justify-center"
+              aria-label="Close menu"
             >
-              <div>
-                <div className="flex items-center justify-between p-6 border-b">
-                  <h2 className="text-2xl font-bold text-[#0D4A86]">
-                    FADENFAB
-                  </h2>
-                  <button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-3xl text-[#0D4A86]"
-                  >
-                    ×
-                  </button>
-                </div>
+              ×
+            </button>
+          </div>
 
-                <div className="flex flex-col mt-4">
-                  {user ? (
-                    // Logged In Mobile Menu
-                    <>
-                      <button
-                        onClick={() => handleNavClick("home", "/")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Home
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("services", "/#services")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Services
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("collection", "/#collection")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Collection
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("why", "/#why")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Why Us
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("contact", "/#contact")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Contact
-                      </button>
-                      <Link
-                        href="/wishlist"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center"
-                      >
-                        <span>Wishlist</span>
-                        {wishlistCount > 0 && (
-                          <span className="bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                            {wishlistCount}
-                          </span>
-                        )}
-                      </Link>
-                      <Link
-                        href="/cart"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center"
-                      >
-                        <span>Cart</span>
-                        {cartCount > 0 && (
-                          <span className="bg-[#0D4A86] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                            {cartCount}
-                          </span>
-                        )}
-                      </Link>
-                      <Link
-                        href="/profile"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        My Profile
-                      </Link>
-                      <Link
-                        href="/orders"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        My Orders
-                      </Link>
-                    </>
-                  ) : (
-                    // Logged Out Mobile Menu
-                    <>
-                      <button
-                        onClick={() => handleNavClick("home", "/")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Home
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("services", "/#services")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Services
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("collection", "/#collection")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Collection
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("why", "/#why")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Why Us
-                      </button>
-                      <button
-                        onClick={() => handleNavClick("contact", "/#contact")}
-                        className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium"
-                      >
-                        Contact
-                      </button>
-                    </>
+          <div className="flex flex-col mt-4">
+            {user ? (
+              // Logged In Mobile Menu
+              <>
+                <button
+                  onClick={() => handleNavClick("home", "/")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Home
+                </button>
+                <button
+                  onClick={() => handleNavClick("services", "/#services")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Services
+                </button>
+                <button
+                  onClick={() => handleNavClick("collection", "/#collection")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Collection
+                </button>
+                <button
+                  onClick={() => handleNavClick("why", "/#why")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Why Us
+                </button>
+                <button
+                  onClick={() => handleNavClick("contact", "/#contact")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Contact
+                </button>
+                <Link
+                  href="/wishlist"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center cursor-pointer touch-manipulation"
+                >
+                  <span>Wishlist</span>
+                  {wishlistCount > 0 && (
+                    <span className="bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                      {wishlistCount}
+                    </span>
                   )}
-                </div>
-              </div>
+                </Link>
+                <Link
+                  href="/cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center cursor-pointer touch-manipulation"
+                >
+                  <span>Cart</span>
+                  {cartCount > 0 && (
+                    <span className="bg-[#0D4A86] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  My Orders
+                </Link>
+              </>
+            ) : (
+              // Logged Out Mobile Menu
+              <>
+                <button
+                  onClick={() => handleNavClick("home", "/")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Home
+                </button>
+                <button
+                  onClick={() => handleNavClick("services", "/#services")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Services
+                </button>
+                <button
+                  onClick={() => handleNavClick("collection", "/#collection")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Collection
+                </button>
+                <button
+                  onClick={() => handleNavClick("why", "/#why")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Why Us
+                </button>
+                <button
+                  onClick={() => handleNavClick("contact", "/#contact")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Contact
+                </button>
+              </>
+            )}
+          </div>
+        </div>
 
-              {/* Mobile Drawer Bottom Action */}
-              <div className="p-6 border-t">
-                {user ? (
-                  <button
-                    onClick={handleLogout}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 rounded-full font-bold transition cursor-pointer"
-                  >
-                    Logout
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      router.push("/userlogin");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3.5 rounded-full font-bold transition cursor-pointer"
-                  >
-                    Login
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+        {/* Mobile Drawer Bottom Action */}
+        <div className="p-6 border-t">
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 rounded-full font-bold transition cursor-pointer touch-manipulation"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                router.push("/userlogin");
+                setMobileMenuOpen(false);
+              }}
+              className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3.5 rounded-full font-bold transition cursor-pointer touch-manipulation"
+            >
+              Login
+            </button>
+          )}
+        </div>
+      </div>
     </motion.nav>
   );
 }
