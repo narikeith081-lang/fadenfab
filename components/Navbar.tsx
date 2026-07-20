@@ -162,31 +162,34 @@ export default function Navbar({
 
   // ================= NAVIGATION =================
   const handleNavClick = (sectionId: string, href: string) => {
-    if (pathname === "/") {
-      if (sectionId === "home") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
-        } else {
-          router.push(href);
-        }
-      }
-    } else {
-      router.push(href);
-    }
+    // 1. Instantly start closing the mobile drawer transition
     setMobileMenuOpen(false);
+
+    // 2. Defer scroll animation by 250ms to allow the drawer transition to fully complete,
+    // avoiding iOS/WebKit graphics thread collisions and browser lockups.
+    setTimeout(() => {
+      if (pathname === "/") {
+        if (sectionId === "home") {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            router.push(href);
+          }
+        }
+      } else {
+        router.push(href);
+      }
+    }, 250);
   };
 
   // Extract first name
   const firstName = profile?.full_name?.split(" ")[0] || user?.user_metadata?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "User";
 
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+    <nav
       className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200 text-slate-900"
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -531,6 +534,6 @@ export default function Navbar({
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

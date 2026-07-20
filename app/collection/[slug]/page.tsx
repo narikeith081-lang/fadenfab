@@ -343,12 +343,12 @@ export default function CollectionPage() {
       </section>
 
       {/* ================= PRODUCTS GRID ================= */}
-      <section className="max-w-7xl mx-auto px-6 pb-32">
-        <h2 className="text-3xl font-bold mb-10 text-black">
+      <section className="max-w-7xl mx-auto px-6 pb-24">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-black">
           Available Designs
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10" style={{ perspective: 1000 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8" style={{ perspective: 1000 }}>
           {collection.products && collection.products.length === 0 ? (
             <div className="col-span-full bg-white border border-slate-200 rounded-3xl p-16 text-center text-slate-500 font-medium">
               No designs currently available in this collection.
@@ -362,7 +362,7 @@ export default function CollectionPage() {
                 <TiltCard
                   key={product.id}
                   isDesktop={isDesktop}
-                  className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -371,91 +371,91 @@ export default function CollectionPage() {
                     delay: product.id * 0.08,
                   }}
                   whileHover={isDesktop ? {
-                    y: -10,
-                    scale: 1.02
+                    y: -6,
+                    scale: 1.01
                   } : {}}
                 >
-                  <div className="relative h-[280px] sm:h-[420px] bg-gray-100 flex items-center justify-center p-4">
+                  <div className="relative h-[220px] sm:h-[300px] bg-slate-50/80 flex items-center justify-center p-4">
                     {product.image ? (
                       <Image
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-contain"
+                        className="object-contain p-2"
                         sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
                         priority
                       />
                     ) : (
-                      <span className="text-6xl text-slate-300">👕</span>
+                      <span className="text-5xl text-slate-300">👕</span>
                     )}
                   </div>
 
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-[#0D4A86]">
+                  <div className="p-5 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D4A86] truncate">
                       {product.name}
                     </h3>
 
                     {product.color && (
-                      <p className="mt-3 text-slate-600">
+                      <p className="mt-1.5 text-xs sm:text-sm text-slate-600 truncate">
                         {product.color}
                       </p>
                     )}
 
-                    <p className="mt-2 text-slate-600">{product.fabric}</p>
+                    <p className="mt-1 text-xs sm:text-sm text-slate-600 truncate">{product.fabric}</p>
 
-                    <p className="mt-2 text-slate-500 font-medium">
+                    <p className="mt-1 text-xs sm:text-sm text-slate-500 font-medium">
                       {product.gsm}
                     </p>
 
                     {/* Scarcity warning when stock <= 5 */}
                     {product.stock <= 5 && (
-                      <p className="mt-2.5 text-red-500 font-bold text-xs animate-pulse flex items-center gap-1.5">
-                        <span>⚠️</span> Only {product.stock} left! Hurry up soon!
+                      <p className="mt-2 text-red-500 font-bold text-[10px] sm:text-xs animate-pulse flex items-center gap-1">
+                        <span>⚠️</span> Only {product.stock} left!
                       </p>
                     )}
 
-                    <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                      <span className="text-2xl font-extrabold text-[#0D4A86]">
+                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+                      <span className="text-xl sm:text-2xl font-extrabold text-[#0D4A86]">
                         ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
                       </span>
 
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleAddToWishlist(product)}
-                          className="p-2.5 rounded-full border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 transition cursor-pointer flex items-center justify-center"
+                          className="p-2 rounded-full border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 transition cursor-pointer flex items-center justify-center"
                           title={wishlistedIds.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                         >
                           {wishlistedIds.includes(product.id) ? (
-                            <HeartIconSolid className="w-5 h-5 text-red-500" />
+                            <HeartIconSolid className="w-4 h-4 text-red-500" />
                           ) : (
-                            <HeartIcon className="w-5 h-5" />
+                            <HeartIcon className="w-4 h-4" />
                           )}
                         </button>
 
                         {currentQty > 0 ? (
                           /* Quantity selector adjuster */
-                          <div className="flex items-center border border-slate-200 rounded-full p-1 bg-slate-50/50">
+                          <div className="flex items-center border border-slate-200 rounded-full p-0.5 bg-slate-50/50">
                             <button
                               onClick={() => handleUpdateCartQuantity(product, -1)}
-                              className="p-1.5 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
+                              className="p-1 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
                             >
-                              <MinusIcon className="w-3.5 h-3.5" />
+                              <MinusIcon className="w-3 h-3" />
                             </button>
-                            <span className="w-8 text-center font-bold text-slate-800 text-sm">
+                            <span className="w-6 text-center font-bold text-slate-800 text-xs">
                               {currentQty}
                             </span>
                             <button
                               onClick={() => handleUpdateCartQuantity(product, 1)}
-                              className="p-1.5 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
+                              className="p-1 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
                             >
-                              <PlusIcon className="w-3.5 h-3.5" />
+                              <PlusIcon className="w-3 h-3" />
                             </button>
                           </div>
                         ) : (
                           /* Add to Cart CTA */
                           <button
                             onClick={() => handleUpdateCartQuantity(product, 1)}
-                            className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-5 py-2.5 rounded-full text-xs font-bold transition cursor-pointer shadow-md hover:shadow-lg"
+                            className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer shadow-md hover:shadow-lg"
                           >
                             Add to Cart
                           </button>
