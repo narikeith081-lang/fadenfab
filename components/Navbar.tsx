@@ -370,25 +370,57 @@ export default function Navbar({
 
       {/* Mobile Drawer Panel */}
       <div
-        className={`fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col justify-between transition-transform duration-200 ease-out transform-gpu will-change-transform ${
+        className={`fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 text-slate-900 flex flex-col transition-transform duration-200 ease-out transform-gpu will-change-transform ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div>
-          <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-2xl font-bold text-[#0D4A86]">
-              FADENFAB
-            </h2>
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-3xl text-[#0D4A86] cursor-pointer touch-manipulation w-10 h-10 flex items-center justify-center"
-              aria-label="Close menu"
-            >
-              ×
-            </button>
-          </div>
+        <div className="flex items-center justify-between p-6 border-b shrink-0">
+          <h2 className="text-2xl font-bold text-[#0D4A86]">
+            FADENFAB
+          </h2>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-3xl text-[#0D4A86] cursor-pointer touch-manipulation w-10 h-10 flex items-center justify-center"
+            aria-label="Close menu"
+          >
+            ×
+          </button>
+        </div>
 
-          <div className="flex flex-col mt-4">
+        <div className="flex-1 overflow-y-auto">
+          {/* Top Authentication Block */}
+          {user ? (
+            <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Account</span>
+                <span className="text-xs bg-[#0D4A86]/10 text-[#0D4A86] font-bold px-2.5 py-0.5 rounded-full">Active</span>
+              </div>
+              <div className="text-slate-800 font-bold text-sm truncate" title={user.email}>
+                {user.email}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="mt-2.5 w-full border border-red-200 hover:bg-red-50 text-red-600 py-2.5 rounded-full font-bold transition cursor-pointer touch-manipulation text-xs text-center bg-white shadow-sm"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+              <button
+                onClick={() => {
+                  router.push("/userlogin");
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3 rounded-full font-bold transition cursor-pointer touch-manipulation text-sm text-center shadow-md"
+              >
+                Login / Sign Up
+              </button>
+            </div>
+          )}
+
+          {/* Navigation Links */}
+          <div className="flex flex-col py-4">
             {user ? (
               // Logged In Mobile Menu
               <>
@@ -497,28 +529,6 @@ export default function Navbar({
               </>
             )}
           </div>
-        </div>
-
-        {/* Mobile Drawer Bottom Action */}
-        <div className="p-6 border-t">
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 rounded-full font-bold transition cursor-pointer touch-manipulation"
-            >
-              Logout
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                router.push("/userlogin");
-                setMobileMenuOpen(false);
-              }}
-              className="w-full bg-[#0D4A86] hover:bg-[#083A6B] text-white py-3.5 rounded-full font-bold transition cursor-pointer touch-manipulation"
-            >
-              Login
-            </button>
-          )}
         </div>
       </div>
     </motion.nav>
