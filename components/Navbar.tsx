@@ -79,8 +79,10 @@ export default function Navbar({
 
       // Wishlist Count
       const { data } = await supabase
-        .from("wishlist")
-        .select("id");
+        .from("leads")
+        .select("id")
+        .eq("status", "wishlist")
+        .eq("email", user.email);
       setWishlistCount(data?.length || 0);
     } else {
       setCartCount(0);

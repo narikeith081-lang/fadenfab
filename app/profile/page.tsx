@@ -161,16 +161,26 @@ function ProfileContent() {
 
   // ================= FETCH WISHLIST =================
   const fetchWishlist = useCallback(async () => {
-    if (!user) return;
+    if (!user || !user.email) return;
     try {
       setLoadingWishlist(true);
       const { data, error } = await supabase
-        .from("wishlist")
+        .from("leads")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("status", "wishlist")
+        .eq("email", user.email);
 
       if (error) throw error;
-      setWishlist(data || []);
+
+      const mappedWishlist = (data || []).map((lead: any) => ({
+        id: lead.id.toString(),
+        product_id: parseInt(lead.quantity) || 0,
+        product_slug: lead.company,
+        product_name: lead.name,
+        product_image: lead.message
+      }));
+
+      setWishlist(mappedWishlist);
     } catch (err) {
       console.log("Supabase wishlist error, checking local storage:", err);
       // Fallback
@@ -309,9 +319,10 @@ function ProfileContent() {
     try {
       if (user) {
         await supabase
-          .from("wishlist")
+          .from("leads")
           .delete()
-          .eq("id", id);
+          .eq("id", id)
+          .eq("status", "wishlist");
         
         setWishlist(wishlist.filter(item => item.id !== id));
       } else {

@@ -63,13 +63,14 @@ export default function CollectionPage() {
 
     const fetchWishlistIds = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      if (user && user.email) {
         const { data } = await supabase
-          .from("wishlist")
-          .select("product_id")
-          .eq("user_id", user.id);
+          .from("leads")
+          .select("quantity")
+          .eq("status", "wishlist")
+          .eq("email", user.email);
         if (data) {
-          setWishlistedIds(data.map((item: any) => item.product_id));
+          setWishlistedIds(data.map((item: any) => parseInt(item.quantity) || 0));
         }
       }
     };
@@ -168,10 +169,11 @@ export default function CollectionPage() {
     try {
       if (isCurrentlyWishlisted) {
         const { error } = await supabase
-          .from("wishlist")
+          .from("leads")
           .delete()
-          .eq("user_id", user.id)
-          .eq("product_id", product.id);
+          .eq("email", user.email)
+          .eq("status", "wishlist")
+          .eq("quantity", product.id.toString());
 
         if (error) throw error;
         setWishlistedIds(wishlistedIds.filter((id) => id !== product.id));
@@ -185,13 +187,15 @@ export default function CollectionPage() {
         });
       } else {
         const { error } = await supabase
-          .from("wishlist")
+          .from("leads")
           .insert({
-            user_id: user.id,
-            product_id: product.id,
-            product_slug: slug,
-            product_name: product.name,
-            product_image: product.image,
+            name: product.name,
+            email: user.email,
+            phone: "N/A",
+            company: slug,
+            quantity: product.id.toString(),
+            message: product.image,
+            status: "wishlist"
           });
 
         if (error) throw error;

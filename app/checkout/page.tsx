@@ -633,11 +633,19 @@ export default function CheckoutPage() {
               {/* QR Code Container */}
               <div className="flex flex-col items-center bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-5">
                 <img
-                  src="/gpay-qr.jpg"
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`upi://pay?pa=narikeith081-2@okhdfcbank&pn=Naresh%20Kumar&am=${total}&cu=INR&tn=Fadenfab%20Order`)}`}
                   alt="Naresh Kumar UPI QR Code"
-                  className="w-52 h-auto object-contain rounded-lg shadow-sm border border-slate-200 bg-white p-2"
+                  className="w-52 h-52 object-contain rounded-lg shadow-sm border border-slate-200 bg-white p-2"
                 />
-                <p className="text-xs font-extrabold text-slate-800 mt-3 font-mono">
+
+                {/* Precise Pay Banner */}
+                <div className="mt-4 bg-blue-50/80 border border-blue-100 rounded-xl px-4 py-2.5 text-center w-full">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Amount to Pay</p>
+                  <p className="text-2xl font-black text-[#0D4A86] mt-0.5">₹{total}</p>
+                  <p className="text-[10px] text-amber-600 font-bold mt-1">⚠️ Scan using any UPI app to pay the exact amount of ₹{total}.</p>
+                </div>
+
+                <p className="text-xs font-extrabold text-slate-800 mt-4 font-mono">
                   UPI ID: narikeith081-2@okhdfcbank
                 </p>
                 <button
