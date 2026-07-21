@@ -209,8 +209,6 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   // Slideshow images matching catalog designs
   const slides = useMemo(() => [
     "/classicneverdies.webp",
@@ -292,7 +290,7 @@ to-amber-50">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.12),transparent_60%)]" />
 
       {/* ================= NAVBAR ================= */}
-      <Navbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+      <Navbar />
 
 {/* ================= HERO ================= */}
 <section className="relative px-6 pt-40 pb-36 overflow-hidden">
@@ -866,11 +864,7 @@ to-amber-50">
   target="_blank"
   rel="noopener noreferrer"
   aria-label="Chat with FADENFAB on WhatsApp"
-  className={`fixed bottom-6 right-6 transition-all duration-300 ${
-    mobileMenuOpen
-      ? "opacity-0 pointer-events-none"
-      : "opacity-100"
-  } z-40 bg-green-500 hover:bg-green-400 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl text-3xl`}
+  className="fixed bottom-6 right-6 transition-all duration-300 z-40 bg-green-500 hover:bg-green-400 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl text-3xl floating-whatsapp"
 >
   💬
 </a>

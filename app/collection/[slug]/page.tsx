@@ -228,14 +228,6 @@ export default function CollectionPage() {
 
         if (error) throw error;
         setWishlistedIds(wishlistedIds.filter((id) => id !== product.id));
-
-        setModalConfig({
-          isOpen: true,
-          type: "info",
-          title: "Wishlist Updated",
-          message: `${product.name} removed from your wishlist.`,
-          onConfirm: () => setModalConfig(null),
-        });
       } else {
         const { error } = await supabase
           .from("leads")
@@ -251,14 +243,6 @@ export default function CollectionPage() {
 
         if (error) throw error;
         setWishlistedIds([...wishlistedIds, product.id]);
-
-        setModalConfig({
-          isOpen: true,
-          type: "success",
-          title: "Added to Wishlist",
-          message: `${product.name} saved to your wishlist.`,
-          onConfirm: () => setModalConfig(null),
-        });
       }
 
       window.dispatchEvent(new Event("wishlist-updated"));

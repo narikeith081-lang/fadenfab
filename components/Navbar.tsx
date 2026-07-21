@@ -129,6 +129,18 @@ export default function Navbar({
     window.location.href = "/";
   };
 
+  // ================= BODY CLASS TRIGGER FOR MOBILE MENU =================
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.classList.add("mobile-menu-active");
+    } else {
+      document.body.classList.remove("mobile-menu-active");
+    }
+    return () => {
+      document.body.classList.remove("mobile-menu-active");
+    };
+  }, [mobileMenuOpen]);
+
   // ================= INACTIVITY TIMEOUT LOGOUT =================
   useEffect(() => {
     if (!user) return;
@@ -534,6 +546,13 @@ export default function Navbar({
           </div>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        body.mobile-menu-active .floating-whatsapp {
+          opacity: 0 !important;
+          pointer-events: none !important;
+          transform: scale(0.9) !important;
+        }
+      ` }} />
     </nav>
   );
 }
