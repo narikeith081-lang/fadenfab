@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, useCallback, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -44,6 +44,22 @@ function ProfileContent() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("profile");
+
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-center active tab in mobile horizontal scroll view
+  useEffect(() => {
+    if (tabsContainerRef.current) {
+      const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
+      if (activeBtn) {
+        activeBtn.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center"
+        });
+      }
+    }
+  }, [activeTab]);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -395,7 +411,7 @@ function ProfileContent() {
 
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* Sidebar Navigation */}
-            <div className="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 p-4 lg:p-6 shadow-xl">
+            <div className="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 p-4 lg:p-6 shadow-xl overflow-hidden max-w-full">
               {/* User Avatar Info */}
               <div className="hidden lg:block text-center pb-6 border-b border-slate-100">
                 <div className="w-20 h-20 bg-[#0D4A86]/10 text-[#0D4A86] text-3xl font-black rounded-full flex items-center justify-center mx-auto mb-4 border border-[#0D4A86]/20">
@@ -410,7 +426,10 @@ function ProfileContent() {
               </div>
 
               {/* Navigation Tabs */}
-              <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0">
+              <div 
+                ref={tabsContainerRef} 
+                className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative"
+              >
                 {[
                   { id: "profile", label: "Profile Details", icon: UserIcon },
                   { id: "orders", label: "Order History", icon: ShoppingBagIcon },
@@ -422,12 +441,20 @@ function ProfileContent() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 ${
+                      data-active={activeTab === tab.id}
+                      className={`relative whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 z-10 ${
                         activeTab === tab.id
-                          ? "bg-[#0D4A86] text-white shadow-md lg:shadow-lg"
+                          ? "text-white"
                           : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
                       }`}
                     >
+                      {activeTab === tab.id && (
+                        <motion.div
+                          layoutId="activeTabPill"
+                          className="absolute inset-0 bg-[#0D4A86] rounded-full lg:rounded-2xl -z-10 shadow-md lg:shadow-lg"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
                       <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
                       <span>{tab.label}</span>
                     </button>
