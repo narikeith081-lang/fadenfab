@@ -81,21 +81,27 @@ function ProfileContent() {
 
   // Auto-center active tab in mobile horizontal scroll view & update shades
   useEffect(() => {
-    if (tabsContainerRef.current) {
-      const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
-      if (activeBtn) {
-        activeBtn.scrollIntoView({
-          behavior: isFirstRender.current ? "auto" : "smooth",
-          block: "nearest",
-          inline: "center"
-        });
-        if (isFirstRender.current) {
-          isFirstRender.current = false;
+    const centerActiveTab = () => {
+      if (tabsContainerRef.current) {
+        const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
+        if (activeBtn) {
+          activeBtn.scrollIntoView({
+            behavior: isFirstRender.current ? "auto" : "smooth",
+            block: "nearest",
+            inline: "center"
+          });
+          if (isFirstRender.current) {
+            isFirstRender.current = false;
+          }
         }
+        // Re-trigger scroll check after programmatic centering animation completes
+        setTimeout(handleScroll, 150);
       }
-      // Re-trigger scroll check after programmatic centering animation completes
-      setTimeout(handleScroll, 300);
-    }
+    };
+
+    // Use a small delay on every update to guarantee stable layout and styles
+    const timerId = setTimeout(centerActiveTab, 100);
+    return () => clearTimeout(timerId);
   }, [activeTab, handleScroll]);
 
   // Form states
