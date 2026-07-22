@@ -46,8 +46,34 @@ function ProfileContent() {
   const [activeTab, setActiveTab] = useState("profile");
 
   const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftShade, setShowLeftShade] = useState(false);
+  const [showRightShade, setShowRightShade] = useState(false);
 
-  // Auto-center active tab in mobile horizontal scroll view
+  const handleScroll = useCallback(() => {
+    if (tabsContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
+      setShowLeftShade(scrollLeft > 5);
+      setShowRightShade(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  }, []);
+
+  // Bind scroll listeners for horizontal tabs overflow indicators
+  useEffect(() => {
+    const container = tabsContainerRef.current;
+    if (container) {
+      handleScroll();
+      container.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [handleScroll]);
+
+  // Auto-center active tab in mobile horizontal scroll view & update shades
   useEffect(() => {
     if (tabsContainerRef.current) {
       const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
@@ -58,8 +84,10 @@ function ProfileContent() {
           inline: "center"
         });
       }
+      // Re-trigger scroll check after programmatic centering animation completes
+      setTimeout(handleScroll, 300);
     }
-  }, [activeTab]);
+  }, [activeTab, handleScroll]);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -425,41 +453,53 @@ function ProfileContent() {
                 </p>
               </div>
 
-              {/* Navigation Tabs */}
-              <div 
-                ref={tabsContainerRef} 
-                className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative"
-              >
-                {[
-                  { id: "profile", label: "Profile Details", icon: UserIcon },
-                  { id: "orders", label: "Order History", icon: ShoppingBagIcon },
-                  { id: "wishlist", label: "My Wishlist", icon: HeartIcon },
-                  { id: "security", label: "Security & Password", icon: LockClosedIcon }
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      data-active={activeTab === tab.id}
-                      className={`relative whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 z-10 ${
-                        activeTab === tab.id
-                          ? "text-white"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
-                      }`}
-                    >
-                      {activeTab === tab.id && (
-                        <motion.div
-                          layoutId="activeTabPill"
-                          className="absolute inset-0 bg-[#0D4A86] rounded-full lg:rounded-2xl -z-10 shadow-md lg:shadow-lg"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                      <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
-                      <span>{tab.label}</span>
-                    </button>
-                  );
-                })}
+              {/* Navigation Tabs with scroll shade overlays */}
+              <div className="relative w-full overflow-hidden lg:overflow-visible mt-2 lg:mt-0">
+                {/* Left Shade Overlay */}
+                {showLeftShade && (
+                  <div className="lg:hidden absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-blue-500/20 to-transparent pointer-events-none z-20 animate-fadeIn" />
+                )}
+
+                {/* Right Shade Overlay */}
+                {showRightShade && (
+                  <div className="lg:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-blue-500/20 to-transparent pointer-events-none z-20 animate-fadeIn" />
+                )}
+
+                <div 
+                  ref={tabsContainerRef} 
+                  className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative scroll-smooth"
+                >
+                  {[
+                    { id: "profile", label: "Profile Details", icon: UserIcon },
+                    { id: "orders", label: "Order History", icon: ShoppingBagIcon },
+                    { id: "wishlist", label: "My Wishlist", icon: HeartIcon },
+                    { id: "security", label: "Security & Password", icon: LockClosedIcon }
+                  ].map((tab) => {
+                    const Icon = tab.icon;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        data-active={activeTab === tab.id}
+                        className={`relative whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 z-10 ${
+                          activeTab === tab.id
+                            ? "text-white"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
+                        }`}
+                      >
+                        {activeTab === tab.id && (
+                          <motion.div
+                            layoutId="activeTabPill"
+                            className="absolute inset-0 bg-[#0D4A86] rounded-full lg:rounded-2xl -z-10 shadow-md lg:shadow-lg"
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
+                        <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
+                        <span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 

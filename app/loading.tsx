@@ -18,7 +18,7 @@ export default function Loading() {
       >
         FADENFAB
       </h2>
-      <p className="text-xs text-slate-500 font-medium">Loading premium experience...</p>
+      <p className="text-xs text-slate-500 font-medium">Loading Portal...</p>
     </div>
   );
 }

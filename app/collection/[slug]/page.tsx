@@ -273,7 +273,7 @@ export default function CollectionPage() {
         >
           FADENFAB
         </h2>
-        <p className="text-xs text-slate-500 font-medium">Fetching design catalog...</p>
+        <p className="text-xs text-slate-500 font-medium">Loading Portal...</p>
       </div>
     );
   }

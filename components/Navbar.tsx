@@ -56,6 +56,22 @@ export default function Navbar({
   // Fetch user profile from DB when user changes
   useEffect(() => {
     if (user) {
+      // Check last active time from previous session
+      const lastActive = localStorage.getItem("fadenfab_last_active");
+      if (lastActive) {
+        const elapsed = Date.now() - parseInt(lastActive);
+        if (elapsed > 60 * 60 * 1000) { // 1 hour
+          supabase.auth.signOut().then(() => {
+            localStorage.removeItem("fadenfab_cart");
+            localStorage.removeItem("fadenfab_wishlist");
+            localStorage.removeItem("fadenfab_last_active");
+            window.location.href = "/?expired=true";
+          });
+          return;
+        }
+      }
+      localStorage.setItem("fadenfab_last_active", Date.now().toString());
+
       supabase
         .from("profiles")
         .select("*")
@@ -124,6 +140,7 @@ export default function Navbar({
     await supabase.auth.signOut();
     localStorage.removeItem("fadenfab_cart");
     localStorage.removeItem("fadenfab_wishlist");
+    localStorage.removeItem("fadenfab_last_active");
     setUser(null);
     setProfile(null);
     setDropdownOpen(false);
@@ -149,13 +166,15 @@ export default function Navbar({
     let timer: any;
 
     const resetTimer = () => {
+      localStorage.setItem("fadenfab_last_active", Date.now().toString());
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         await supabase.auth.signOut();
         localStorage.removeItem("fadenfab_cart");
         localStorage.removeItem("fadenfab_wishlist");
+        localStorage.removeItem("fadenfab_last_active");
         window.location.href = "/?expired=true";
-      }, 30 * 60 * 1000); // 30 minutes
+      }, 60 * 60 * 1000); // 1 hour
     };
 
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];

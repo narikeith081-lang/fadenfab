@@ -152,17 +152,22 @@ export async function PATCH(req: Request) {
       password: adminPassword
     });
 
-    const { id, status } = await req.json();
-    if (!id || !status) {
+    const body = await req.json();
+    const { id } = body;
+    if (!id) {
       return Response.json(
-        { error: "Missing required fields" },
+        { error: "Missing ID field" },
         { status: 400 }
       );
     }
 
+    const updateObj: any = {};
+    if (body.status !== undefined) updateObj.status = body.status;
+    if (body.message !== undefined) updateObj.message = body.message;
+
     const { data, error } = await supabase
       .from("leads")
-      .update({ status })
+      .update(updateObj)
       .eq("id", id)
       .select();
 

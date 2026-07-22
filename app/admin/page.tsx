@@ -825,48 +825,171 @@ export default function AdminPage() {
                     No leads or contact inquiries found
                   </div>
                 ) : (
-                  filteredLeads.map((lead) => (
-                    <motion.div
-                      key={lead.id}
-                      className="bg-gradient-to-br from-[#111827] to-[#0f172a] border border-white/10 rounded-2xl p-5 hover:border-cyan-400/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.15)] transition-all duration-300"
-                    >
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-                        <div className="col-span-2">
-                          <p className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-lg">
-                            {lead.name}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(lead.created_at).toLocaleDateString()}
-                          </p>
+                  filteredLeads.map((lead) => {
+                    let isOrder = false;
+                    let orderDetails: any = null;
+                    if (lead.company && lead.company.trim().startsWith("{")) {
+                      try {
+                        orderDetails = JSON.parse(lead.company);
+                        isOrder = true;
+                      } catch (e) {
+                        isOrder = false;
+                      }
+                    }
+
+                    return (
+                      <motion.div
+                        key={lead.id}
+                        className={`bg-gradient-to-br from-[#111827] to-[#0f172a] border rounded-2xl p-5 transition-all duration-300 ${
+                          isOrder 
+                            ? "border-cyan-500/20 hover:border-cyan-400/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)]" 
+                            : "border-white/10 hover:border-green-500/20 hover:shadow-[0_0_25px_rgba(34,197,94,0.1)]"
+                        }`}
+                      >
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                          {/* Contact User */}
+                          <div className="col-span-2">
+                            <p className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-lg flex items-center gap-1.5">
+                              {isOrder && <span className="text-sm shrink-0">🛒</span>}
+                              {lead.name}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(lead.created_at).toLocaleDateString()}
+                            </p>
+                            {lead.email && (
+                              <p className="text-[10px] text-gray-400 mt-0.5 truncate">{lead.email}</p>
+                            )}
+                          </div>
+
+                          {/* Phone */}
+                          <div className="col-span-2 text-sm text-slate-300 font-medium">
+                            {lead.phone || "N/A"}
+                          </div>
+
+                          {/* Company / Items */}
+                          <div className="col-span-2 text-sm">
+                            {isOrder && orderDetails ? (
+                              <div className="text-xs space-y-1 bg-white/5 border border-white/5 p-2 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
+                                <span className="font-bold text-cyan-400 block text-[9px] uppercase tracking-wider mb-1">📦 Order Items</span>
+                                {orderDetails.items && orderDetails.items.map((item: any, idx: number) => (
+                                  <div key={idx} className="flex justify-between gap-2 border-b border-white/5 pb-1 mb-1 last:border-0 last:pb-0 last:mb-0">
+                                    <span className="truncate text-slate-300 text-xs" title={item.name}>{item.name}</span>
+                                    <span className="shrink-0 font-bold text-slate-400 text-xs">x{item.quantity}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-slate-300">{lead.company || "N/A"}</span>
+                            )}
+                          </div>
+
+                          {/* Quantity / Amount */}
+                          <div className="col-span-1 text-center font-bold">
+                            {isOrder ? (
+                              <span className="text-green-400 text-sm">₹{lead.quantity}</span>
+                            ) : (
+                              <span className="text-slate-300 text-sm">{lead.quantity || 0}</span>
+                            )}
+                          </div>
+
+                          {/* Message / Shipping Address */}
+                          <div className="col-span-3 text-sm">
+                            {isOrder && orderDetails ? (
+                              <div className="text-[11px] space-y-1.5 bg-white/5 border border-white/5 p-2 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
+                                {orderDetails.shipping_address && (
+                                  <div>
+                                    <span className="font-bold text-slate-400 block text-[9px] uppercase tracking-wider">📍 Shipping Address</span>
+                                    <p className="text-slate-300 leading-tight">
+                                      {orderDetails.shipping_address.street}, {orderDetails.shipping_address.city}, {orderDetails.shipping_address.state} - {orderDetails.shipping_address.pincode}
+                                    </p>
+                                  </div>
+                                )}
+                                {orderDetails.payment_method && (
+                                  <div className="pt-1 border-t border-white/5 text-[10px] text-slate-400 flex flex-wrap justify-between items-center gap-1">
+                                    <span>Pay: <strong className="text-slate-300">{orderDetails.payment_method}</strong></span>
+                                    {orderDetails.transaction_id && (
+                                      <span className="text-cyan-400 font-mono">UTR: {orderDetails.transaction_id}</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-gray-300 truncate" title={lead.message || ""}>
+                                {lead.message || "No message"}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Status Select */}
+                          <div className="col-span-1">
+                            {isOrder ? (
+                              <select
+                                value={lead.message || "Processing"}
+                                onChange={async (e) => {
+                                  const newStatus = e.target.value;
+                                  try {
+                                    const res = await fetch("/api/leads", {
+                                      method: "PATCH",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                        "x-admin-secret": "fadenfab_secure_admin_2026"
+                                      },
+                                      body: JSON.stringify({ id: lead.id, message: newStatus })
+                                    });
+                                    if (!res.ok) throw new Error("Update failed");
+                                    setModalConfig({
+                                      isOpen: true,
+                                      type: "success",
+                                      title: "Order Status Updated",
+                                      message: `Order tracking status successfully changed to "${newStatus}".`,
+                                      onConfirm: () => {
+                                        setModalConfig(null);
+                                        fetchLeads();
+                                      }
+                                    });
+                                  } catch (err) {
+                                    console.error(err);
+                                    setModalConfig({
+                                      isOpen: true,
+                                      type: "error",
+                                      title: "Update Failed",
+                                      message: "Could not update order status.",
+                                      onConfirm: () => setModalConfig(null)
+                                    });
+                                  }
+                                }}
+                                className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-2 py-2 text-xs outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 text-slate-300 font-semibold"
+                              >
+                                <option value="Processing" className="bg-[#111827] text-yellow-300">🟡 Processing</option>
+                                <option value="Shipped" className="bg-[#111827] text-blue-300">🔵 Shipped</option>
+                                <option value="Delivered" className="bg-[#111827] text-green-300">🟢 Delivered</option>
+                              </select>
+                            ) : (
+                              <select
+                                value={lead.status}
+                                onChange={(e) => updateStatus(lead.id, e.target.value)}
+                                className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-2 py-2 text-xs outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-slate-300"
+                              >
+                                <option value="new" className="bg-[#111827] text-yellow-300">🟡 New</option>
+                                <option value="contacted" className="bg-[#111827] text-cyan-300">🔵 Contacted</option>
+                                <option value="closed" className="bg-[#111827] text-green-300">🟢 Closed</option>
+                              </select>
+                            )}
+                          </div>
+
+                          {/* Action Delete */}
+                          <div className="col-span-1">
+                            <button
+                              onClick={() => deleteLead(lead.id)}
+                              className="w-full bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/20 hover:from-red-500/30 hover:to-orange-500/30 text-red-200 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
-                        <div className="col-span-2 text-sm">{lead.phone}</div>
-                        <div className="col-span-2 text-sm">{lead.company}</div>
-                        <div className="col-span-1 text-center font-bold text-slate-300">{lead.quantity}</div>
-                        <div className="col-span-3 text-sm text-gray-300 truncate" title={lead.message || ""}>
-                          {lead.message || "No message"}
-                        </div>
-                        <div className="col-span-1">
-                          <select
-                            value={lead.status}
-                            onChange={(e) => updateStatus(lead.id, e.target.value)}
-                            className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-2 py-2 text-xs outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-slate-300"
-                          >
-                            <option value="new" className="bg-[#111827] text-yellow-300">🟡 New</option>
-                            <option value="contacted" className="bg-[#111827] text-cyan-300">🔵 Contacted</option>
-                            <option value="closed" className="bg-[#111827] text-green-300">🟢 Closed</option>
-                          </select>
-                        </div>
-                        <div className="col-span-1">
-                          <button
-                            onClick={() => deleteLead(lead.id)}
-                            className="w-full bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/20 hover:from-red-500/30 hover:to-orange-500/30 text-red-200 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))
+                      </motion.div>
+                    );
+                  })
                 )}
               </div>
             </motion.div>
