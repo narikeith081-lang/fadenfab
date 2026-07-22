@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
+import { HeartIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 export default function Navbar({
@@ -253,20 +254,20 @@ export default function Navbar({
               </button>
               
               {/* Wishlist Icon */}
-              <Link href="/wishlist" className="hover:text-[#0D4A86] transition flex items-center gap-1 relative">
-                <span>Wishlist</span>
+              <Link href="/wishlist" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Wishlist">
+                <HeartIcon className="w-6 h-6" />
                 {wishlistCount > 0 && (
-                  <span className="bg-amber-500 text-black text-xs font-bold px-1.5 py-0.5 rounded-full min-w-5 text-center animate-fadeIn">
+                  <span className="absolute top-0.5 right-0.5 bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
 
               {/* Cart Icon */}
-              <Link href="/cart" className="hover:text-[#0D4A86] transition flex items-center gap-1 relative">
-                <span>Cart</span>
+              <Link href="/cart" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Shopping Cart">
+                <ShoppingCartIcon className="w-6 h-6" />
                 {cartCount > 0 && (
-                  <span className="bg-[#0D4A86] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-5 text-center animate-fadeIn">
+                  <span className="absolute top-0.5 right-0.5 bg-[#0D4A86] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
                     {cartCount}
                   </span>
                 )}
@@ -355,6 +356,15 @@ export default function Navbar({
               >
                 Contact
               </button>
+              {/* Cart Icon (Guest) */}
+              <Link href="/cart" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10 mr-2" title="Shopping Cart">
+                <ShoppingCartIcon className="w-6 h-6" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 bg-[#0D4A86] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
               <button
                 onClick={() => router.push("/userlogin")}
                 className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
@@ -365,14 +375,45 @@ export default function Navbar({
           )}
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden w-12 h-12 flex items-center justify-center text-3xl text-[#0D4A86] cursor-pointer touch-manipulation"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileMenuOpen ? <HiX /> : <HiMenu />}
-        </button>
+        {/* Mobile Actions & Toggle */}
+        <div className="flex md:hidden items-center gap-1">
+          {/* Mobile Wishlist Icon */}
+          <Link
+            href="/wishlist"
+            className="hover:text-[#0D4A86] text-slate-700 relative w-10 h-10 flex items-center justify-center cursor-pointer"
+            aria-label="Wishlist"
+          >
+            <HeartIcon className="w-6 h-6" />
+            {wishlistCount > 0 && (
+              <span className="absolute top-1 right-1 bg-amber-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Mobile Cart Icon */}
+          <Link
+            href="/cart"
+            className="hover:text-[#0D4A86] text-slate-700 relative w-10 h-10 flex items-center justify-center cursor-pointer"
+            aria-label="Cart"
+          >
+            <ShoppingCartIcon className="w-6 h-6" />
+            {cartCount > 0 && (
+              <span className="absolute top-1 right-1 bg-[#0D4A86] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Mobile Hamburger Toggle */}
+          <button
+            className="w-12 h-12 flex items-center justify-center text-3xl text-[#0D4A86] cursor-pointer touch-manipulation"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <HiX /> : <HiMenu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer Backdrop */}
@@ -411,7 +452,7 @@ export default function Navbar({
                 <span className="text-xs bg-[#0D4A86]/10 text-[#0D4A86] font-bold px-2.5 py-0.5 rounded-full">Active</span>
               </div>
               <div className="text-slate-800 font-bold text-sm truncate" title={user.email}>
-                {user.email}
+                {firstName}
               </div>
               <button
                 onClick={handleLogout}
@@ -541,6 +582,20 @@ export default function Navbar({
                 >
                   Contact
                 </button>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  My Orders
+                </Link>
               </>
             )}
           </div>

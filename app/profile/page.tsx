@@ -395,9 +395,9 @@ function ProfileContent() {
 
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* Sidebar Navigation */}
-            <div className="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 p-6 shadow-xl">
+            <div className="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 p-4 lg:p-6 shadow-xl">
               {/* User Avatar Info */}
-              <div className="text-center pb-6 border-b border-slate-100">
+              <div className="hidden lg:block text-center pb-6 border-b border-slate-100">
                 <div className="w-20 h-20 bg-[#0D4A86]/10 text-[#0D4A86] text-3xl font-black rounded-full flex items-center justify-center mx-auto mb-4 border border-[#0D4A86]/20">
                   {fullName ? fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
                 </div>
@@ -410,7 +410,7 @@ function ProfileContent() {
               </div>
 
               {/* Navigation Tabs */}
-              <div className="mt-6 flex flex-col gap-2">
+              <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0">
                 {[
                   { id: "profile", label: "Profile Details", icon: UserIcon },
                   { id: "orders", label: "Order History", icon: ShoppingBagIcon },
@@ -422,13 +422,13 @@ function ProfileContent() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-4 w-full text-left px-4 py-3.5 rounded-2xl font-semibold transition cursor-pointer ${
+                      className={`whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 ${
                         activeTab === tab.id
-                          ? "bg-[#0D4A86] text-white shadow-lg"
+                          ? "bg-[#0D4A86] text-white shadow-md lg:shadow-lg"
                           : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
                       }`}
                     >
-                      <Icon className="w-5 h-5 shrink-0" />
+                      <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
                       <span>{tab.label}</span>
                     </button>
                   );
@@ -437,7 +437,7 @@ function ProfileContent() {
             </div>
 
             {/* Dashboard Content Panel */}
-            <div className="lg:col-span-9 bg-white rounded-3xl border border-slate-200 p-8 shadow-xl min-h-[500px]">
+            <div className="lg:col-span-9 bg-white rounded-3xl border border-slate-200 p-5 sm:p-8 shadow-xl min-h-[400px] lg:min-h-[500px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
