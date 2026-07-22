@@ -43,9 +43,15 @@ function ProfileContent() {
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabParam && ["profile", "orders", "wishlist", "security"].includes(tabParam)) {
+      return tabParam;
+    }
+    return "profile";
+  });
 
   const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
   const [showLeftShade, setShowLeftShade] = useState(false);
   const [showRightShade, setShowRightShade] = useState(false);
 
@@ -79,10 +85,13 @@ function ProfileContent() {
       const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
       if (activeBtn) {
         activeBtn.scrollIntoView({
-          behavior: "smooth",
+          behavior: isFirstRender.current ? "auto" : "smooth",
           block: "nearest",
           inline: "center"
         });
+        if (isFirstRender.current) {
+          isFirstRender.current = false;
+        }
       }
       // Re-trigger scroll check after programmatic centering animation completes
       setTimeout(handleScroll, 300);
