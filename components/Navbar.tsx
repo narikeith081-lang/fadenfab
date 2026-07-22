@@ -486,54 +486,6 @@ export default function Navbar({
                 >
                   Home
                 </button>
-                <button
-                  onClick={() => handleNavClick("services", "/#services")}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  Services
-                </button>
-                <button
-                  onClick={() => handleNavClick("collection", "/#collection")}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  Collection
-                </button>
-                <button
-                  onClick={() => handleNavClick("why", "/#why")}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  Why Us
-                </button>
-                <button
-                  onClick={() => handleNavClick("contact", "/#contact")}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  Contact
-                </button>
-                <Link
-                  href="/wishlist"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center cursor-pointer touch-manipulation"
-                >
-                  <span>Wishlist</span>
-                  {wishlistCount > 0 && (
-                    <span className="bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </Link>
-                <Link
-                  href="/cart"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium flex justify-between items-center cursor-pointer touch-manipulation"
-                >
-                  <span>Cart</span>
-                  {cartCount > 0 && (
-                    <span className="bg-[#0D4A86] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
@@ -548,6 +500,18 @@ export default function Navbar({
                 >
                   My Orders
                 </Link>
+                <button
+                  onClick={() => handleNavClick("collection", "/#collection")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Collection
+                </button>
+                <button
+                  onClick={() => handleNavClick("contact", "/#contact")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Contact
+                </button>
               </>
             ) : (
               // Logged Out Mobile Menu

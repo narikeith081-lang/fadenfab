@@ -449,27 +449,27 @@ function ProfileContent() {
                   {/* ================= PROFILE TAB ================= */}
                   {activeTab === "profile" && (
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <UserIcon className="w-6 h-6 text-[#0D4A86]" /> Profile Information
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center gap-3">
+                        <UserIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0D4A86]" /> Profile Information
                       </h2>
 
-                      <form onSubmit={handleUpdateProfile} className="space-y-6 max-w-xl">
+                      <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-xl">
                         {/* Email (Disabled) */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             Email Address (Linked to Account)
                           </label>
                           <input
                             type="text"
                             value={user?.email || ""}
                             disabled
-                            className="w-full rounded-xl border border-slate-200 bg-slate-100 text-slate-500 px-4 py-3 outline-none"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-100 text-slate-500 px-3.5 py-2.5 text-xs sm:text-sm outline-none"
                           />
                         </div>
 
                         {/* Name */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             Full Name
                           </label>
                           <input
@@ -477,13 +477,13 @@ function ProfileContent() {
                             placeholder="Enter your full name"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
                           />
                         </div>
 
                         {/* Mobile */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             Mobile Number
                           </label>
                           <input
@@ -491,28 +491,28 @@ function ProfileContent() {
                             placeholder="e.g. 9876543210"
                             value={mobile}
                             onChange={(e) => setMobile(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
                           />
                         </div>
 
                         {/* Address */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             Default Shipping Address
                           </label>
                           <textarea
                             placeholder="Enter your street address, city, state, and postal code..."
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
-                            rows={4}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition resize-none"
+                            rows={3}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition resize-none"
                           />
                         </div>
 
                         {/* Messages */}
                         {profileMessage.text && (
                           <div
-                            className={`p-4 rounded-xl text-sm border font-semibold ${
+                            className={`p-3 rounded-xl text-xs sm:text-sm border font-semibold ${
                               profileMessage.type === "success"
                                 ? "bg-green-50 border-green-200 text-green-700"
                                 : "bg-red-50 border-red-200 text-red-700"
@@ -526,7 +526,7 @@ function ProfileContent() {
                         <button
                           type="submit"
                           disabled={savingProfile}
-                          className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-8 py-3.5 rounded-xl font-bold transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-500/10"
+                          className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-6 py-2.5 sm:py-3.5 rounded-xl font-bold transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-500/10 text-xs sm:text-sm"
                         >
                           {savingProfile ? "Saving Updates..." : "Save Details"}
                         </button>
@@ -566,9 +566,9 @@ function ProfileContent() {
                           {orders.map((order) => (
                             <div
                               key={order.id}
-                              className="border border-slate-200 rounded-2xl p-6 bg-slate-50/50 hover:bg-slate-50 transition-all duration-300"
+                              className="border border-slate-200 rounded-2xl p-4 sm:p-6 bg-slate-50/50 hover:bg-slate-50 transition-all duration-300"
                             >
-                              <div className="flex flex-wrap justify-between items-center gap-4 border-b border-slate-100 pb-4 mb-4">
+                              <div className="flex flex-wrap justify-between items-center gap-3 sm:gap-4 border-b border-slate-100 pb-3 sm:pb-4 mb-3 sm:mb-4">
                                 <div>
                                   <span className="text-xs text-slate-400 font-bold uppercase block">
                                     Order ID
@@ -798,14 +798,14 @@ function ProfileContent() {
                   {/* ================= SECURITY TAB ================= */}
                   {activeTab === "security" && (
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <LockClosedIcon className="w-6 h-6 text-[#0D4A86]" /> Security Settings
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center gap-3">
+                        <LockClosedIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0D4A86]" /> Security Settings
                       </h2>
 
-                      <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-xl">
+                      <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-xl">
                         {/* New Password */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             New Password
                           </label>
                           <input
@@ -813,13 +813,13 @@ function ProfileContent() {
                             placeholder="Enter at least 6 characters"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
                           />
                         </div>
 
                         {/* Confirm Password */}
                         <div>
-                          <label className="block text-sm font-semibold text-slate-600 mb-2">
+                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
                             Confirm New Password
                           </label>
                           <input
@@ -827,14 +827,14 @@ function ProfileContent() {
                             placeholder="Re-enter your new password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
                           />
                         </div>
 
                         {/* Messages */}
                         {passwordMessage.text && (
                           <div
-                            className={`p-4 rounded-xl text-sm border font-semibold ${
+                            className={`p-3 rounded-xl text-xs sm:text-sm border font-semibold ${
                               passwordMessage.type === "success"
                                 ? "bg-green-50 border-green-200 text-green-700"
                                 : "bg-red-50 border-red-200 text-red-700"
@@ -848,7 +848,7 @@ function ProfileContent() {
                         <button
                           type="submit"
                           disabled={updatingPassword}
-                          className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-8 py-3.5 rounded-xl font-bold transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-500/10"
+                          className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-6 py-2.5 sm:py-3.5 rounded-xl font-bold transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-500/10 text-xs sm:text-sm"
                         >
                           {updatingPassword ? "Updating Password..." : "Update Password"}
                         </button>

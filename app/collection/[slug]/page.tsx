@@ -72,6 +72,7 @@ export default function CollectionPage() {
   const [wishlistedIds, setWishlistedIds] = useState<number[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Professional Modal State
   const [modalConfig, setModalConfig] = useState<{
@@ -84,19 +85,40 @@ export default function CollectionPage() {
 
   // ================= LOAD DATA =================
   const loadData = async () => {
-    // 1. Load Cart only if logged in
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const items = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
-      setCart(items);
-    } else {
-      setCart([]);
-    }
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // 1. Load Cart
+        const items = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+        setCart(items);
 
-    // 2. Load Catalog Collection
-    const catalog = getCatalog();
-    if (catalog[slug]) {
-      setCollection(catalog[slug]);
+        // 2. Fetch Wishlist
+        if (user.email) {
+          const { data } = await supabase
+            .from("leads")
+            .select("quantity")
+            .eq("status", "wishlist")
+            .eq("email", user.email);
+          if (data) {
+            setWishlistedIds(data.map((item: any) => parseInt(item.quantity) || 0));
+          }
+        }
+      } else {
+        setCart([]);
+        setWishlistedIds([]);
+      }
+
+      // 3. Load Catalog Collection
+      const catalog = getCatalog();
+      if (catalog[slug]) {
+        setCollection(catalog[slug]);
+      } else {
+        setCollection(null);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,21 +132,6 @@ export default function CollectionPage() {
       setIsDesktop(window.innerWidth >= 1024);
     };
     window.addEventListener("resize", handleResize);
-
-    const fetchWishlistIds = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user && user.email) {
-        const { data } = await supabase
-          .from("leads")
-          .select("quantity")
-          .eq("status", "wishlist")
-          .eq("email", user.email);
-        if (data) {
-          setWishlistedIds(data.map((item: any) => parseInt(item.quantity) || 0));
-        }
-      }
-    };
-    fetchWishlistIds();
 
     return () => {
       window.removeEventListener("cart-updated", loadData);
@@ -250,6 +257,26 @@ export default function CollectionPage() {
       console.error(err);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
+        {/* Branded Loading Spinner */}
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-slate-100" />
+          <div className="absolute inset-0 rounded-full border-4 border-t-[#0D4A86] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+        </div>
+        {/* Brand Text */}
+        <h2 
+          className="text-xl font-bold tracking-widest text-[#0D4A86] animate-pulse" 
+          style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+        >
+          FADENFAB
+        </h2>
+        <p className="text-xs text-slate-500 font-medium">Fetching design catalog...</p>
+      </div>
+    );
+  }
 
   if (!collection) {
     return (
