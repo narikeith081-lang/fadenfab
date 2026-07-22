@@ -273,7 +273,7 @@ export default function Navbar({
               </button>
               
               {/* Wishlist Icon */}
-              <Link href="/wishlist" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Wishlist">
+              <Link href="/profile?tab=wishlist" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Wishlist">
                 <HeartIcon className="w-6 h-6" />
                 {wishlistCount > 0 && (
                   <span className="absolute top-0.5 right-0.5 bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
@@ -317,14 +317,14 @@ export default function Navbar({
                         My Profile
                       </Link>
                       <Link
-                        href="/orders"
+                        href="/profile?tab=orders"
                         onClick={() => setDropdownOpen(false)}
                         className="block px-5 py-3 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] text-slate-700 transition"
                       >
                         My Orders
                       </Link>
                       <Link
-                        href="/wishlist"
+                        href="/profile?tab=wishlist"
                         onClick={() => setDropdownOpen(false)}
                         className="block px-5 py-3 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] text-slate-700 transition"
                       >
@@ -398,7 +398,7 @@ export default function Navbar({
         <div className="flex md:hidden items-center gap-1">
           {/* Mobile Wishlist Icon */}
           <Link
-            href="/wishlist"
+            href="/profile?tab=wishlist"
             className="hover:text-[#0D4A86] text-slate-700 relative w-10 h-10 flex items-center justify-center cursor-pointer"
             aria-label="Wishlist"
           >
@@ -513,7 +513,7 @@ export default function Navbar({
                   My Profile
                 </Link>
                 <Link
-                  href="/orders"
+                  href="/profile?tab=orders"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
                 >
@@ -573,7 +573,7 @@ export default function Navbar({
                   My Profile
                 </Link>
                 <Link
-                  href="/orders"
+                  href="/profile?tab=orders"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
                 >
