@@ -82,19 +82,25 @@ function ProfileContent() {
   // Auto-center active tab in mobile horizontal scroll view & update shades
   useEffect(() => {
     const centerActiveTab = () => {
-      if (tabsContainerRef.current) {
-        const activeBtn = tabsContainerRef.current.querySelector('[data-active="true"]');
+      const container = tabsContainerRef.current;
+      if (container) {
+        const activeBtn = container.querySelector('[data-active="true"]') as HTMLElement;
         if (activeBtn) {
-          activeBtn.scrollIntoView({
-            behavior: isFirstRender.current ? "auto" : "smooth",
-            block: "nearest",
-            inline: "center"
+          const btnOffsetLeft = activeBtn.offsetLeft;
+          const btnWidth = activeBtn.offsetWidth;
+          const containerWidth = container.clientWidth;
+          const targetScrollLeft = btnOffsetLeft - (containerWidth / 2) + (btnWidth / 2);
+
+          container.scrollTo({
+            left: targetScrollLeft,
+            behavior: isFirstRender.current ? "auto" : "smooth"
           });
+
           if (isFirstRender.current) {
             isFirstRender.current = false;
           }
         }
-        // Re-trigger scroll check after programmatic centering animation completes
+        // Re-trigger scroll check after programmatic centering completes
         setTimeout(handleScroll, 150);
       }
     };
@@ -482,7 +488,7 @@ function ProfileContent() {
 
                 <div 
                   ref={tabsContainerRef} 
-                  className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative scroll-smooth"
+                  className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative scroll-smooth [-webkit-overflow-scrolling:touch]"
                 >
                   {[
                     { id: "profile", label: "Profile Details", icon: UserIcon },
