@@ -2,6 +2,8 @@
 
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "FADENFAB | Premium T-Shirt Printing",
@@ -50,11 +52,8 @@ export default function RootLayout({
   return (
     <html lang="en">
 
-      <body className="bg-black text-white antialiased overflow-x-hidden">
-
-        {/* Main App */}
+      <body className="bg-gradient-to-br from-slate-50 via-blue-50 to-amber-50 text-slate-900 antialiased overflow-x-hidden min-h-screen">
         {children}
-
       </body>
 
     </html>

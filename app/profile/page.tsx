@@ -43,72 +43,15 @@ function ProfileContent() {
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState(() => {
+  const [activeTab, setActiveTab] = useState("profile");
+
+  useEffect(() => {
     if (tabParam && ["profile", "orders", "wishlist", "security"].includes(tabParam)) {
-      return tabParam;
+      setActiveTab(tabParam);
     }
-    return "profile";
-  });
+  }, [tabParam]);
 
-  const tabsContainerRef = useRef<HTMLDivElement>(null);
-  const isFirstRender = useRef(true);
-  const [showLeftShade, setShowLeftShade] = useState(false);
-  const [showRightShade, setShowRightShade] = useState(false);
 
-  const handleScroll = useCallback(() => {
-    if (tabsContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
-      setShowLeftShade(scrollLeft > 5);
-      setShowRightShade(scrollLeft < scrollWidth - clientWidth - 5);
-    }
-  }, []);
-
-  // Bind scroll listeners for horizontal tabs overflow indicators
-  useEffect(() => {
-    const container = tabsContainerRef.current;
-    if (container) {
-      handleScroll();
-      container.addEventListener("scroll", handleScroll);
-      window.addEventListener("resize", handleScroll);
-    }
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
-      }
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [handleScroll]);
-
-  // Auto-center active tab in mobile horizontal scroll view & update shades
-  useEffect(() => {
-    const centerActiveTab = () => {
-      const container = tabsContainerRef.current;
-      if (container) {
-        const activeBtn = container.querySelector('[data-active="true"]') as HTMLElement;
-        if (activeBtn) {
-          const btnOffsetLeft = activeBtn.offsetLeft;
-          const btnWidth = activeBtn.offsetWidth;
-          const containerWidth = container.clientWidth;
-          const targetScrollLeft = btnOffsetLeft - (containerWidth / 2) + (btnWidth / 2);
-
-          container.scrollTo({
-            left: targetScrollLeft,
-            behavior: isFirstRender.current ? "auto" : "smooth"
-          });
-
-          if (isFirstRender.current) {
-            isFirstRender.current = false;
-          }
-        }
-        // Re-trigger scroll check after programmatic centering completes
-        setTimeout(handleScroll, 150);
-      }
-    };
-
-    // Use a small delay on every update to guarantee stable layout and styles
-    const timerId = setTimeout(centerActiveTab, 100);
-    return () => clearTimeout(timerId);
-  }, [activeTab, handleScroll]);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -407,7 +350,7 @@ function ProfileContent() {
 
   const handleAddToCart = (product: any) => {
     const cart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
-    const existingIndex = cart.findIndex((item: any) => item.id === product.product_id);
+    const existingIndex = cart.findIndex((item: any) => item.id === product.product_id && item.slug === product.product_slug);
     
     if (existingIndex > -1) {
       cart[existingIndex].quantity += 1;
@@ -419,7 +362,8 @@ function ProfileContent() {
         quantity: 1,
         price: product.product_slug === "oversized-tshirts" ? 699 : 1499,
         fabric: "Premium Fabric",
-        color: "Selected Color"
+        color: "Selected Color",
+        slug: product.product_slug
       });
     }
 
@@ -437,7 +381,9 @@ function ProfileContent() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen overflow-x-hidden text-slate-900 bg-gradient-to-br from-slate-50 via-blue-50 to-amber-50 flex flex-col justify-between">
+      <div className="min-h-screen flex flex-col justify-between relative">
+        <Navbar />
+        <div className="w-full relative flex-grow">
         {/* Background Glows */}
         <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-32 w-[550px] h-[550px] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -445,7 +391,7 @@ function ProfileContent() {
           <div className="absolute bottom-0 left-1/3 w-[450px] h-[450px] bg-indigo-500/10 rounded-full blur-[140px]" />
         </div>
 
-        <Navbar />
+
 
         <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
           {/* Header */}
@@ -458,9 +404,9 @@ function ProfileContent() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-            {/* Sidebar Navigation */}
-            <div className="lg:col-span-3 bg-transparent lg:bg-white/80 lg:backdrop-blur-md rounded-3xl lg:border lg:border-slate-200 p-0 lg:p-6 shadow-none lg:shadow-xl overflow-hidden max-w-full">
+          <div className="grid grid-cols-12 gap-3 lg:gap-8 items-start">
+            {/* Sidebar Navigation (Left Panel) */}
+            <div className="col-span-3 lg:col-span-3 bg-white/80 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-slate-200 p-1.5 lg:p-6 shadow-lg lg:shadow-xl flex flex-col items-center lg:items-stretch gap-6 overflow-hidden max-w-full">
               {/* User Avatar Info */}
               <div className="hidden lg:block text-center pb-6 border-b border-slate-100">
                 <div className="w-20 h-20 bg-[#0D4A86]/10 text-[#0D4A86] text-3xl font-black rounded-full flex items-center justify-center mx-auto mb-4 border border-[#0D4A86]/20">
@@ -474,58 +420,47 @@ function ProfileContent() {
                 </p>
               </div>
 
-              {/* Navigation Tabs with scroll shade overlays */}
-              <div className="relative w-full overflow-hidden lg:overflow-visible mt-2 lg:mt-0 bg-slate-200/50 lg:bg-transparent p-1 lg:p-0 rounded-full lg:rounded-none">
-                {/* Left Shade Overlay */}
-                {showLeftShade && (
-                  <div className="lg:hidden absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-blue-500/20 to-transparent pointer-events-none z-20 animate-fadeIn" />
-                )}
-
-                {/* Right Shade Overlay */}
-                {showRightShade && (
-                  <div className="lg:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-blue-500/20 to-transparent pointer-events-none z-20 animate-fadeIn" />
-                )}
-
-                <div 
-                  ref={tabsContainerRef} 
-                  className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-none shrink-0 w-full relative scroll-smooth [-webkit-overflow-scrolling:touch]"
-                >
-                  {[
-                    { id: "profile", label: "Profile Details", icon: UserIcon },
-                    { id: "orders", label: "Order History", icon: ShoppingBagIcon },
-                    { id: "wishlist", label: "My Wishlist", icon: HeartIcon },
-                    { id: "security", label: "Security & Password", icon: LockClosedIcon }
-                  ].map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        data-active={activeTab === tab.id}
-                        className={`relative whitespace-nowrap flex items-center gap-2 lg:gap-4 px-4 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-semibold transition cursor-pointer shrink-0 z-10 ${
-                          activeTab === tab.id
-                            ? "text-white"
-                            : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
-                        }`}
-                      >
-                        {activeTab === tab.id && (
-                          <motion.div
-                            layoutId="activeTabPill"
-                            className="absolute inset-0 bg-[#0D4A86] rounded-full lg:rounded-2xl -z-10 shadow-md lg:shadow-lg"
-                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                          />
-                        )}
-                        <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
-                        <span>{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Navigation Tabs (Vertical List for all viewports) */}
+              <div className="flex flex-col gap-2 w-full relative">
+                {[
+                  { id: "profile", label: "Profile Details", shortLabel: "Profile", icon: UserIcon },
+                  { id: "orders", label: "Order History", shortLabel: "Orders", icon: ShoppingBagIcon },
+                  { id: "wishlist", label: "My Wishlist", shortLabel: "Wishlist", icon: HeartIcon },
+                  { id: "security", label: "Security & Password", shortLabel: "Security", icon: LockClosedIcon }
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      data-active={activeTab === tab.id}
+                      className={`relative w-full h-14 lg:h-auto flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-4 px-1 py-2 lg:px-4 lg:py-3.5 rounded-xl lg:rounded-2xl font-semibold transition cursor-pointer z-10 ${
+                        activeTab === tab.id
+                          ? "text-white"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-[#0D4A86]"
+                      }`}
+                      title={tab.label}
+                    >
+                      {activeTab === tab.id && (
+                        <motion.div
+                          layoutId="activeTabPill"
+                          className="absolute inset-0 bg-[#0D4A86] rounded-xl lg:rounded-2xl -z-10 shadow-md lg:shadow-lg"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <Icon className="w-5 h-5 shrink-0" />
+                      <span className="lg:hidden text-[9px] font-bold text-center tracking-tight leading-none truncate max-w-full">
+                        {tab.shortLabel}
+                      </span>
+                      <span className="hidden lg:inline-block truncate">{tab.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Dashboard Content Panel */}
-            <div className="lg:col-span-9 bg-white rounded-3xl border border-slate-200 p-5 sm:p-8 shadow-xl min-h-[400px] lg:min-h-[500px]">
+            <div className="col-span-9 lg:col-span-9 bg-white rounded-2xl lg:rounded-3xl border border-slate-200 p-3 sm:p-8 shadow-lg lg:shadow-xl min-h-[400px] lg:min-h-[500px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -959,8 +894,9 @@ function ProfileContent() {
           />
         )}
 
-        <Footer />
-      </main>
+      </div>
+      <Footer />
+    </div>
     </ProtectedRoute>
   );
 }
@@ -968,8 +904,16 @@ function ProfileContent() {
 export default function ProfilePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-slate-200 border-t-[#0D4A86] rounded-full animate-spin" />
+      <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+        <div className="relative flex flex-col items-center">
+          <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+          <h2 
+            className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86] animate-pulse" 
+            style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+          >
+            FADENFAB
+          </h2>
+        </div>
       </div>
     }>
       <ProfileContent />

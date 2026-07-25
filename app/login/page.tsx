@@ -27,7 +27,7 @@ export default function LoginPage() {
   // ✅ Auto redirect
   useEffect(() => {
     const isAdmin =
-      localStorage.getItem("FADENFAB_admin");
+      localStorage.getItem("fadenfab_admin");
 
     if (isAdmin === "true") {
       router.push("/admin");

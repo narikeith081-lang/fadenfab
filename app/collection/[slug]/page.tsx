@@ -9,6 +9,8 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { getCatalog } from "@/lib/products";
 import CustomModal from "@/components/CustomModal";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // Reusable Hardware-Accelerated 3D Tilt Card component
 function TiltCard({ children, className, isDesktop, ...props }: any) {
@@ -260,20 +262,24 @@ export default function CollectionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
-        {/* Branded Loading Spinner */}
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-4 border-slate-100" />
-          <div className="absolute inset-0 rounded-full border-4 border-t-[#0D4A86] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+      <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+        <div className="relative flex flex-col items-center">
+          <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+          <motion.h2 
+            initial={{ opacity: 0.3, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 1.5,
+              ease: "easeInOut"
+            }}
+            className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86]" 
+            style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+          >
+            FADENFAB
+          </motion.h2>
         </div>
-        {/* Brand Text */}
-        <h2 
-          className="text-xl font-bold tracking-widest text-[#0D4A86] animate-pulse" 
-          style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
-        >
-          FADENFAB
-        </h2>
-        <p className="text-xs text-slate-500 font-medium">Loading Portal...</p>
       </div>
     );
   }
@@ -289,15 +295,17 @@ export default function CollectionPage() {
   }
 
   return (
-    <motion.main
-      className="min-h-screen bg-slate-50"
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.8,
-        ease: "easeOut",
-      }}
-    >
+    <div className="min-h-screen flex flex-col justify-between relative">
+      <Navbar />
+      <motion.div
+        className="w-full relative flex-grow"
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          ease: "easeOut",
+        }}
+      >
       {/* Reusable Professional Popups */}
       {modalConfig && (
         <CustomModal
@@ -503,6 +511,8 @@ export default function CollectionPage() {
           </button>
         </div>
       )}
-    </motion.main>
+      </motion.div>
+      <Footer />
+    </div>
   );
 }

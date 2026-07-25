@@ -83,24 +83,16 @@ export default function Gallery() {
   }, []);
 
   return (
-    <section
+    <div
       id="gallery"
-      className="relative py-28 px-6 bg-gradient-to-b from-white to-slate-50 overflow-hidden"
+      className="relative py-4 overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute top-0 left-0 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#0D4A86]/10/10 blur-[140px] rounded-full" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#0D4A86]/10 blur-[140px] rounded-full" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
-          
-        </motion.div>
+
         {/* Products Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10" style={{ perspective: 1000 }}>
           {products.map((item, i) => (
@@ -182,6 +174,6 @@ export default function Gallery() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { motion } from "framer-motion";
 
 export default function ProtectedRoute({
   children,
@@ -26,12 +27,23 @@ export default function ProtectedRoute({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 border-4 border-slate-200 border-t-[#0D4A86] rounded-full animate-spin" />
-          <h2 className="text-[#0D4A86] font-bold text-xl animate-pulse">
-            Loading Portal...
-          </h2>
+      <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+        <div className="relative flex flex-col items-center">
+          <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+          <motion.h2 
+            initial={{ opacity: 0.3, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 1.5,
+              ease: "easeInOut"
+            }}
+            className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86]" 
+            style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+          >
+            FADENFAB
+          </motion.h2>
         </div>
       </div>
     );

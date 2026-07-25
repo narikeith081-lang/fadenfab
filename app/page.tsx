@@ -235,12 +235,10 @@ export default function Home() {
   };
 
   return (
-<main className="min-h-screen overflow-x-hidden text-slate-900
-bg-gradient-to-br
-from-slate-50
-via-blue-50
-to-amber-50">
-<div className="fixed inset-0 -z-10 overflow-hidden">
+    <div className="min-h-screen flex flex-col justify-between relative">
+      <Navbar />
+      <div className="w-full relative flex-grow">
+        <div className="fixed inset-0 -z-10 overflow-hidden">
 
   <motion.div
     style={{ y: isDesktop ? bgGlowY1 : 0 }}
@@ -289,8 +287,7 @@ to-amber-50">
       {/* ================= BACKGROUND ================= */}
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.12),transparent_60%)]" />
 
-      {/* ================= NAVBAR ================= */}
-      <Navbar />
+
 
 {/* ================= HERO ================= */}
 <section className="relative px-6 pt-24 md:pt-36 pb-20 md:pb-28 overflow-hidden">
@@ -411,7 +408,7 @@ to-amber-50">
       {/* ================= SERVICES ================= */}
 <section
   id="services"
-  className="relative px-6 py-28 scroll-mt-32 bg-gradient-to-b from-slate-50 via-blue-50 to-white overflow-hidden"
+  className="relative px-6 py-16 md:py-20 scroll-mt-24 bg-gradient-to-b from-slate-50 via-blue-50 to-white overflow-hidden"
 >
   {/* Background Glow */}
   <div className="absolute left-0 top-0 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full" />
@@ -422,7 +419,7 @@ to-amber-50">
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    className="text-center max-w-3xl mx-auto mb-20"
+    className="text-center max-w-3xl mx-auto mb-8 md:mb-12"
   >
     <span className="text-[#0D4A86] font-semibold tracking-[4px] uppercase">
       What We Offer
@@ -507,7 +504,7 @@ to-amber-50">
 {/* ================= COLLECTION ================= */}
 <section
   id="collection"
-  className="relative py-28 scroll-mt-32 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
+  className="relative py-16 md:py-20 scroll-mt-24 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
 >
 
   {/* Background Glow */}
@@ -521,7 +518,7 @@ to-amber-50">
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="text-center max-w-3xl mx-auto mb-20"
+      className="text-center max-w-3xl mx-auto mb-8 md:mb-12"
     >
       <span className="text-[#0D4A86] font-semibold tracking-[4px] uppercase">
         Our Collection
@@ -551,7 +548,7 @@ to-amber-50">
   {/* ================= WHY US ================= */}
 <section
   id="why"
-  className="relative px-6 py-28 scroll-mt-32 overflow-hidden bg-gradient-to-b from-white to-slate-50"
+  className="relative px-6 py-16 md:py-20 scroll-mt-24 overflow-hidden bg-gradient-to-b from-white to-slate-50"
 >
 
   {/* Background Glow */}
@@ -686,7 +683,7 @@ to-amber-50">
 
 </section>
 {/* ================= CTA ================= */}
-<section className="relative px-6 py-32 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+<section className="relative px-6 py-16 md:py-20 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
 
   {/* Background Glow */}
   <div className="absolute left-0 top-0 w-96 h-96 bg-[#0D4A86]/10 blur-[150px] rounded-full" />
@@ -869,8 +866,7 @@ to-amber-50">
   💬
 </a>
 
-{/* ================= FOOTER ================= */}
-<Footer />
+
 
       {showExpiredModal && (
         <CustomModal
@@ -882,6 +878,8 @@ to-amber-50">
         />
       )}
 
-    </main>
+      </div>
+      <Footer />
+    </div>
   );
 }

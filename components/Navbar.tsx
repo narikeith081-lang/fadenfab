@@ -18,6 +18,8 @@ export default function Navbar({
   const router = useRouter();
   const pathname = usePathname();
 
+  if (pathname?.startsWith("/admin")) return null;
+
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   
@@ -274,7 +276,7 @@ export default function Navbar({
               
               {/* Wishlist Icon */}
               <Link href="/profile?tab=wishlist" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Wishlist">
-                <HeartIcon className="w-6 h-6" />
+                <HeartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
                 {wishlistCount > 0 && (
                   <span className="absolute top-0.5 right-0.5 bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
                     {wishlistCount}
@@ -284,7 +286,7 @@ export default function Navbar({
 
               {/* Cart Icon */}
               <Link href="/cart" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10" title="Shopping Cart">
-                <ShoppingCartIcon className="w-6 h-6" />
+                <ShoppingCartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
                 {cartCount > 0 && (
                   <span className="absolute top-0.5 right-0.5 bg-[#0D4A86] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
                     {cartCount}
@@ -377,7 +379,7 @@ export default function Navbar({
               </button>
               {/* Cart Icon (Guest) */}
               <Link href="/cart" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10 mr-2" title="Shopping Cart">
-                <ShoppingCartIcon className="w-6 h-6" />
+                <ShoppingCartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
                 {cartCount > 0 && (
                   <span className="absolute top-0.5 right-0.5 bg-[#0D4A86] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
                     {cartCount}
@@ -402,7 +404,7 @@ export default function Navbar({
             className="hover:text-[#0D4A86] text-slate-700 relative w-10 h-10 flex items-center justify-center cursor-pointer"
             aria-label="Wishlist"
           >
-            <HeartIcon className="w-6 h-6" />
+            <HeartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
             {wishlistCount > 0 && (
               <span className="absolute top-1 right-1 bg-amber-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center">
                 {wishlistCount}
@@ -416,7 +418,7 @@ export default function Navbar({
             className="hover:text-[#0D4A86] text-slate-700 relative w-10 h-10 flex items-center justify-center cursor-pointer"
             aria-label="Cart"
           >
-            <ShoppingCartIcon className="w-6 h-6" />
+            <ShoppingCartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
             {cartCount > 0 && (
               <span className="absolute top-1 right-1 bg-[#0D4A86] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center">
                 {cartCount}

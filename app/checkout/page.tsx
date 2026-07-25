@@ -295,7 +295,9 @@ export default function CheckoutPage() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen overflow-x-hidden text-slate-900 bg-gradient-to-br from-slate-50 via-blue-50 to-amber-50 flex flex-col justify-between">
+      <div className="min-h-screen flex flex-col justify-between relative">
+        <Navbar />
+        <div className="w-full relative flex-grow">
         {/* Background Glows */}
         <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-32 w-[550px] h-[550px] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -303,7 +305,7 @@ export default function CheckoutPage() {
           <div className="absolute bottom-0 left-1/3 w-[450px] h-[450px] bg-indigo-500/10 rounded-full blur-[140px]" />
         </div>
 
-        <Navbar />
+
 
         <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
           <AnimatePresence mode="wait">
@@ -603,8 +605,9 @@ export default function CheckoutPage() {
           </AnimatePresence>
         </div>
 
-        <Footer />
-      </main>
+      </div>
+      <Footer />
+    </div>
 
       {/* Online Payment Verification Modal */}
       <AnimatePresence>

@@ -3,8 +3,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <footer className="bg-slate-950 text-white border-t border-white/10 mt-20">
 
