@@ -188,7 +188,7 @@ export default function CartPage() {
 
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 pt-36 pb-24 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
         {/* Page Title */}
         <div className="mb-10">
           <h1 className="text-4xl font-extrabold text-slate-900">

@@ -447,20 +447,20 @@ function ProfileContent() {
 
         <Navbar />
 
-        <div className="max-w-7xl mx-auto px-6 pt-36 pb-24 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
           {/* Header */}
-          <div className="mb-12">
-            <h1 className="text-4xl font-extrabold text-slate-900">
+          <div className="mb-6 md:mb-10">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
               Customer Portal
             </h1>
-            <p className="mt-2 text-slate-600">
+            <p className="mt-2 text-slate-600 text-sm md:text-base">
               Manage your orders, profile details, and account settings.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* Sidebar Navigation */}
-            <div className="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 p-4 lg:p-6 shadow-xl overflow-hidden max-w-full">
+            <div className="lg:col-span-3 bg-transparent lg:bg-white/80 lg:backdrop-blur-md rounded-3xl lg:border lg:border-slate-200 p-0 lg:p-6 shadow-none lg:shadow-xl overflow-hidden max-w-full">
               {/* User Avatar Info */}
               <div className="hidden lg:block text-center pb-6 border-b border-slate-100">
                 <div className="w-20 h-20 bg-[#0D4A86]/10 text-[#0D4A86] text-3xl font-black rounded-full flex items-center justify-center mx-auto mb-4 border border-[#0D4A86]/20">
@@ -475,7 +475,7 @@ function ProfileContent() {
               </div>
 
               {/* Navigation Tabs with scroll shade overlays */}
-              <div className="relative w-full overflow-hidden lg:overflow-visible mt-2 lg:mt-0">
+              <div className="relative w-full overflow-hidden lg:overflow-visible mt-2 lg:mt-0 bg-slate-200/50 lg:bg-transparent p-1 lg:p-0 rounded-full lg:rounded-none">
                 {/* Left Shade Overlay */}
                 {showLeftShade && (
                   <div className="lg:hidden absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-blue-500/20 to-transparent pointer-events-none z-20 animate-fadeIn" />

@@ -293,7 +293,7 @@ to-amber-50">
       <Navbar />
 
 {/* ================= HERO ================= */}
-<section className="relative px-6 pt-40 pb-36 overflow-hidden">
+<section className="relative px-6 pt-24 md:pt-36 pb-20 md:pb-28 overflow-hidden">
 
   {/* Background Glow */}
   <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#0D4A86]/15 blur-[140px] rounded-full" />
