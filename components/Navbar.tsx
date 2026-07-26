@@ -57,7 +57,7 @@ export default function Navbar({
 
   // Fetch user profile from DB when user changes
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       // Check last active time from previous session
       const lastActive = localStorage.getItem("fadenfab_last_active");
       if (lastActive) {
@@ -90,7 +90,7 @@ export default function Navbar({
   // ================= COUNTERS SYNC =================
   const updateCounts = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
+    if (user && user.id) {
       // Cart Count
       const cart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
       const totalQty = cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
@@ -208,7 +208,7 @@ export default function Navbar({
         } else {
           const el = document.getElementById(sectionId);
           if (el) {
-            el.scrollIntoView({ behavior: "smooth" });
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
           } else {
             router.push(href);
           }
@@ -240,7 +240,7 @@ export default function Navbar({
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8 text-lg font-medium">
-          {user ? (
+          {user && user.id ? (
             // ================= LOGGED IN NAVBAR =================
             <>
               <button
@@ -377,15 +377,6 @@ export default function Navbar({
               >
                 Contact
               </button>
-              {/* Cart Icon (Guest) */}
-              <Link href="/cart" className="hover:text-[#0D4A86] text-slate-700 hover:scale-105 transition flex items-center justify-center relative w-10 h-10 mr-2" title="Shopping Cart">
-                <ShoppingCartIcon className="w-6 h-6" style={{ width: "24px", height: "24px" }} />
-                {cartCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 bg-[#0D4A86] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-4 text-center animate-fadeIn">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
               <button
                 onClick={() => router.push("/userlogin")}
                 className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
@@ -466,7 +457,7 @@ export default function Navbar({
 
         <div className="flex-1 overflow-y-auto">
           {/* Top Authentication Block */}
-          {user ? (
+          {user && user.id ? (
             <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Account</span>
@@ -498,7 +489,7 @@ export default function Navbar({
 
           {/* Navigation Links */}
           <div className="flex flex-col py-4">
-            {user ? (
+            {user && user.id ? (
               // Logged In Mobile Menu
               <>
                 <button
@@ -567,20 +558,6 @@ export default function Navbar({
                 >
                   Contact
                 </button>
-                <Link
-                  href="/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/profile?tab=orders"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  My Orders
-                </Link>
               </>
             )}
           </div>

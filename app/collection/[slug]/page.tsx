@@ -73,6 +73,7 @@ export default function CollectionPage() {
   const [collection, setCollection] = useState<any>(null);
   const [wishlistedIds, setWishlistedIds] = useState<number[]>([]);
   const [cart, setCart] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +90,7 @@ export default function CollectionPage() {
   const loadData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
       if (user) {
         // 1. Load Cart
         const items = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
@@ -129,6 +131,12 @@ export default function CollectionPage() {
     window.addEventListener("cart-updated", loadData);
     window.addEventListener("catalog-updated", loadData);
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
     setIsDesktop(window.innerWidth >= 1024);
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 1024);
@@ -139,6 +147,7 @@ export default function CollectionPage() {
       window.removeEventListener("cart-updated", loadData);
       window.removeEventListener("catalog-updated", loadData);
       window.removeEventListener("resize", handleResize);
+      subscription.unsubscribe();
     };
   }, [slug]);
 
@@ -295,10 +304,10 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative">
+    <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
       <Navbar />
       <motion.div
-        className="w-full relative flex-grow"
+        className="w-full relative flex-grow min-w-0"
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -438,7 +447,7 @@ export default function CollectionPage() {
                         ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
                       </span>
 
-                      <div className="flex items-center gap-2">
+                      <div className={`items-center gap-2 ${user ? "flex" : "hidden md:flex"}`}>
                         <button
                           onClick={() => handleAddToWishlist(product)}
                           className="p-2 rounded-full border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 transition cursor-pointer flex items-center justify-center"

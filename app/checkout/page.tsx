@@ -69,7 +69,8 @@ export default function CheckoutPage() {
         if (profile) {
           setFullName(profile.full_name || "");
           setMobile(profile.mobile || "");
-          const savedAddress = localStorage.getItem(`fadenfab_address_${user.id}`) || "";
+          const dbAddress = user.user_metadata?.address || "";
+          const savedAddress = dbAddress || localStorage.getItem(`fadenfab_address_${user.id}`) || "";
           setAddress(savedAddress);
         }
       }
@@ -154,6 +155,20 @@ export default function CheckoutPage() {
   const executeOrderSubmission = async (method: string, txId: string) => {
     try {
       setIsSubmitting(true);
+      
+      // Update saved address, name, and phone permanently
+      localStorage.setItem(`fadenfab_address_${user.id}`, address);
+      await supabase.auth.updateUser({
+        data: { address: address }
+      }).catch(e => console.error("Auth metadata update error:", e));
+
+      await supabase
+        .from("profiles")
+        .update({
+          full_name: fullName,
+          mobile: mobile
+        })
+        .eq("id", user.id);
       const orderAddress = {
         street: address,
         city,
@@ -295,9 +310,9 @@ export default function CheckoutPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex flex-col justify-between relative">
+      <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
         <Navbar />
-        <div className="w-full relative flex-grow">
+        <div className="w-full relative flex-grow min-w-0">
         {/* Background Glows */}
         <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-32 w-[550px] h-[550px] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -307,7 +322,7 @@ export default function CheckoutPage() {
 
 
 
-        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
           <AnimatePresence mode="wait">
             {orderSuccess ? (
               /* ================= SUCCESS SCREEN ================= */
@@ -714,6 +729,29 @@ export default function CheckoutPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Branded Loading Overlay */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+          <div className="relative flex flex-col items-center">
+            <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+            <motion.h2 
+              initial={{ opacity: 0.3, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 1.5,
+                ease: "easeInOut"
+              }}
+              className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86]" 
+              style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+            >
+              FADENFAB
+            </motion.h2>
+          </div>
+        </div>
+      )}
     </ProtectedRoute>
   );
 }

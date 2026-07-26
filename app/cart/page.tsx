@@ -180,9 +180,9 @@ export default function CartPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex flex-col justify-between relative">
+      <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
         <Navbar />
-        <div className="w-full relative flex-grow">
+        <div className="w-full relative flex-grow min-w-0">
       {/* Background Glows */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-32 w-[550px] h-[550px] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -192,7 +192,7 @@ export default function CartPage() {
 
 
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
         {/* Page Title */}
         <div className="mb-10">
           <h1 className="text-4xl font-extrabold text-slate-900">

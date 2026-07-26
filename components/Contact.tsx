@@ -91,11 +91,10 @@ if (!res.ok) {
 
   return (
     <section
-      id="contact"
       className="bg-black text-white px-6 md:px-8 py-20"
     >
       {/* Heading */}
-      <div className="text-center mb-12">
+      <div id="contact" className="text-center mb-12 scroll-mt-24">
         <h2 className="text-4xl md:text-5xl font-bold">
           Get a Quote
         </h2>
@@ -260,10 +259,41 @@ if (!res.ok) {
               <p className="text-gray-300 mt-3">
                 Our team will contact you shortly.
               </p>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setSuccess(false)}
+                className="mt-6 bg-yellow-400 hover:bg-yellow-300 text-black px-6 py-2.5 rounded-full font-bold transition cursor-pointer text-sm"
+              >
+                Close
+              </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+          <div className="relative flex flex-col items-center">
+            <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+            <motion.h2 
+              initial={{ opacity: 0.3, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 1.5,
+                ease: "easeInOut"
+              }}
+              className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86]" 
+              style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+            >
+              FADENFAB
+            </motion.h2>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -98,8 +98,12 @@ function ProfileContent() {
           setProfile(profileData);
           setFullName(profileData.full_name || "");
           setMobile(profileData.mobile || "");
-          const savedAddress = localStorage.getItem(`fadenfab_address_${user.id}`) || "";
+          const dbAddress = user.user_metadata?.address || "";
+          const savedAddress = dbAddress || localStorage.getItem(`fadenfab_address_${user.id}`) || "";
           setAddress(savedAddress);
+          if (savedAddress && !dbAddress) {
+            supabase.auth.updateUser({ data: { address: savedAddress } });
+          }
 
           // Auto-sync profile name & phone with the admin's database view
           const { data: { session } } = await supabase.auth.getSession();
@@ -227,6 +231,11 @@ function ProfileContent() {
     try {
       setSavingProfile(true);
       localStorage.setItem(`fadenfab_address_${user.id}`, address);
+      
+      // Save address permanently in Supabase Auth user_metadata
+      await supabase.auth.updateUser({
+        data: { address: address }
+      });
 
       const { error } = await supabase
         .from("profiles")
@@ -381,9 +390,9 @@ function ProfileContent() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex flex-col justify-between relative">
+      <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
         <Navbar />
-        <div className="w-full relative flex-grow">
+        <div className="w-full relative flex-grow min-w-0">
         {/* Background Glows */}
         <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-32 w-[550px] h-[550px] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -393,7 +402,7 @@ function ProfileContent() {
 
 
 
-        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-32 pb-16 md:pb-24 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
           {/* Header */}
           <div className="mb-6 md:mb-10">
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
@@ -892,6 +901,29 @@ function ProfileContent() {
             message={modalConfig.message}
             onConfirm={modalConfig.onConfirm}
           />
+        )}
+
+        {/* Branded Loading Overlay */}
+        {savingProfile && (
+          <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
+            <div className="relative flex flex-col items-center">
+              <div className="w-20 h-20 rounded-full border-[3px] border-slate-100 border-t-[#0D4A86] animate-spin mb-4" />
+              <motion.h2 
+                initial={{ opacity: 0.3, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }}
+                className="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#0D4A86]" 
+                style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+              >
+                FADENFAB
+              </motion.h2>
+            </div>
+          </div>
         )}
 
       </div>

@@ -654,10 +654,8 @@ export default function AdminPage() {
   if (!authorized) return null;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#050816] via-[#0b1023] to-[#111827] text-white pb-24">
-      {/* Background glows */}
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(168,85,247,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),transparent_35%),radial-gradient(circle_at_left,_rgba(250,204,21,0.12),transparent_30%)]" />
-
+    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased flex flex-col lg:flex-row w-full max-w-full overflow-x-hidden">
+      
       {/* Reusable Custom Modal */}
       {modalConfig && (
         <CustomModal
@@ -672,130 +670,199 @@ export default function AdminPage() {
         />
       )}
 
-      {/* ================= HEADER ================= */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#070b18]/80 backdrop-blur-2xl shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      {/* ================= DESKTOP SIDEBAR ================= */}
+      <aside className="hidden lg:flex w-64 border-r border-slate-200 bg-white p-6 flex-col justify-between h-screen sticky top-0 shrink-0">
+        <div className="space-y-8">
           <div>
-            <h1 className="text-2xl font-black tracking-wide bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-extrabold tracking-widest text-[#0D4A86]" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
               FADENFAB
             </h1>
-            <p className="text-sm text-gray-400 mt-1">Admin Management Dashboard</p>
+            <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Admin Dashboard</p>
+          </div>
+
+          {/* Navigation Menu */}
+          <nav className="space-y-1">
+            <button
+              onClick={() => setActiveTab("leads")}
+              className={`w-full px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-3 cursor-pointer ${
+                activeTab === "leads"
+                  ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <EnvelopeIcon className="w-5 h-5 shrink-0" />
+              <span>Inquiries & Leads</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("inventory")}
+              className={`w-full px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-3 cursor-pointer ${
+                activeTab === "inventory"
+                  ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <CircleStackIcon className="w-5 h-5 shrink-0" />
+              <span>Catalog Products</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`w-full px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-3 cursor-pointer ${
+                activeTab === "users"
+                  ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <UsersIcon className="w-5 h-5 shrink-0" />
+              <span>User Telemetry</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("coupons")}
+              className={`w-full px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-3 cursor-pointer ${
+                activeTab === "coupons"
+                  ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <TicketIcon className="w-5 h-5 shrink-0" />
+              <span>Coupons Used</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("orders")}
+              className={`w-full px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-3 cursor-pointer ${
+                activeTab === "orders"
+                  ? "bg-[#0D4A86]/10 text-[#0D4A86]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <ShoppingBagIcon className="w-5 h-5 shrink-0" />
+              <span>Order Management</span>
+            </button>
+          </nav>
+        </div>
+
+        {/* Logout */}
+        <button
+          onClick={logout}
+          className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-3 rounded-xl text-sm font-bold transition duration-300 cursor-pointer flex items-center justify-center gap-2"
+        >
+          Logout Session
+        </button>
+      </aside>
+
+      {/* ================= MOBILE HEADER & TAB BAR ================= */}
+      <div className="lg:hidden flex flex-col w-full min-w-0 bg-white border-b border-slate-200 sticky top-0 z-40 overflow-hidden">
+        <header className="px-6 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-extrabold tracking-widest text-[#0D4A86]" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+              FADENFAB
+            </h1>
+            <p className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Admin Portal</p>
           </div>
           <button
             onClick={logout}
-            className="bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-400/30 hover:scale-105 hover:from-red-500/30 hover:to-pink-500/30 text-red-200 px-5 py-2 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg cursor-pointer"
+            className="text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold"
           >
             Logout
           </button>
-        </div>
-      </header>
+        </header>
 
-      {/* ================= CONTENT CONTAINER ================= */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        
-        {/* ================= TAB CONTROLS ================= */}
-        <div className="flex flex-wrap gap-4 mb-8 border-b border-white/10 pb-4">
+        {/* Scrollable Horizontal Tabs */}
+        <div className="flex gap-2 overflow-x-auto px-4 pb-3 scrollbar-none w-full max-w-full">
           <button
             onClick={() => setActiveTab("leads")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              activeTab === "leads"
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            className={`px-4 py-2 rounded-lg font-bold text-xs shrink-0 transition-all ${
+              activeTab === "leads" ? "bg-[#0D4A86] text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <EnvelopeIcon className="w-5 h-5" />
-            <span>Manage Contacts/Leads ({stats.totalLeads})</span>
+            Leads ({stats.totalLeads})
           </button>
           <button
             onClick={() => setActiveTab("inventory")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              activeTab === "inventory"
-                ? "bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/20"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            className={`px-4 py-2 rounded-lg font-bold text-xs shrink-0 transition-all ${
+              activeTab === "inventory" ? "bg-[#0D4A86] text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <CircleStackIcon className="w-5 h-5" />
-            <span>🔐 Catalog Products (Confidential)</span>
+            Catalog
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              activeTab === "users"
-                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/20"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            className={`px-4 py-2 rounded-lg font-bold text-xs shrink-0 transition-all ${
+              activeTab === "users" ? "bg-[#0D4A86] text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <UsersIcon className="w-5 h-5" />
-            <span>👤 Users & Telemetry Analytics</span>
+            Telemetry
           </button>
           <button
             onClick={() => setActiveTab("coupons")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              activeTab === "coupons"
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/20"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            className={`px-4 py-2 rounded-lg font-bold text-xs shrink-0 transition-all ${
+              activeTab === "coupons" ? "bg-[#0D4A86] text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <TicketIcon className="w-5 h-5" />
-            <span>🎟️ Coupon Redemptions</span>
+            Coupons
           </button>
           <button
             onClick={() => setActiveTab("orders")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              activeTab === "orders"
-                ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/20"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+            className={`px-4 py-2 rounded-lg font-bold text-xs shrink-0 transition-all ${
+              activeTab === "orders" ? "bg-[#0D4A86] text-white" : "bg-slate-100 text-slate-600"
             }`}
           >
-            <ShoppingBagIcon className="w-5 h-5" />
-            <span>📦 Order Management ({ordersList.length})</span>
+            Orders ({ordersList.length})
           </button>
         </div>
+      </div>
 
-        {/* ================= STATS OVERVIEW CARDS ================= */}
+      {/* ================= MAIN CONTENT WINDOW ================= */}
+      <main className="flex-grow min-w-0 px-4 lg:px-8 py-5 lg:py-8 w-full max-w-7xl mx-auto">
+
+        {/* ================= STATS CARD PANELS ================= */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-[#131c31] to-[#0b1220] border border-white/10 rounded-2xl p-5 shadow-[0_0_20px_rgba(59,130,246,0.08)]">
-            <p className="text-sm text-gray-400">Total Registered Users</p>
-            <h2 className="text-3xl font-bold mt-2 text-cyan-400">{stats.totalUsers}</h2>
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Registered Users</p>
+            <h2 className="text-2xl font-black mt-2 text-[#0D4A86]">{stats.totalUsers}</h2>
           </div>
-          <div className="bg-gradient-to-br from-[#131c31] to-[#0b1220] border border-white/10 rounded-2xl p-5 shadow-[0_0_20px_rgba(59,130,246,0.08)]">
-            <p className="text-sm text-gray-400">Total Sales Volume</p>
-            <h2 className="text-3xl font-bold mt-2 text-green-400">₹{stats.totalSales.toLocaleString()}</h2>
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Sales</p>
+            <h2 className="text-2xl font-black mt-2 text-emerald-600">₹{stats.totalSales.toLocaleString()}</h2>
           </div>
-          <div className="bg-gradient-to-br from-[#131c31] to-[#0b1220] border border-white/10 rounded-2xl p-5 shadow-[0_0_20px_rgba(59,130,246,0.08)]">
-            <p className="text-sm text-gray-400">Active Site Usage</p>
-            <h2 className="text-3xl font-bold mt-2 text-yellow-400">{stats.usageHours} hrs</h2>
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Site Usage</p>
+            <h2 className="text-2xl font-black mt-2 text-amber-600">{stats.usageHours} hrs</h2>
           </div>
-          <div className="bg-gradient-to-br from-[#131c31] to-[#0b1220] border border-white/10 rounded-2xl p-5 shadow-[0_0_20px_rgba(59,130,246,0.08)]">
-            <p className="text-sm text-gray-400">Coupons Used</p>
-            <h2 className="text-3xl font-bold mt-2 text-amber-400">{stats.totalCouponsUsed} times</h2>
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Campaign Coupons</p>
+            <h2 className="text-2xl font-black mt-2 text-indigo-600">{stats.totalCouponsUsed} times</h2>
           </div>
         </div>
 
         <AnimatePresence mode="wait">
           {activeTab === "leads" ? (
-            /* ================= LEADS TAB ================= */
+            /* ================= INQUIRIES TAB ================= */
             <motion.div
               key="leads-tab"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
+              className="space-y-6"
             >
               {/* FILTERS */}
-              <div className="bg-gradient-to-r from-[#111827] to-[#172033] border border-white/10 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(168,85,247,0.08)]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                 <div className="flex flex-col lg:flex-row gap-4">
                   <input
                     type="text"
                     placeholder="Search contact name, company or phone..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#0D4A86] focus:bg-white transition"
                   />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none text-slate-700 font-semibold"
                   >
                     <option value="all">All Contacts Status</option>
                     <option value="new">New</option>
@@ -805,8 +872,8 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* TABLE HEADER */}
-              <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-4 text-sm text-gray-400 border-b border-white/10 mb-3 font-semibold">
+              {/* TABLE HEADER (Desktop Only) */}
+              <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-2 text-xs text-slate-400 uppercase font-bold tracking-wider mb-2">
                 <div className="col-span-2">Contact User</div>
                 <div className="col-span-2">Phone</div>
                 <div className="col-span-2">Company</div>
@@ -816,13 +883,13 @@ export default function AdminPage() {
                 <div className="col-span-1 text-center">Action</div>
               </div>
 
-              {/* LEADS LIST */}
+              {/* INQUIRIES LIST */}
               <div className="space-y-4">
                 {loading ? (
-                  <div className="text-center py-20 text-gray-400 font-medium">Loading contacts...</div>
+                  <div className="text-center py-20 text-slate-400 font-medium bg-white rounded-2xl border border-slate-200 shadow-sm">Loading contacts...</div>
                 ) : filteredLeads.length === 0 ? (
-                  <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-10 text-center text-gray-400">
-                    No leads or contact inquiries found
+                  <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center text-slate-400 shadow-sm">
+                    No leads or contact inquiries found.
                   </div>
                 ) : (
                   filteredLeads.map((lead) => {
@@ -840,87 +907,85 @@ export default function AdminPage() {
                     return (
                       <motion.div
                         key={lead.id}
-                        className={`bg-gradient-to-br from-[#111827] to-[#0f172a] border rounded-2xl p-5 transition-all duration-300 ${
-                          isOrder 
-                            ? "border-cyan-500/20 hover:border-cyan-400/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)]" 
-                            : "border-white/10 hover:border-green-500/20 hover:shadow-[0_0_25px_rgba(34,197,94,0.1)]"
+                        className={`bg-white border rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-md ${
+                          isOrder ? "border-sky-200" : "border-slate-200"
                         }`}
                       >
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-                          {/* Contact User */}
+                          {/* User Column */}
                           <div className="col-span-2">
-                            <p className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-lg flex items-center gap-1.5">
+                            <p className="font-bold text-slate-800 text-base flex items-center gap-1.5 truncate">
                               {isOrder && <span className="text-sm shrink-0">🛒</span>}
                               {lead.name}
                             </p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">
                               {new Date(lead.created_at).toLocaleDateString()}
                             </p>
                             {lead.email && (
-                              <p className="text-[10px] text-gray-400 mt-0.5 truncate">{lead.email}</p>
+                              <p className="text-xs text-slate-500 mt-0.5 truncate select-all">{lead.email}</p>
                             )}
                           </div>
 
-                          {/* Phone */}
-                          <div className="col-span-2 text-sm text-slate-300 font-medium">
+                          {/* Phone Column */}
+                          <div className="col-span-2 text-sm text-slate-700 font-semibold select-all">
                             {lead.phone || "N/A"}
                           </div>
 
-                          {/* Company / Items */}
+                          {/* Company / Items Column */}
                           <div className="col-span-2 text-sm">
                             {isOrder && orderDetails ? (
-                              <div className="text-xs space-y-1 bg-white/5 border border-white/5 p-2 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
-                                <span className="font-bold text-cyan-400 block text-[9px] uppercase tracking-wider mb-1">📦 Order Items</span>
+                              <div className="text-xs space-y-1 bg-slate-50 border border-slate-100 p-2.5 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
+                                <span className="font-bold text-sky-800 block text-[9px] uppercase tracking-wider mb-1">📦 Items</span>
                                 {orderDetails.items && orderDetails.items.map((item: any, idx: number) => (
-                                  <div key={idx} className="flex justify-between gap-2 border-b border-white/5 pb-1 mb-1 last:border-0 last:pb-0 last:mb-0">
-                                    <span className="truncate text-slate-300 text-xs" title={item.name}>{item.name}</span>
-                                    <span className="shrink-0 font-bold text-slate-400 text-xs">x{item.quantity}</span>
+                                  <div key={idx} className="flex justify-between gap-2 border-b border-slate-200/40 pb-1 mb-1 last:border-0 last:pb-0 last:mb-0">
+                                    <span className="truncate text-slate-600 text-xs" title={item.name}>{item.name}</span>
+                                    <span className="shrink-0 font-bold text-[#0D4A86] text-xs">x{item.quantity}</span>
                                   </div>
                                 ))}
                               </div>
                             ) : (
-                              <span className="text-slate-300">{lead.company || "N/A"}</span>
+                              <span className="text-slate-600 font-medium">{lead.company || "N/A"}</span>
                             )}
                           </div>
 
-                          {/* Quantity / Amount */}
+                          {/* Quantity Column */}
                           <div className="col-span-1 text-center font-bold">
                             {isOrder ? (
-                              <span className="text-green-400 text-sm">₹{lead.quantity}</span>
+                              <span className="text-emerald-600 text-sm">₹{lead.quantity}</span>
                             ) : (
-                              <span className="text-slate-300 text-sm">{lead.quantity || 0}</span>
+                              <span className="text-slate-600 text-sm">{lead.quantity || 0}</span>
                             )}
                           </div>
 
-                          {/* Message / Shipping Address */}
+                          {/* Message / Shipping Column */}
                           <div className="col-span-3 text-sm">
                             {isOrder && orderDetails ? (
-                              <div className="text-[11px] space-y-1.5 bg-white/5 border border-white/5 p-2 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
+                              <div className="text-[11px] space-y-1.5 bg-slate-50 border border-slate-100 p-2.5 rounded-xl max-h-[140px] overflow-y-auto scrollbar-none">
                                 {orderDetails.shipping_address && (
                                   <div>
                                     <span className="font-bold text-slate-400 block text-[9px] uppercase tracking-wider">📍 Shipping Address</span>
-                                    <p className="text-slate-300 leading-tight">
+                                    <p className="text-slate-600 leading-tight">
                                       {orderDetails.shipping_address.street}, {orderDetails.shipping_address.city}, {orderDetails.shipping_address.state} - {orderDetails.shipping_address.pincode}
                                     </p>
                                   </div>
                                 )}
                                 {orderDetails.payment_method && (
-                                  <div className="pt-1 border-t border-white/5 text-[10px] text-slate-400 flex flex-wrap justify-between items-center gap-1">
-                                    <span>Pay: <strong className="text-slate-300">{orderDetails.payment_method}</strong></span>
+                                  <div className="pt-1 border-t border-slate-200/50 text-[10px] text-slate-500 flex flex-wrap justify-between items-center gap-1">
+                                    <span>Pay: <strong className="text-slate-700">{orderDetails.payment_method}</strong></span>
                                     {orderDetails.transaction_id && (
-                                      <span className="text-cyan-400 font-mono">UTR: {orderDetails.transaction_id}</span>
+                                      <span className="text-[#0D4A86] font-mono select-all">UTR: {orderDetails.transaction_id}</span>
                                     )}
                                   </div>
                                 )}
                               </div>
                             ) : (
-                              <div className="text-gray-300 truncate" title={lead.message || ""}>
+                              <div className="text-slate-600 text-xs line-clamp-3" title={lead.message || ""}>
                                 {lead.message || "No message"}
                               </div>
                             )}
                           </div>
 
-                          {/* Status Select */}
+                          {/* Status Dropdown */}
                           <div className="col-span-1">
                             {isOrder ? (
                               <select
@@ -958,21 +1023,21 @@ export default function AdminPage() {
                                     });
                                   }
                                 }}
-                                className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-2 py-2 text-xs outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 text-slate-300 font-semibold"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none text-slate-700 font-bold focus:border-[#0D4A86] focus:bg-white"
                               >
-                                <option value="Processing" className="bg-[#111827] text-yellow-300">🟡 Processing</option>
-                                <option value="Shipped" className="bg-[#111827] text-blue-300">🔵 Shipped</option>
-                                <option value="Delivered" className="bg-[#111827] text-green-300">🟢 Delivered</option>
+                                <option value="Processing" className="text-yellow-600">🟡 Processing</option>
+                                <option value="Shipped" className="text-blue-600">🔵 Shipped</option>
+                                <option value="Delivered" className="text-green-600">🟢 Delivered</option>
                               </select>
                             ) : (
                               <select
                                 value={lead.status}
                                 onChange={(e) => updateStatus(lead.id, e.target.value)}
-                                className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-2 py-2 text-xs outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-slate-300"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none text-slate-700 font-bold focus:border-[#0D4A86] focus:bg-white"
                               >
-                                <option value="new" className="bg-[#111827] text-yellow-300">🟡 New</option>
-                                <option value="contacted" className="bg-[#111827] text-cyan-300">🔵 Contacted</option>
-                                <option value="closed" className="bg-[#111827] text-green-300">🟢 Closed</option>
+                                <option value="new" className="text-yellow-600">🟡 New</option>
+                                <option value="contacted" className="text-sky-600">🔵 Contacted</option>
+                                <option value="closed" className="text-green-600">🟢 Closed</option>
                               </select>
                             )}
                           </div>
@@ -981,7 +1046,7 @@ export default function AdminPage() {
                           <div className="col-span-1">
                             <button
                               onClick={() => deleteLead(lead.id)}
-                              className="w-full bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/20 hover:from-red-500/30 hover:to-orange-500/30 text-red-200 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer"
+                              className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 rounded-xl text-xs font-bold transition duration-300 cursor-pointer"
                             >
                               Delete
                             </button>
@@ -1001,21 +1066,22 @@ export default function AdminPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="space-y-10"
+              className="space-y-6"
             >
-              <div className="bg-gradient-to-r from-purple-900/10 to-indigo-950/20 border border-purple-500/20 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              {/* Header Panel */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm">
                 <div className="flex items-start gap-4">
-                  <ShieldCheckIcon className="w-10 h-10 text-purple-400 shrink-0" />
+                  <ShieldCheckIcon className="w-10 h-10 text-[#0D4A86] shrink-0" />
                   <div>
-                    <h3 className="text-lg font-bold text-purple-300">🔐 Confidential Catalog CRUD Panel</h3>
-                    <p className="text-sm text-gray-400 mt-1 leading-relaxed">
+                    <h3 className="text-lg font-bold text-slate-800">🔐 Confidential Catalog CRUD Panel</h3>
+                    <p className="text-sm text-slate-500 mt-1 leading-relaxed max-w-xl">
                       Easily add new designs, edit specifications, modify stock levels, or remove products permanently from FADENFAB.
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsAddOpen(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-2xl text-sm font-extrabold flex items-center gap-1.5 shadow-lg shadow-purple-500/20 transition cursor-pointer"
+                  className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-1.5 shadow-lg shadow-[#0D4A86]/10 transition cursor-pointer"
                 >
                   <PlusIcon className="w-4 h-4 text-white" />
                   <span>Add Product</span>
@@ -1025,8 +1091,8 @@ export default function AdminPage() {
               {Object.keys(catalog).map((slug) => {
                 const category = catalog[slug];
                 return (
-                  <div key={slug} className="space-y-5">
-                    <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-pink-400 bg-clip-text uppercase tracking-wider">
+                  <div key={slug} className="space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-500 uppercase tracking-widest pl-1 mt-4">
                       {category.title} ({category.products ? category.products.length : 0} items)
                     </h3>
 
@@ -1034,9 +1100,9 @@ export default function AdminPage() {
                       {category.products && category.products.map((product) => (
                         <div
                           key={product.id}
-                          className="bg-[#111827] border border-white/5 rounded-2xl p-5 hover:border-purple-500/20 transition-all duration-300 flex items-center gap-4 relative group"
+                          className="bg-white border border-slate-200/80 rounded-2xl p-5 hover:shadow-md transition-all duration-300 flex items-center gap-4 relative group"
                         >
-                          <div className="w-16 h-20 bg-white/5 border border-white/10 rounded-lg p-1 shrink-0 flex items-center justify-center relative overflow-hidden">
+                          <div className="w-16 h-20 bg-slate-50 border border-slate-100 rounded-lg p-1 shrink-0 flex items-center justify-center relative overflow-hidden">
                             {product.image ? (
                               <img
                                 src={product.image}
@@ -1044,39 +1110,39 @@ export default function AdminPage() {
                                 className="object-contain w-full h-full"
                               />
                             ) : (
-                              <span className="text-2xl text-slate-500">👕</span>
+                              <span className="text-2xl text-slate-400">👕</span>
                             )}
                           </div>
 
                           <div className="flex-grow min-w-0 pr-12">
-                            <h4 className="font-bold text-sm truncate" title={product.name}>
+                            <h4 className="font-bold text-slate-800 text-sm truncate" title={product.name}>
                               {product.name}
                             </h4>
-                            <p className="text-xs text-purple-400 mt-1 font-semibold">
+                            <p className="text-xs text-[#0D4A86] mt-1 font-bold">
                               {product.gsm} | {product.color ? product.color.replace("Color: ", "") : "No Color"}
                             </p>
-                            <p className="text-xs text-gray-500 truncate mt-0.5" title={product.fabric}>
+                            <p className="text-xs text-slate-500 truncate mt-0.5" title={product.fabric}>
                               {product.fabric ? product.fabric.replace("Material: ", "") : "Standard Fabric"}
                             </p>
                             <div className="flex items-center gap-2 mt-2">
-                              <span className="text-xs text-gray-400">Stock:</span>
-                              <span className={`text-xs font-extrabold ${product.stock <= 5 ? "text-red-400 animate-pulse" : "text-green-400"}`}>
+                              <span className="text-xs text-slate-400">Stock:</span>
+                              <span className={`text-xs font-extrabold ${product.stock <= 5 ? "text-red-500 animate-pulse font-black" : "text-emerald-600"}`}>
                                 {product.stock} units
                               </span>
                             </div>
                           </div>
 
-                          <div className="absolute right-4 top-4 flex flex-col gap-2">
+                          <div className="absolute right-4 top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition duration-300">
                             <button
                               onClick={() => startEditProduct(slug, product)}
-                              className="p-1.5 bg-slate-800 hover:bg-[#0D4A86] text-slate-300 hover:text-white rounded-lg transition cursor-pointer"
+                              className="p-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg transition cursor-pointer"
                               title="Edit Product"
                             >
                               <PencilIcon className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleRemoveProduct(slug, product)}
-                              className="p-1.5 bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white rounded-lg transition cursor-pointer"
+                              className="p-1.5 bg-red-50 border border-red-100 hover:bg-red-100 text-red-600 rounded-lg transition cursor-pointer"
                               title="Delete Product"
                             >
                               <TrashIcon className="w-3.5 h-3.5" />
@@ -1099,9 +1165,9 @@ export default function AdminPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <h3 className="text-xl font-bold text-teal-300">👤 User Accounts & Telemetry Directory</h3>
+              <h3 className="text-base font-extrabold text-slate-500 uppercase tracking-widest pl-1">👤 User Accounts & Telemetry Directory</h3>
               {usersAnalytics.length === 0 ? (
-                <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-10 text-center text-gray-400">
+                <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center text-slate-400 shadow-sm">
                   No registered users or active telemetry logs found yet.
                 </div>
               ) : (
@@ -1109,42 +1175,42 @@ export default function AdminPage() {
                   {usersAnalytics.map((u, idx) => (
                     <div
                       key={idx}
-                      className="bg-slate-900/60 border border-white/10 rounded-3xl p-6 hover:border-teal-400/20 transition-all duration-300"
+                      className="bg-white border border-slate-200/80 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h4 className="font-extrabold text-lg text-teal-400">{u.name || "App User"}</h4>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Active since: {new Date(u.registeredAt).toLocaleDateString()}
+                          <h4 className="font-extrabold text-base text-slate-800 truncate max-w-[150px]">{u.name || "App User"}</h4>
+                          <p className="text-[10px] text-slate-400 font-medium mt-1">
+                            Signup: {new Date(u.registeredAt).toLocaleDateString()}
                           </p>
                         </div>
-                        <span className="bg-teal-500/10 text-teal-400 text-xs px-2.5 py-1 rounded-full font-bold">Client</span>
+                        <span className="bg-blue-50 text-[#0D4A86] text-[10px] px-2.5 py-1 rounded-full font-bold border border-blue-100">Client</span>
                       </div>
                       
-                      <div className="space-y-2.5 text-sm border-t border-white/5 pt-4">
+                      <div className="space-y-2.5 text-xs border-t border-slate-100 pt-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-400">Email ID:</span>
-                          <span className="font-medium text-slate-200 truncate max-w-[160px]" title={u.email}>{u.email}</span>
+                          <span className="text-slate-400">Email ID:</span>
+                          <span className="font-semibold text-slate-700 truncate max-w-[150px] select-all" title={u.email}>{u.email}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Password:</span>
-                          <span className="font-medium text-teal-300 font-mono tracking-wider">{u.mockPassword || "••••••••"}</span>
+                          <span className="text-slate-400">Password:</span>
+                          <span className="font-semibold text-[#0D4A86] font-mono tracking-wider">{u.mockPassword || "••••••••"}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Phone Mobile:</span>
-                          <span className="font-medium text-slate-200">{u.mobile || "N/A"}</span>
+                          <span className="text-slate-400">Phone Mobile:</span>
+                          <span className="font-semibold text-slate-700 select-all">{u.mobile || "N/A"}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Session Usage:</span>
-                          <span className="font-bold text-yellow-400">
+                          <span className="text-slate-400">Session Usage:</span>
+                          <span className="font-bold text-amber-600">
                             {u.usageTime >= 60
                               ? `${Math.round(u.usageTime / 60)} mins`
                               : `${u.usageTime || 0} secs`}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Purchase Count:</span>
-                          <span className="font-bold text-green-400">{u.purchaseCount || 0} Orders placed</span>
+                          <span className="text-slate-400">Purchase Count:</span>
+                          <span className="font-bold text-emerald-600">{u.purchaseCount || 0} Orders placed</span>
                         </div>
                       </div>
                     </div>
@@ -1162,43 +1228,43 @@ export default function AdminPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <h3 className="text-xl font-bold text-amber-300">🎟️ Active Coupon Campaigns & Usage Logs</h3>
+              <h3 className="text-base font-extrabold text-slate-500 uppercase tracking-widest pl-1">🎟️ Active Coupon Campaigns & Usage Logs</h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {couponsData.map((coupon, idx) => (
                   <div
                     key={idx}
-                    className="bg-slate-900/60 border border-white/10 rounded-3xl p-6 hover:border-amber-400/20 transition-all duration-300"
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 hover:shadow-md transition-all duration-300"
                   >
-                    <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
-                      <h4 className="font-extrabold text-lg text-amber-400 font-mono tracking-widest uppercase">
+                    <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                      <h4 className="font-extrabold text-base text-indigo-700 font-mono tracking-widest uppercase">
                         {coupon.code}
                       </h4>
-                      <span className="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded-full font-bold">
-                        {coupon.discount}% Discount
+                      <span className="bg-indigo-50 text-indigo-600 text-xs px-2.5 py-1 rounded-full font-bold border border-indigo-100">
+                        {coupon.discount}% Off
                       </span>
                     </div>
 
-                    <div className="space-y-3.5 text-sm">
+                    <div className="space-y-3.5 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Redeem Count:</span>
-                        <span className="font-bold text-slate-200">{coupon.usageCount || 0} times</span>
+                        <span className="text-slate-400">Redeem Count:</span>
+                        <span className="font-bold text-slate-700">{coupon.usageCount || 0} times</span>
                       </div>
                       
                       <div className="space-y-1">
-                        <span className="text-gray-400 text-xs font-bold block mb-1">Applied By Users:</span>
+                        <span className="text-slate-400 text-[10px] font-bold block mb-1">Applied By Users:</span>
                         {coupon.users && coupon.users.length > 0 ? (
                           <div className="flex flex-wrap gap-1 max-h-[85px] overflow-y-auto pr-1">
                             {coupon.users.map((email: string, i: number) => (
                               <span
                                 key={i}
-                                className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md border border-white/5 font-semibold"
+                                className="text-[10px] bg-slate-50 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200/50 font-semibold"
                               >
                                 {email}
                               </span>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-xs text-gray-500 italic block">Not applied by any user yet.</span>
+                          <span className="text-xs text-slate-400 italic block">Not applied by any user yet.</span>
                         )}
                       </div>
                     </div>
@@ -1217,19 +1283,19 @@ export default function AdminPage() {
               className="space-y-6"
             >
               {/* FILTERS */}
-              <div className="bg-gradient-to-r from-[#111827] to-[#172033] border border-white/10 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(34,197,94,0.08)]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                 <div className="flex flex-col lg:flex-row gap-4">
                   <input
                     type="text"
                     placeholder="Search by Order ID, Recipient name, mobile, payment method, or transaction ID..."
                     value={ordersSearch}
                     onChange={(e) => setOrdersSearch(e.target.value)}
-                    className="flex-1 bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none text-slate-200 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-sm"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none text-slate-700 focus:border-[#0D4A86] focus:bg-white transition text-sm"
                   />
                   <select
                     value={ordersStatusFilter}
                     onChange={(e) => setOrdersStatusFilter(e.target.value)}
-                    className="bg-[#0b1220] border border-white/10 rounded-xl px-4 py-3 outline-none text-slate-200 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-sm font-semibold"
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none text-slate-700 focus:border-[#0D4A86] focus:bg-white transition text-sm font-semibold"
                   >
                     <option value="all">All Order Statuses</option>
                     <option value="Processing">🟡 Processing</option>
@@ -1240,9 +1306,9 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <h3 className="text-xl font-bold text-green-300">📦 Order Management Directory</h3>
+              <h3 className="text-base font-extrabold text-slate-500 uppercase tracking-widest pl-1">📦 Order Management Directory</h3>
               {filteredOrdersList.length === 0 ? (
-                <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-10 text-center text-gray-400">
+                <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center text-slate-400 shadow-sm">
                   No orders found.
                 </div>
               ) : (
@@ -1250,47 +1316,47 @@ export default function AdminPage() {
                   {filteredOrdersList.map((order) => (
                     <div
                       key={order.id}
-                      className="bg-slate-900/60 border border-white/10 rounded-3xl p-6 hover:border-green-400/20 transition-all duration-300"
+                      className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-300"
                     >
                       {/* Order Info Row */}
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-white/5 pb-4 mb-4 text-sm">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-slate-100 pb-4 mb-4 text-xs text-slate-600">
                         <div>
-                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Order ID</span>
-                          <span className="font-bold text-slate-200 block break-all text-xs font-mono">{order.id}</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Order ID</span>
+                          <span className="font-bold text-slate-700 block break-all font-mono select-all">{order.id}</span>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Customer & Address</span>
-                          <span className="font-bold text-slate-200 block">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Customer & Address</span>
+                          <span className="font-bold text-slate-700 block select-all">
                             {order.shipping_address?.fullName || "N/A"}
                           </span>
-                          <span className="text-xs text-gray-400 block mt-0.5 font-semibold">
+                          <span className="text-[10px] text-slate-500 block mt-0.5 font-semibold select-all">
                             Mobile: {order.shipping_address?.mobile || "N/A"}
                           </span>
-                          <span className="text-[11px] text-gray-400 block mt-1 leading-relaxed">
+                          <span className="text-[10px] text-slate-400 block mt-1 leading-relaxed select-all">
                             {order.shipping_address?.street || "N/A"}, {order.shipping_address?.city || "N/A"}, {order.shipping_address?.state || "N/A"} - {order.shipping_address?.pincode || "N/A"}
                           </span>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Payment & Total</span>
-                          <span className="font-bold text-slate-200 block">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Payment & Total</span>
+                          <span className="font-bold text-slate-700 block select-all">
                             {order.payment_method || "N/A"}
                           </span>
                           {order.transaction_id && (
-                            <span className="text-xs text-yellow-400 font-mono block mt-1 font-semibold">
+                            <span className="text-[10px] text-[#0D4A86] font-mono block mt-1 font-semibold select-all">
                               UTR: {order.transaction_id}
                             </span>
                           )}
-                          <span className="text-sm text-green-400 font-extrabold block mt-1">
+                          <span className="text-xs text-emerald-600 font-extrabold block mt-1">
                             Total Paid: ₹{order.total}
                           </span>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-400 font-bold uppercase block mb-1">Status Management</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Status Management</span>
                           <div className="flex gap-2 items-center mt-1">
                             <select
                               value={order.status}
                               onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                              className="bg-[#0b1220] border border-white/10 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300 text-slate-200 font-bold"
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-green-400 focus:bg-white text-slate-700 font-bold"
                             >
                               <option value="Processing">🟡 Processing</option>
                               <option value="Shipped">🔵 Shipped</option>
@@ -1299,7 +1365,7 @@ export default function AdminPage() {
                             </select>
                             <button
                               onClick={() => cancelOrder(order.id)}
-                              className="p-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition cursor-pointer"
+                              className="p-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl transition cursor-pointer"
                               title="Delete/Cancel Order"
                             >
                               <TrashIcon className="w-4 h-4" />
@@ -1310,11 +1376,11 @@ export default function AdminPage() {
 
                       {/* Items Row */}
                       <div className="space-y-3">
-                        <span className="text-xs text-gray-400 font-bold uppercase block">Items Ordered</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Items Ordered</span>
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
                           {order.items && order.items.map((item: any, i: number) => (
-                            <div key={i} className="flex gap-3 bg-white/5 border border-white/5 rounded-2xl p-3 items-center">
-                              <div className="w-12 h-14 bg-white/5 border border-white/10 rounded-lg p-1 shrink-0 flex items-center justify-center">
+                            <div key={i} className="flex gap-3 bg-slate-50 border border-slate-100 rounded-2xl p-3 items-center">
+                              <div className="w-12 h-14 bg-white border border-slate-200/60 rounded-lg p-1 shrink-0 flex items-center justify-center">
                                 {item.image ? (
                                   <img
                                     src={item.image}
@@ -1326,24 +1392,24 @@ export default function AdminPage() {
                                 )}
                               </div>
                               <div className="min-w-0 flex-grow">
-                                <p className="text-xs font-bold text-slate-200 truncate">{item.name}</p>
-                                <p className="text-[10px] text-gray-400 mt-0.5">
+                                <p className="text-xs font-bold text-slate-700 truncate">{item.name}</p>
+                                <p className="text-[10px] text-slate-400 mt-0.5">
                                   Qty: {item.quantity} | {item.fabric || "Premium Fabric"}
                                 </p>
-                                <p className="text-[10px] text-gray-500">{item.color || "Selected Color"}</p>
+                                <p className="text-[10px] text-slate-500">{item.color || "Selected Color"}</p>
                               </div>
                             </div>
                           ))}
                         </div>
                       </div>
                     </div>
-                  ))}`
+                  ))}
                 </div>
               )}
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </main>
 
       {/* ================= ADD PRODUCT MODAL ================= */}
       <AnimatePresence>
@@ -1354,26 +1420,26 @@ export default function AdminPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsAddOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-lg bg-[#0f172a] rounded-3xl p-6 shadow-2xl border border-white/10"
+              className="relative w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800"
             >
-              <h3 className="text-xl font-bold text-purple-300 mb-6 flex items-center gap-2">
-                <PlusIcon className="w-6 h-6 text-purple-400" />
+              <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <PlusIcon className="w-6 h-6 text-[#0D4A86]" />
                 <span>Add Product to Catalog</span>
               </h3>
 
               <form onSubmit={handleAddProduct} className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 font-bold">Select Collection</label>
+                  <label className="block text-xs text-slate-500 mb-1.5 font-bold">Select Collection</label>
                   <select
                     value={addSlug}
                     onChange={(e) => setAddSlug(e.target.value)}
-                    className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-700 outline-none focus:border-[#0D4A86] focus:bg-white"
                   >
                     <option value="oversized-tshirts">Oversized T-Shirts</option>
                     <option value="hoodies">Premium Hoodies</option>
@@ -1381,71 +1447,71 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 font-bold">Product Name</label>
+                  <label className="block text-xs text-slate-500 mb-1.5 font-bold">Product Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Classic Never Dies"
                     value={addName}
                     onChange={(e) => setAddName(e.target.value)}
-                    className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Color</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Color</label>
                     <input
                       type="text"
                       placeholder="e.g. Faded Black"
                       value={addColor}
                       onChange={(e) => setAddColor(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">GSM Weight</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">GSM Weight</label>
                     <input
                       type="text"
                       placeholder="e.g. 240–280"
                       value={addGsm}
                       onChange={(e) => setAddGsm(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 font-bold">Fabric Specification</label>
+                  <label className="block text-xs text-slate-500 mb-1.5 font-bold">Fabric Specification</label>
                   <input
                     type="text"
                     placeholder="e.g. 100% Premium Heavyweight Cotton"
                     value={addFabric}
                     onChange={(e) => setAddFabric(e.target.value)}
-                    className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Initial Stock Level</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Initial Stock Level</label>
                     <input
                       type="number"
                       required
                       min="0"
                       value={addStock}
                       onChange={(e) => setAddStock(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Image URL Path</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Image URL Path</label>
                     <input
                       type="text"
                       placeholder="e.g. /classicneverdies.webp"
                       value={addImage}
                       onChange={(e) => setAddImage(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                 </div>
@@ -1454,13 +1520,13 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddOpen(false)}
-                    className="border border-white/10 hover:bg-white/5 text-gray-400 px-5 py-2 rounded-xl transition cursor-pointer"
+                    className="border border-slate-200 hover:bg-slate-50 text-slate-500 px-5 py-2 rounded-xl transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl font-bold transition cursor-pointer shadow shadow-purple-600/10"
+                    className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-5 py-2 rounded-xl font-bold transition cursor-pointer shadow shadow-[#0D4A86]/10"
                   >
                     Create Product
                   </button>
@@ -1480,86 +1546,86 @@ export default function AdminPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setEditingProduct(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-lg bg-[#0f172a] rounded-3xl p-6 shadow-2xl border border-white/10"
+              className="relative w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800"
             >
-              <h3 className="text-xl font-bold text-purple-300 mb-6 flex items-center gap-2">
-                <PencilIcon className="w-6 h-6 text-purple-400" />
+              <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <PencilIcon className="w-6 h-6 text-[#0D4A86]" />
                 <span>Edit Product Specifications</span>
               </h3>
 
               <form onSubmit={handleUpdateProduct} className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 font-bold">Product Name</label>
+                  <label className="block text-xs text-slate-500 mb-1.5 font-bold">Product Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Classic Never Dies"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Color</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Color</label>
                     <input
                       type="text"
                       placeholder="e.g. Faded Black"
                       value={editColor}
                       onChange={(e) => setEditColor(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">GSM Weight</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">GSM Weight</label>
                     <input
                       type="text"
                       placeholder="e.g. 240–280"
                       value={editGsm}
                       onChange={(e) => setEditGsm(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 font-bold">Fabric Specification</label>
+                  <label className="block text-xs text-slate-500 mb-1.5 font-bold">Fabric Specification</label>
                   <input
                     type="text"
                     placeholder="e.g. 100% Premium Heavyweight Cotton"
                     value={editFabric}
                     onChange={(e) => setEditFabric(e.target.value)}
-                    className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Stock Quantity</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Stock Quantity</label>
                     <input
                       type="number"
                       required
                       min="0"
                       value={editStock}
                       onChange={(e) => setEditStock(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1.5 font-bold">Image URL Path</label>
+                    <label className="block text-xs text-slate-500 mb-1.5 font-bold">Image URL Path</label>
                     <input
                       type="text"
                       placeholder="e.g. /classicneverdies.webp"
                       value={editImage}
                       onChange={(e) => setEditImage(e.target.value)}
-                      className="w-full bg-[#0b1220] border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-400"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 outline-none focus:border-[#0D4A86] focus:bg-white"
                     />
                   </div>
                 </div>
@@ -1568,13 +1634,13 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setEditingProduct(null)}
-                    className="border border-white/10 hover:bg-white/5 text-gray-400 px-5 py-2 rounded-xl transition cursor-pointer"
+                    className="border border-slate-200 hover:bg-slate-50 text-slate-500 px-5 py-2 rounded-xl transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl font-bold transition cursor-pointer shadow shadow-purple-600/10"
+                    className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-5 py-2 rounded-xl font-bold transition cursor-pointer shadow shadow-[#0D4A86]/10"
                   >
                     Save Changes
                   </button>
@@ -1585,6 +1651,6 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-    </main>
+    </div>
   );
 }

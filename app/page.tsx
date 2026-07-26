@@ -82,15 +82,19 @@ export default function Home() {
     }
   }, [router]);   // <-- HERE
 
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
       const targetId = hash.replace("#", "");
       setTimeout(() => {
-        const el = document.getElementById(targetId);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
-        }
+        scrollToSection(targetId);
       }, 150);
     } else {
       window.scrollTo({
@@ -235,9 +239,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative">
+    <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
       <Navbar />
-      <div className="w-full relative flex-grow">
+      <div className="w-full relative flex-grow min-w-0">
         <div className="fixed inset-0 -z-10 overflow-hidden">
 
   <motion.div
@@ -290,10 +294,10 @@ export default function Home() {
 
 
 {/* ================= HERO ================= */}
-<section className="relative px-6 pt-24 md:pt-36 pb-20 md:pb-28 overflow-hidden">
+<section className="relative px-6 pt-24 md:pt-32 pb-12 md:pb-16 overflow-hidden">
 
   {/* Background Glow */}
-  <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#0D4A86]/15 blur-[140px] rounded-full" />
+  <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#0D4A86]/15 blur-[140px] rounded-full pointer-events-none" />
 
   <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
@@ -319,24 +323,14 @@ export default function Home() {
       {/* Buttons */}
       <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
         <button
-          onClick={() =>
-            document.getElementById("contact")?.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={() => scrollToSection("contact")}
           className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-10 py-4 rounded-full font-bold shadow-xl transition cursor-pointer"
         >
           Get Instant Quote
         </button>
 
         <button
-          onClick={() => {
-            document
-              .getElementById("collection")
-              ?.scrollIntoView({
-                behavior: "smooth",
-              });
-          }}
+          onClick={() => scrollToSection("collection")}
           className="border border-slate-300 hover:bg-slate-100 bg-white px-10 py-4 rounded-full font-semibold transition cursor-pointer"
         >
           Explore Collection
@@ -408,11 +402,11 @@ export default function Home() {
       {/* ================= SERVICES ================= */}
 <section
   id="services"
-  className="relative px-6 py-16 md:py-20 scroll-mt-24 bg-gradient-to-b from-slate-50 via-blue-50 to-white overflow-hidden"
+  className="relative px-6 py-10 md:py-16 scroll-mt-24 bg-gradient-to-b from-slate-50 via-blue-50 to-white overflow-hidden"
 >
   {/* Background Glow */}
-  <div className="absolute left-0 top-0 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full" />
-  <div className="absolute right-0 bottom-0 w-80 h-80 bg-yellow-400/10 blur-[140px] rounded-full" />
+  <div className="absolute left-0 top-0 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full pointer-events-none" />
+  <div className="absolute right-0 bottom-0 w-80 h-80 bg-yellow-400/10 blur-[140px] rounded-full pointer-events-none" />
 
   {/* Heading */}
   <motion.div
@@ -504,12 +498,12 @@ export default function Home() {
 {/* ================= COLLECTION ================= */}
 <section
   id="collection"
-  className="relative py-16 md:py-20 scroll-mt-24 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
+  className="relative py-10 md:py-16 scroll-mt-24 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
 >
 
   {/* Background Glow */}
-  <div className="absolute top-0 right-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full" />
-  <div className="absolute top-0 left-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full" />
+  <div className="absolute top-0 right-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
+  <div className="absolute top-0 left-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
 
   <div className="max-w-7xl mx-auto px-6">
 
@@ -548,12 +542,12 @@ export default function Home() {
   {/* ================= WHY US ================= */}
 <section
   id="why"
-  className="relative px-6 py-16 md:py-20 scroll-mt-24 overflow-hidden bg-gradient-to-b from-white to-slate-50"
+  className="relative px-6 py-10 md:py-16 scroll-mt-24 overflow-hidden bg-gradient-to-b from-white to-slate-50"
 >
 
   {/* Background Glow */}
-  <div className="absolute left-0 top-20 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full" />
-  <div className="absolute right-0 bottom-0 w-80 h-80 bg-yellow-400/10 blur-[140px] rounded-full" />
+  <div className="absolute left-0 top-20 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full pointer-events-none" />
+  <div className="absolute right-0 bottom-0 w-80 h-80 bg-yellow-400/10 blur-[140px] rounded-full pointer-events-none" />
 
   <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
@@ -583,7 +577,7 @@ export default function Home() {
         across India.
       </p>
 
-      <div className="mt-10 grid gap-5">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 
         {[
           "Premium Quality Fabric",
@@ -596,14 +590,14 @@ export default function Home() {
           <motion.div
             key={i}
             whileHover={{ x: 5 }}
-            className="flex items-center gap-4 bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-all"
+            className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all"
           >
 
-            <div className="w-10 h-10 rounded-full bg-[#0D4A86]/10 flex items-center justify-center text-[#0D4A86] font-bold">
+            <div className="w-8 h-8 rounded-full bg-[#0D4A86]/10 flex items-center justify-center text-[#0D4A86] text-sm font-bold shrink-0">
               ✓
             </div>
 
-            <p className="text-slate-700 font-medium">
+            <p className="text-slate-700 text-sm sm:text-base font-medium">
               {item}
             </p>
 
@@ -621,22 +615,22 @@ export default function Home() {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
       whileHover={{
-        y: -10,
+        y: -5,
       }}
       className="relative"
     >
 
-      <div className="bg-white rounded-[40px] border border-slate-200 shadow-2xl p-12 text-center">
+      <div className="bg-white rounded-3xl sm:rounded-[40px] border border-slate-200 shadow-2xl p-6 sm:p-12 text-center">
 
-        <div className="text-8xl">
+        <div className="text-5xl sm:text-8xl">
           👕
         </div>
 
-        <h3 className="text-3xl font-bold mt-8 text-[#0D4A86]">
+        <h3 className="text-xl sm:text-3xl font-extrabold mt-6 sm:mt-8 text-[#0D4A86]">
           Premium Printing Solutions
         </h3>
 
-        <p className="text-slate-600 mt-6 leading-8">
+        <p className="text-slate-600 text-sm sm:text-base mt-4 sm:mt-6 leading-relaxed">
           From corporate uniforms and event
           merchandise to startup branding and
           college apparel, we bring your designs
@@ -644,31 +638,31 @@ export default function Home() {
         </p>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-10">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-8 sm:mt-10">
 
-          <div>
-            <h4 className="text-3xl font-bold text-[#0D4A86]">
+          <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-2.5 sm:p-4 flex flex-col justify-center min-w-0">
+            <h4 className="text-base sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
               100%
             </h4>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1.5 block leading-tight">
               Quality
             </p>
           </div>
 
-          <div>
-            <h4 className="text-3xl font-bold text-[#0D4A86]">
+          <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-2.5 sm:p-4 flex flex-col justify-center min-w-0">
+            <h4 className="text-base sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
               Fast
             </h4>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1.5 block leading-tight">
               Delivery
             </p>
           </div>
 
-          <div>
-            <h4 className="text-3xl font-bold text-[#0D4A86]">
+          <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-2.5 sm:p-4 flex flex-col justify-center min-w-0">
+            <h4 className="text-base sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
               Bulk
             </h4>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1.5 block leading-tight">
               Orders
             </p>
           </div>
@@ -683,11 +677,11 @@ export default function Home() {
 
 </section>
 {/* ================= CTA ================= */}
-<section className="relative px-6 py-16 md:py-20 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+<section className="relative px-6 py-10 md:py-16 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
 
   {/* Background Glow */}
-  <div className="absolute left-0 top-0 w-96 h-96 bg-[#0D4A86]/10 blur-[150px] rounded-full" />
-  <div className="absolute right-0 bottom-0 w-96 h-96 bg-yellow-400/10 blur-[150px] rounded-full" />
+  <div className="absolute left-0 top-0 w-96 h-96 bg-[#0D4A86]/10 blur-[150px] rounded-full pointer-events-none" />
+  <div className="absolute right-0 bottom-0 w-96 h-96 bg-yellow-400/10 blur-[150px] rounded-full pointer-events-none" />
 
   <motion.div
     initial={{ opacity: 0, y: 40 }}
@@ -716,61 +710,48 @@ export default function Home() {
     </p>
 
     {/* Quick Stats */}
-    <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto mt-10">
+    <div className="grid grid-cols-3 gap-2 sm:gap-6 max-w-xl mx-auto mt-10 text-center">
 
-      <div>
-        <h3 className="text-3xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           20+
         </h3>
-        <p className="text-sm text-slate-500">
-          Minimum Order
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
+          Min. Order
         </p>
       </div>
 
-      <div>
-        <h3 className="text-3xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           Fast
         </h3>
-        <p className="text-sm text-slate-500">
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
           Delivery
         </p>
       </div>
 
-      <div>
-        <h3 className="text-3xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           Premium
         </h3>
-        <p className="text-sm text-slate-500">
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
           Quality
         </p>
       </div>
-
     </div>
 
     {/* CTA Buttons */}
     <div className="flex flex-col sm:flex-row justify-center gap-4 mt-12">
 
       <button
-        onClick={() => {
-          document
-            .getElementById("contact")
-            ?.scrollIntoView({
-              behavior: "smooth",
-            });
-        }}
+        onClick={() => scrollToSection("contact")}
         className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-10 py-4 rounded-full font-bold shadow-xl transition"
       >
         Get Instant Quote
       </button>
 
       <button
-        onClick={() => {
-          document
-            .getElementById("collection")
-            ?.scrollIntoView({
-              behavior: "smooth",
-            });
-        }}
+        onClick={() => scrollToSection("collection")}
         className="border border-slate-300 hover:bg-slate-100 px-10 py-4 rounded-full font-semibold transition"
       >
         View Collection
@@ -791,14 +772,13 @@ export default function Home() {
 
 {/* ================= CONTACT ================= */}
 <section
-  id="contact"
   className="scroll-mt-32"
 >
   <Contact />
 </section>
 
 {/* ================= BRAND SIGNATURE ================= */}
-<section className="bg-slate-50 py-20 px-6 border-t border-slate-200">
+<section className="bg-slate-50 py-10 px-6 border-t border-slate-200">
 
   <div className="max-w-4xl mx-auto text-center">
 
@@ -816,35 +796,34 @@ export default function Home() {
       corporates, colleges and events across India.
     </p>
 
-    <div className="flex flex-wrap justify-center gap-8 mt-10">
+    <div className="grid grid-cols-3 gap-2 sm:gap-6 max-w-xl mx-auto mt-10 text-center">
 
-      <div>
-        <h3 className="text-2xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           Premium
         </h3>
-        <p className="text-slate-500">
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
           Fabric Quality
         </p>
       </div>
 
-      <div>
-        <h3 className="text-2xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           Fast
         </h3>
-        <p className="text-slate-500">
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
           Delivery
         </p>
       </div>
 
-      <div>
-        <h3 className="text-2xl font-bold text-[#0D4A86]">
+      <div className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2.5 sm:p-4 shadow-sm flex flex-col justify-center min-w-0">
+        <h3 className="text-sm sm:text-2xl md:text-3xl font-black text-[#0D4A86] tracking-tighter block leading-none">
           20+
         </h3>
-        <p className="text-slate-500">
-          Minimum Order
+        <p className="text-[8px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wider mt-1 block leading-tight">
+          Min. Order
         </p>
       </div>
-
     </div>
 
     <p className="mt-12 text-sm text-slate-400 italic">
