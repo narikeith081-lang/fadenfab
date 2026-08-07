@@ -87,90 +87,71 @@ export default function Gallery() {
       id="gallery"
       className="relative py-4 overflow-hidden"
     >
-      {/* Background Effects */}
-      <div className="absolute top-0 left-0 w-80 h-80 bg-[#0D4A86]/5 blur-[140px] rounded-full" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#0D4A86]/10 blur-[140px] rounded-full" />
-
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Products Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10" style={{ perspective: 1000 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           {products.map((item, i) => (
-            <TiltCard
+            <motion.div
               key={i}
-              isDesktop={isDesktop}
               onClick={() => {
                 if (!item.comingSoon) {
                   router.push(`/collection/${item.slug}`);
                 }
               }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{
-                duration: 0.5,
-                delay: i * 0.08,
+                duration: 0.6,
+                delay: i * 0.1,
               }}
-              whileHover={isDesktop ? {
-                y: item.comingSoon ? 0 : -10,
-                scale: item.comingSoon ? 1 : 1.02,
-              } : {}}
-              className={`group relative overflow-hidden rounded-[32px] bg-white border border-slate-200 shadow-lg transition-all duration-500 ${
-                item.comingSoon
-                  ? "cursor-not-allowed opacity-90"
-                  : "cursor-pointer hover:shadow-2xl"
+              className={`group flex flex-col transition-all duration-300 ${
+                item.comingSoon ? "cursor-not-allowed opacity-75" : "cursor-pointer"
               }`}
             >
-              {/* Image */}
-              <div className="relative h-[280px] sm:h-[420px] overflow-hidden">
+              {/* Image Wrapper */}
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100/60 rounded-none border border-slate-100">
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  sizes="(max-width:768px) 100vw,
-                         (max-width:1200px) 50vw,
-                         33vw"
-                  className={`object-cover transition-transform duration-700 ${
-                    item.comingSoon
-                      ? "grayscale brightness-75"
-                      : "group-hover:scale-110"
+                  sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+                  className={`object-cover transition-transform duration-1000 ease-out ${
+                    item.comingSoon ? "grayscale brightness-90" : "group-hover:scale-105"
                   }`}
+                  priority
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-
                 {item.comingSoon && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-[#0D4A86]/10 text-[#0D4A86] font-bold px-6 py-3 rounded-full text-lg shadow-xl">
-                      🚀 Coming Soon
+                  <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+                    <span className="bg-white/95 text-slate-800 tracking-widest uppercase font-bold px-5 py-2.5 text-xs border border-slate-200">
+                      Coming Soon
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Content */}
-              <div className="absolute bottom-0 left-0 p-8">
-                <h3 className="text-2xl font-bold text-white">
+              {/* Text Description Below Image (Luxury Storefront Style) */}
+              <div className="pt-4 pb-2 text-left">
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#0D4A86] uppercase block">
+                  {item.comingSoon ? "Next Season" : "Custom Collection"}
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 mt-1" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
                   {item.title}
                 </h3>
-
-                <p className="text-white/80 mt-3">
+                <p className="text-slate-500 text-sm mt-1 leading-relaxed">
                   {item.comingSoon
-                    ? "Launching Soon"
-                    : "Premium quality custom printing"}
+                    ? "Premium corporate outerwear & tailored workwear coordinates"
+                    : "Premium combed cotton, customized prints & embroidery"}
                 </p>
+                {!item.comingSoon && (
+                  <span className="inline-block mt-3 text-xs font-semibold tracking-wider text-slate-800 border-b border-slate-800 pb-0.5 hover:text-[#0D4A86] hover:border-[#0D4A86] transition">
+                    Explore Collection →
+                  </span>
+                )}
               </div>
-
-              {/* Premium Badge */}
-              <div
-                className={`absolute top-5 right-5 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold shadow-md ${
-                  item.comingSoon
-                    ? "bg-[#0D4A86]/10 text-[#0D4A86]"
-                    : "bg-white/90 text-[#0D4A86]"
-                }`}
-              >
-                {item.comingSoon ? "" : "PREMIUM"}
-              </div>
-            </TiltCard>
+            </motion.div>
           ))}
         </div>
       </div>

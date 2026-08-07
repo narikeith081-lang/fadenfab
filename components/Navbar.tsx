@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +28,19 @@ export default function Navbar({
   const setMobileMenuOpen = controlledSetMobileMenuOpen !== undefined ? controlledSetMobileMenuOpen : setInternalMobileMenuOpen;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const tickers = useMemo(() => [
+    "COMPLIMENTARY SHIPPING ON ALL COMMISSIONS OVER ₹5,000",
+    "THE AUTUMN/WINTER EDIT: EXPLORE NEW CATALOGS",
+    "BESPOKE EMBROIDERY & STITCH CUSTOMIZATION AVAILABLE",
+  ], []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % tickers.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [tickers.length]);
   
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
@@ -224,9 +237,15 @@ export default function Navbar({
 
   return (
     <nav
-      className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200 text-slate-900"
+      className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/95 border-b border-slate-200/60 text-slate-900 shadow-sm"
     >
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      {/* Top Ticker Ticker Bar */}
+      <div className="bg-slate-950 text-white py-2.5 text-[9px] md:text-xs font-bold tracking-[0.25em] uppercase text-center overflow-hidden border-b border-slate-900 px-4">
+        <div className="transition-all duration-500">
+          {tickers[tickerIndex]}
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <button
           onClick={() => router.push("/")}
@@ -250,22 +269,16 @@ export default function Navbar({
                 Home
               </button>
               <button
-                onClick={() => handleNavClick("services", "/#services")}
+                onClick={() => handleNavClick("designer", "/#designer")}
                 className="hover:text-[#0D4A86] transition cursor-pointer"
               >
-                Services
+                Custom Design
               </button>
               <button
                 onClick={() => handleNavClick("collection", "/#collection")}
                 className="hover:text-[#0D4A86] transition cursor-pointer"
               >
-                Collection
-              </button>
-              <button
-                onClick={() => handleNavClick("why", "/#why")}
-                className="hover:text-[#0D4A86] transition cursor-pointer"
-              >
-                Why Us
+                Shop
               </button>
               <button
                 onClick={() => handleNavClick("contact", "/#contact")}
@@ -354,22 +367,16 @@ export default function Navbar({
                 Home
               </button>
               <button
-                onClick={() => handleNavClick("services", "/#services")}
+                onClick={() => handleNavClick("designer", "/#designer")}
                 className="hover:text-[#0D4A86] transition cursor-pointer"
               >
-                Services
+                Custom Design
               </button>
               <button
                 onClick={() => handleNavClick("collection", "/#collection")}
                 className="hover:text-[#0D4A86] transition cursor-pointer"
               >
-                Collection
-              </button>
-              <button
-                onClick={() => handleNavClick("why", "/#why")}
-                className="hover:text-[#0D4A86] transition cursor-pointer"
-              >
-                Why Us
+                Shop
               </button>
               <button
                 onClick={() => handleNavClick("contact", "/#contact")}
@@ -513,10 +520,16 @@ export default function Navbar({
                   My Orders
                 </Link>
                 <button
+                  onClick={() => handleNavClick("designer", "/#designer")}
+                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
+                >
+                  Custom Design
+                </button>
+                <button
                   onClick={() => handleNavClick("collection", "/#collection")}
                   className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
                 >
-                  Collection
+                  Shop
                 </button>
                 <button
                   onClick={() => handleNavClick("contact", "/#contact")}
@@ -535,22 +548,16 @@ export default function Navbar({
                   Home
                 </button>
                 <button
-                  onClick={() => handleNavClick("services", "/#services")}
+                  onClick={() => handleNavClick("designer", "/#designer")}
                   className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
                 >
-                  Services
+                  Custom Design
                 </button>
                 <button
                   onClick={() => handleNavClick("collection", "/#collection")}
                   className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
                 >
-                  Collection
-                </button>
-                <button
-                  onClick={() => handleNavClick("why", "/#why")}
-                  className="text-left px-8 py-4 hover:bg-[#0D4A86]/5 hover:text-[#0D4A86] transition font-medium cursor-pointer touch-manipulation"
-                >
-                  Why Us
+                  Shop
                 </button>
                 <button
                   onClick={() => handleNavClick("contact", "/#contact")}

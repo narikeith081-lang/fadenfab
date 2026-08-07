@@ -89,25 +89,20 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="relative py-16 md:py-20 px-6 bg-gradient-to-b from-white via-blue-50/50 to-slate-50 overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-300/5 rounded-full blur-[150px] pointer-events-none" />
-
+    <section className="relative py-20 px-6 bg-white overflow-hidden border-t border-slate-100">
       <div className="relative max-w-4xl mx-auto">
         {/* Heading */}
-        <div className="text-center mb-12">
-          <span className="text-[#0D4A86] uppercase tracking-[4px] font-bold text-xs">
-            Testimonials
+        <div className="text-center mb-16">
+          <span className="text-[#0D4A86] uppercase tracking-[0.3em] font-bold text-xs">
+            Client Voices
           </span>
 
-          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mt-3">
-            What Our
-            <span className="text-[#0D4A86]"> Customers Say</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mt-3" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+            Trusted by the Best
           </h2>
 
-          <p className="text-slate-500 mt-4 max-w-xl mx-auto text-sm md:text-base">
-            Trusted by startups, corporates, colleges and businesses across India.
+          <p className="text-slate-500 mt-4 max-w-xl mx-auto text-sm font-light">
+            Read comments from organizers, founders, and teams who choose FADENFAB for bespoke apparel.
           </p>
         </div>
 
@@ -116,7 +111,7 @@ export default function Testimonials() {
           {/* Left Arrow Button */}
           <button
             onClick={handlePrev}
-            className="flex-shrink-0 bg-white hover:bg-[#0D4A86] text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-200 shadow-md transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
+            className="flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
             aria-label="Previous Testimonial"
           >
             <ChevronLeftIcon className="w-5 h-5" style={{ width: "20px", height: "20px" }} />
@@ -135,31 +130,31 @@ export default function Testimonials() {
                 onAnimationStart={() => setIsAnimating(true)}
                 onAnimationComplete={() => setIsAnimating(false)}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute inset-0 w-full bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xl flex flex-col justify-between h-full hover:shadow-2xl transition-all duration-300"
+                className="absolute inset-0 w-full bg-[#FAF9F6] border border-slate-100 p-6 md:p-8 flex flex-col justify-between h-full hover:border-slate-200 transition-all duration-300 rounded-none"
               >
                 <div>
                   {/* Stars */}
-                  <div className="text-yellow-400 text-xl">
+                  <div className="text-amber-500/80 text-base tracking-wider">
                     ★★★★★
                   </div>
 
                   {/* Review */}
-                  <p className="text-slate-600 mt-4 leading-relaxed text-sm md:text-base italic font-medium">
+                  <p className="text-slate-600 mt-4 leading-relaxed text-sm md:text-base italic font-light font-serif">
                     "{active.review}"
                   </p>
                 </div>
 
                 {/* User Info */}
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-[#0D4A86]">
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                       {active.name}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-400 mt-0.5 font-light">
                       {active.company}
                     </p>
                   </div>
-                  <span className="text-2xl opacity-25">💬</span>
+                  <span className="text-lg opacity-15">“</span>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -168,7 +163,7 @@ export default function Testimonials() {
           {/* Right Arrow Button */}
           <button
             onClick={handleNext}
-            className="flex-shrink-0 bg-white hover:bg-[#0D4A86] text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-slate-200 shadow-md transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
+            className="flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
             aria-label="Next Testimonial"
           >
             <ChevronRightIcon className="w-5 h-5" style={{ width: "20px", height: "20px" }} />
@@ -181,8 +176,8 @@ export default function Testimonials() {
             <button
               key={i}
               onClick={() => handleDotClick(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                activeIndex === i ? "bg-[#0D4A86] w-6" : "bg-slate-300 hover:bg-slate-400 w-2.5"
+              className={`h-1.5 transition-all duration-300 cursor-pointer rounded-none ${
+                activeIndex === i ? "bg-slate-900 w-6" : "bg-slate-300 hover:bg-slate-400 w-1.5"
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />

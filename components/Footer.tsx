@@ -19,106 +19,88 @@ export default function Footer() {
 
           {/* BRAND */}
           <div>
-
             <motion.h2
-              whileHover={{ scale: 1.03 }}
-              className="text-3xl font-extrabold text-[#0D4A86]"
+              whileHover={{ scale: 1.02 }}
+              className="text-2xl font-extrabold text-white tracking-widest font-serif"
             >
               FADENFAB
             </motion.h2>
 
-            <p className="text-gray-400 mt-4 leading-7">
-              Premium custom t-shirt printing
-              for startups, colleges,
-              corporate events & brands
-              across Chennai.
+            <p className="text-gray-400 mt-4 leading-7 text-sm font-light">
+              Premium custom apparel for startups, corporate commissions, and academic institutions across India.
             </p>
-
           </div>
 
           {/* QUICK LINKS */}
           <div>
-
-            <h3 className="text-lg font-bold mb-5">
+            <h3 className="text-sm font-bold tracking-widest uppercase mb-5 text-white">
               Quick Links
             </h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
-
+            <div className="flex flex-col gap-3 text-sm text-gray-400 font-light">
               <a
                 href="/"
-                className="hover:text-[#0D4A86] transition"
+                className="hover:text-white transition"
               >
                 Home
               </a>
 
               <a
                 href="#services"
-                className="hover:text-[#0D4A86] transition"
+                className="hover:text-white transition"
               >
-                Services
+                Custom Design
               </a>
 
               <a
                 href="#contact"
-                className="hover:text-[#0D4A86] transition"
+                className="hover:text-white transition"
               >
                 Contact
               </a>
 
-<button
-  onClick={() => {
-    window.location.href = "/login";
-  }}
-  className="text-left font-normal text-gray-400 hover:text-[#0D4A86] transition"
->
-  Admin
-</button>
-
+              <button
+                onClick={() => {
+                  window.location.href = "/login";
+                }}
+                className="text-left font-light text-gray-400 hover:text-white transition cursor-pointer"
+              >
+                Admin
+              </button>
             </div>
-
           </div>
 
           {/* SERVICES */}
           <div>
-
-            <h3 className="text-lg font-bold mb-5">
-              Services
+            <h3 className="text-sm font-bold tracking-widest uppercase mb-5 text-white">
+              Custom Products
             </h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
-
-              <p>Corporate T-Shirts</p>
-
-              <p>College Fest Printing</p>
-
-              <p>Startup Merchandise</p>
-
-              <p>Custom Hoodie Printing</p>
-
+            <div className="flex flex-col gap-3 text-sm text-gray-400 font-light">
+              <p>Oversized T-Shirts</p>
+              <p>Premium Hoodies</p>
+              <p>Corporate Uniforms</p>
+              <p>Event Coordinate Wear</p>
             </div>
-
           </div>
 
           {/* CONTACT */}
           <div>
-
-            <h3 className="text-lg font-bold mb-5">
-              Contact
+            <h3 className="text-sm font-bold tracking-widest uppercase mb-5 text-white">
+              Inquiries
             </h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
-
+            <div className="flex flex-col gap-3 text-sm text-gray-400 font-light">
               <a
                 href="tel:+916374998042"
-                className="hover:text-[#0D4A86] transition"
+                className="hover:text-white transition"
               >
                 📞 +91 63749 98042
               </a>
 
               <a
                 href="mailto:fadenfab22@gmail.com"
-                className="hover:text-[#0D4A86] transition"
+                className="hover:text-white transition"
               >
                 ✉️ fadenfab22@gmail.com
               </a>
@@ -134,41 +116,32 @@ export default function Footer() {
               <p>
                 📍 Chennai, Tamil Nadu
               </p>
-
             </div>
-
           </div>
-
         </div>
 
         {/* ================= BOTTOM ================= */}
 {/* ================= BOTTOM ================= */}
 <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-
-  <p className="text-gray-500 text-sm">
+  <p className="text-gray-500 text-sm font-light">
     © 2026 FADENFAB. All rights reserved.
   </p>
 
-  <div className="flex items-center gap-4 text-sm">
-
+  <div className="flex items-center gap-4 text-sm font-light">
     <Link
       href="/privacy-policy"
-      className="text-gray-500 hover:text-[#0D4A86] transition duration-300"
+      className="text-gray-500 hover:text-white transition duration-300"
     >
       Privacy Policy
     </Link>
-
-    <span className="text-gray-300">|</span>
-
+    <span className="text-gray-700">|</span>
     <Link
       href="/terms"
-      className="text-gray-500 hover:text-[#0D4A86] transition duration-300"
+      className="text-gray-500 hover:text-white transition duration-300"
     >
       Terms &amp; Conditions
     </Link>
-
   </div>
-
 </div>
 
       </div>

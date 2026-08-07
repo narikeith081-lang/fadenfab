@@ -69,8 +69,10 @@ export default function CollectionPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
+  const pairedSlug = slug === "oversized-tshirts" ? "premium-hoodies" : "oversized-tshirts";
 
   const [collection, setCollection] = useState<any>(null);
+  const [pairedCollection, setPairedCollection] = useState<any>(null);
   const [wishlistedIds, setWishlistedIds] = useState<number[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -118,6 +120,11 @@ export default function CollectionPage() {
         setCollection(catalog[slug]);
       } else {
         setCollection(null);
+      }
+      if (catalog[pairedSlug]) {
+        setPairedCollection(catalog[pairedSlug]);
+      } else {
+        setPairedCollection(null);
       }
     } catch (err) {
       console.error(err);
@@ -269,6 +276,63 @@ export default function CollectionPage() {
     }
   };
 
+  // ================= ADD COMBO DEAL TO CART =================
+  const handleAddComboToCart = () => {
+    const prod1 = collection?.products?.[0];
+    const prod2 = pairedCollection?.products?.[0];
+
+    if (!prod1 || !prod2) return;
+
+    const currentCart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+
+    // Add Item 1 (current collection item)
+    const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === slug);
+    if (idx1 > -1) {
+      currentCart[idx1].quantity += 1;
+    } else {
+      currentCart.push({
+        id: prod1.id,
+        name: prod1.name,
+        image: prod1.image,
+        color: prod1.color,
+        fabric: prod1.fabric,
+        gsm: prod1.gsm,
+        quantity: 1,
+        slug: slug,
+        price: slug === "oversized-tshirts" ? 699 : 1499
+      });
+    }
+
+    // Add Item 2 (paired collection item)
+    const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === pairedSlug);
+    if (idx2 > -1) {
+      currentCart[idx2].quantity += 1;
+    } else {
+      currentCart.push({
+        id: prod2.id,
+        name: prod2.name,
+        image: prod2.image,
+        color: prod2.color,
+        fabric: prod2.fabric,
+        gsm: prod2.gsm,
+        quantity: 1,
+        slug: pairedSlug,
+        price: pairedSlug === "oversized-tshirts" ? 699 : 1499
+      });
+    }
+
+    localStorage.setItem("fadenfab_cart", JSON.stringify(currentCart));
+    window.dispatchEvent(new Event("cart-updated"));
+
+    setModalConfig({
+      isOpen: true,
+      type: "success",
+      title: "Combo Added!",
+      message: `Success! Added the ${prod1.name} and ${prod2.name} to your cart. 15% Combo Discount is automatically applied!`,
+      onConfirm: () => setModalConfig(null),
+    });
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center gap-6">
@@ -307,7 +371,7 @@ export default function CollectionPage() {
     <div className="min-h-screen flex flex-col justify-between relative w-full max-w-full overflow-x-hidden">
       <Navbar />
       <motion.div
-        className="w-full relative flex-grow min-w-0"
+        className="w-full relative flex-grow min-w-0 pt-28 md:pt-32"
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -387,39 +451,34 @@ export default function CollectionPage() {
               const currentQty = cartItem ? cartItem.quantity : 0;
 
               return (
-                <TiltCard
+                <motion.div
                   key={product.id}
-                  isDesktop={isDesktop}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100"
+                  className="bg-[#FAF9F6] overflow-hidden transition-all duration-300 border border-slate-100 flex flex-col justify-between"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{
                     duration: 0.5,
-                    delay: product.id * 0.08,
+                    delay: product.id * 0.05,
                   }}
-                  whileHover={isDesktop ? {
-                    y: -6,
-                    scale: 1.01
-                  } : {}}
                 >
-                  <div className="relative h-[220px] sm:h-[300px] bg-slate-50/80 flex items-center justify-center p-4">
+                  <div className="relative h-[250px] sm:h-[320px] bg-white flex items-center justify-center p-4 border-b border-slate-100">
                     {product.image ? (
                       <Image
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-contain p-2"
+                        className="object-contain p-4 transition-transform duration-700 hover:scale-105"
                         sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
                         priority
                       />
                     ) : (
-                      <span className="text-5xl text-slate-300">👕</span>
+                      <span className="text-5xl text-slate-200">👕</span>
                     )}
                   </div>
 
-                  <div className="p-5 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-[#0D4A86] truncate">
+                  <div className="p-5 text-left">
+                    <h3 className="text-base font-bold text-slate-900 truncate uppercase tracking-wider font-serif">
                       {product.name}
                     </h3>
 
@@ -443,14 +502,14 @@ export default function CollectionPage() {
                     )}
 
                     <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                      <span className="text-xl sm:text-2xl font-extrabold text-[#0D4A86]">
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">
                         ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
                       </span>
 
                       <div className={`items-center gap-2 ${user ? "flex" : "hidden md:flex"}`}>
                         <button
                           onClick={() => handleAddToWishlist(product)}
-                          className="p-2 rounded-full border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 transition cursor-pointer flex items-center justify-center"
+                          className="p-2 rounded-none border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 transition cursor-pointer flex items-center justify-center"
                           title={wishlistedIds.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                         >
                           {wishlistedIds.includes(product.id) ? (
@@ -462,10 +521,10 @@ export default function CollectionPage() {
 
                         {currentQty > 0 ? (
                           /* Quantity selector adjuster */
-                          <div className="flex items-center border border-slate-200 rounded-full p-0.5 bg-slate-50/50">
+                          <div className="flex items-center border border-slate-200 rounded-none p-0.5 bg-slate-50/55">
                             <button
                               onClick={() => handleUpdateCartQuantity(product, -1)}
-                              className="p-1 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
+                              className="p-1 hover:bg-slate-200 rounded-none text-slate-600 transition cursor-pointer flex items-center justify-center"
                             >
                               <MinusIcon className="w-3 h-3" />
                             </button>
@@ -474,7 +533,7 @@ export default function CollectionPage() {
                             </span>
                             <button
                               onClick={() => handleUpdateCartQuantity(product, 1)}
-                              className="p-1 hover:bg-slate-200 rounded-full text-slate-600 transition cursor-pointer flex items-center justify-center"
+                              className="p-1 hover:bg-slate-200 rounded-none text-slate-600 transition cursor-pointer flex items-center justify-center"
                             >
                               <PlusIcon className="w-3 h-3" />
                             </button>
@@ -483,7 +542,7 @@ export default function CollectionPage() {
                           /* Add to Cart CTA */
                           <button
                             onClick={() => handleUpdateCartQuantity(product, 1)}
-                            className="bg-[#0D4A86] hover:bg-[#083A6B] text-white px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer shadow-md hover:shadow-lg"
+                            className="bg-slate-950 hover:bg-slate-850 text-white px-4 py-2.5 rounded-none text-xs font-bold uppercase tracking-widest transition cursor-pointer"
                           >
                             Add to Cart
                           </button>
@@ -491,12 +550,89 @@ export default function CollectionPage() {
                       </div>
                     </div>
                   </div>
-                </TiltCard>
+                </motion.div>
               );
             })
           )}
         </div>
       </section>
+
+      {/* ================= PERFECT PAIR COMBO DEAL ================= */}
+      {pairedCollection && collection?.products?.[0] && pairedCollection?.products?.[0] && (
+        <section className="max-w-7xl mx-auto px-6 pb-24 border-t border-slate-100 pt-16">
+          <div className="bg-[#FAF9F6] border border-slate-200/60 p-8 md:p-12 text-center max-w-4xl mx-auto">
+            <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase">
+              Exclusive Set Offer
+            </span>
+            <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mt-3 font-serif">
+              The Perfect Pair Combo Deal
+            </h2>
+            <p className="text-slate-500 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed">
+              Complete your collection coordinates. Purchase any Oversized T-Shirt and a Premium Hoodie together to automatically claim a <b>15% discount</b> on both!
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-12 mt-10">
+              {/* Product 1: current collection */}
+              <div className="flex flex-col items-center">
+                <div className="w-32 h-40 bg-white border border-slate-100 p-2 flex items-center justify-center relative">
+                  <img
+                    src={collection.products[0].image}
+                    alt={collection.products[0].name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <p className="text-xs font-bold text-slate-700 mt-3 max-w-[120px] truncate uppercase tracking-wider">
+                  {collection.products[0].name}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
+                </p>
+              </div>
+
+              {/* PLUS SIGN */}
+              <div className="text-2xl text-slate-400 font-light">+</div>
+
+              {/* Product 2: paired collection */}
+              <div className="flex flex-col items-center">
+                <div className="w-32 h-40 bg-white border border-slate-100 p-2 flex items-center justify-center relative">
+                  <img
+                    src={pairedCollection.products[0].image}
+                    alt={pairedCollection.products[0].name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <p className="text-xs font-bold text-slate-700 mt-3 max-w-[120px] truncate uppercase tracking-wider">
+                  {pairedCollection.products[0].name}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  ₹{pairedSlug === "oversized-tshirts" ? "699" : "1,499"}
+                </p>
+              </div>
+            </div>
+
+            {/* Price Calculations */}
+            <div className="mt-8 border-t border-slate-200/80 pt-6">
+              <p className="text-xs text-slate-400 uppercase tracking-widest">Combo Price</p>
+              <div className="flex items-center justify-center gap-3 mt-1">
+                <span className="text-slate-400 line-through text-sm">₹{699 + 1499}</span>
+                <span className="text-xl md:text-2xl font-extrabold text-green-600 font-serif">
+                  ₹{Math.round((699 + 1499) * 0.85)}
+                </span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-none font-bold uppercase">
+                  Save 15%
+                </span>
+              </div>
+
+              <button
+                onClick={handleAddComboToCart}
+                className="mt-6 bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest px-8 py-3.5 transition cursor-pointer"
+              >
+                Add Combo Set to Cart
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Floating Go to Cart Shortcut */}
       {cart.length > 0 && (

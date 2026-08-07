@@ -91,24 +91,26 @@ if (!res.ok) {
 
   return (
     <section
-      className="bg-black text-white px-6 md:px-8 py-20"
+      className="bg-slate-950 text-white px-6 md:px-8 py-20 border-t border-slate-900"
     >
       {/* Heading */}
-      <div id="contact" className="text-center mb-12 scroll-mt-24">
-        <h2 className="text-4xl md:text-5xl font-bold">
-          Get a Quote
+      <div id="contact" className="text-center mb-16 scroll-mt-24">
+        <span className="text-slate-400 text-xs font-bold tracking-[0.3em] uppercase block mb-3">
+          Commissions
+        </span>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-white" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+          Request a Custom Quote
         </h2>
 
-        <p className="text-gray-400 mt-4">
-          Bulk T-shirt printing for startups,
-          colleges & events
+        <p className="text-slate-400 text-sm mt-4 max-w-xl mx-auto leading-relaxed font-light">
+          Fill out the brief below to receive bespoke pricing and fabric recommendations for your custom program.
         </p>
       </div>
 
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="max-w-3xl mx-auto grid gap-5"
+        className="max-w-2xl mx-auto grid gap-6"
       >
         {/* Name */}
         <input
@@ -116,9 +118,9 @@ if (!res.ok) {
           name="name"
           value={form.name}
           onChange={handleChange}
-          placeholder="Your Name"
+          placeholder="Full Name"
           required
-          className="p-4 rounded-xl bg-gray-900 border border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+          className="p-4 rounded-none bg-slate-900/60 border border-slate-800 focus:border-white outline-none transition text-sm placeholder-slate-500 font-light"
         />
 
         {/* Phone */}
@@ -137,7 +139,7 @@ if (!res.ok) {
           placeholder="Phone Number"
           required
           maxLength={10}
-          className="p-4 rounded-xl bg-gray-900 border border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+          className="p-4 rounded-none bg-slate-900/60 border border-slate-800 focus:border-white outline-none transition text-sm placeholder-slate-500 font-light"
         />
 
         {/* Email */}
@@ -146,8 +148,8 @@ if (!res.ok) {
           name="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="Email (Optional)"
-          className="p-4 rounded-xl bg-gray-900 border border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+          placeholder="Email Address (Optional)"
+          className="p-4 rounded-none bg-slate-900/60 border border-slate-800 focus:border-white outline-none transition text-sm placeholder-slate-500 font-light"
         />
 
         {/* Company */}
@@ -156,49 +158,49 @@ if (!res.ok) {
           name="company"
           value={form.company}
           onChange={handleChange}
-          placeholder="Company / College Name"
+          placeholder="Company or Organization Name"
           required
-          className="p-4 rounded-xl bg-gray-900 border border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+          className="p-4 rounded-none bg-slate-900/60 border border-slate-800 focus:border-white outline-none transition text-sm placeholder-slate-500 font-light"
         />
 
         {/* Quantity */}
-<div>
-  <input
-    type="number"
-    name="quantity"
-    value={form.quantity}
-    onChange={handleChange}
-    placeholder="Minimum Order Quantity (20)"
-    min="20"
-    required
-    className={`w-full p-4 rounded-xl bg-gray-900 border outline-none transition ${
-      form.quantity && Number(form.quantity) < 20
-        ? "border-red-500 focus:ring-2 focus:ring-red-500"
-        : "border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400"
-    }`}
-  />
+        <div>
+          <input
+            type="number"
+            name="quantity"
+            value={form.quantity}
+            onChange={handleChange}
+            placeholder="Estimated Quantity (Minimum 20)"
+            min="20"
+            required
+            className={`w-full p-4 rounded-none bg-slate-900/60 border outline-none transition text-sm placeholder-slate-500 font-light ${
+              form.quantity && Number(form.quantity) < 20
+                ? "border-red-500"
+                : "border-slate-800 focus:border-white"
+            }`}
+          />
 
-  {form.quantity && Number(form.quantity) < 20 && (
-    <p className="mt-2 text-sm text-red-400">
-      Minimum order quantity is 20 pieces.
-    </p>
-  )}
-</div>
+          {form.quantity && Number(form.quantity) < 20 && (
+            <p className="mt-2 text-xs text-red-400 font-light">
+              Minimum order quantity is 20 pieces.
+            </p>
+          )}
+        </div>
 
         {/* Message */}
         <textarea
           name="message"
           value={form.message}
           onChange={handleChange}
-          placeholder="Requirement"
+          placeholder="Describe your design concepts, fabric preferences, or deadline..."
           required
           rows={5}
-          className="p-4 rounded-xl bg-gray-900 border border-white/10 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none transition resize-none"
+          className="p-4 rounded-none bg-slate-900/60 border border-slate-800 focus:border-white outline-none transition text-sm placeholder-slate-500 font-light resize-none"
         />
 
         {/* Error */}
         {errorMessage && (
-          <p className="text-red-400 text-sm">
+          <p className="text-red-400 text-xs font-light">
             {errorMessage}
           </p>
         )}
@@ -207,7 +209,7 @@ if (!res.ok) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-yellow-400 hover:bg-yellow-300 text-black py-4 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-white hover:bg-slate-100 text-slate-950 py-4 rounded-none font-bold uppercase tracking-widest transition disabled:opacity-50 disabled:cursor-not-allowed text-xs cursor-pointer"
         >
           {loading ? "Sending..." : "Submit Inquiry"}
         </button>

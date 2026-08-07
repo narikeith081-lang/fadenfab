@@ -57,6 +57,9 @@ function ProfileContent() {
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [stateVal, setStateVal] = useState("");
+  const [zip, setZip] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState({ type: "", text: "" });
 
@@ -101,8 +104,28 @@ function ProfileContent() {
           const dbAddress = user.user_metadata?.address || "";
           const savedAddress = dbAddress || localStorage.getItem(`fadenfab_address_${user.id}`) || "";
           setAddress(savedAddress);
+
+          const dbCity = user.user_metadata?.city || "";
+          const savedCity = dbCity || localStorage.getItem(`fadenfab_city_${user.id}`) || "";
+          setCity(savedCity);
+
+          const dbState = user.user_metadata?.state || "";
+          const savedState = dbState || localStorage.getItem(`fadenfab_state_${user.id}`) || "";
+          setStateVal(savedState);
+
+          const dbZip = user.user_metadata?.zip || "";
+          const savedZip = dbZip || localStorage.getItem(`fadenfab_zip_${user.id}`) || "";
+          setZip(savedZip);
+
           if (savedAddress && !dbAddress) {
-            supabase.auth.updateUser({ data: { address: savedAddress } });
+            supabase.auth.updateUser({
+              data: {
+                address: savedAddress,
+                city: savedCity,
+                state: savedState,
+                zip: savedZip
+              }
+            });
           }
 
           // Auto-sync profile name & phone with the admin's database view
@@ -231,10 +254,18 @@ function ProfileContent() {
     try {
       setSavingProfile(true);
       localStorage.setItem(`fadenfab_address_${user.id}`, address);
+      localStorage.setItem(`fadenfab_city_${user.id}`, city);
+      localStorage.setItem(`fadenfab_state_${user.id}`, stateVal);
+      localStorage.setItem(`fadenfab_zip_${user.id}`, zip);
       
       // Save address permanently in Supabase Auth user_metadata
       await supabase.auth.updateUser({
-        data: { address: address }
+        data: {
+          address: address,
+          city: city,
+          state: stateVal,
+          zip: zip
+        }
       });
 
       const { error } = await supabase
@@ -402,7 +433,7 @@ function ProfileContent() {
 
 
 
-        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
           {/* Header */}
           <div className="mb-6 md:mb-10">
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
@@ -528,17 +559,58 @@ function ProfileContent() {
                         </div>
 
                         {/* Address */}
-                        <div>
-                          <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
-                            Default Shipping Address
-                          </label>
-                          <textarea
-                            placeholder="Enter your street address, city, state, and postal code..."
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            rows={3}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition resize-none"
-                          />
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1 sm:mb-2">
+                              Street Address
+                            </label>
+                            <textarea
+                              placeholder="Enter your flat/street address details..."
+                              value={address}
+                              onChange={(e) => setAddress(e.target.value)}
+                              rows={2}
+                              className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition resize-none"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1.5">
+                                City
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="City"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1.5">
+                                State
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="State"
+                                value={stateVal}
+                                onChange={(e) => setStateVal(e.target.value)}
+                                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1.5">
+                                ZIP / Postal Code
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="ZIP Code"
+                                value={zip}
+                                onChange={(e) => setZip(e.target.value)}
+                                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-[#0D4A86] focus:ring-2 focus:ring-[#0D4A86]/20 transition"
+                              />
+                            </div>
+                          </div>
                         </div>
 
                         {/* Messages */}

@@ -72,6 +72,18 @@ export default function CheckoutPage() {
           const dbAddress = user.user_metadata?.address || "";
           const savedAddress = dbAddress || localStorage.getItem(`fadenfab_address_${user.id}`) || "";
           setAddress(savedAddress);
+
+          const dbCity = user.user_metadata?.city || "";
+          const savedCity = dbCity || localStorage.getItem(`fadenfab_city_${user.id}`) || "";
+          setCity(savedCity);
+
+          const dbState = user.user_metadata?.state || "";
+          const savedState = dbState || localStorage.getItem(`fadenfab_state_${user.id}`) || "";
+          setStateName(savedState);
+
+          const dbZip = user.user_metadata?.zip || "";
+          const savedZip = dbZip || localStorage.getItem(`fadenfab_zip_${user.id}`) || "";
+          setPinCode(savedZip);
         }
       }
 
@@ -158,8 +170,16 @@ export default function CheckoutPage() {
       
       // Update saved address, name, and phone permanently
       localStorage.setItem(`fadenfab_address_${user.id}`, address);
+      localStorage.setItem(`fadenfab_city_${user.id}`, city);
+      localStorage.setItem(`fadenfab_state_${user.id}`, stateName);
+      localStorage.setItem(`fadenfab_zip_${user.id}`, pinCode);
       await supabase.auth.updateUser({
-        data: { address: address }
+        data: {
+          address: address,
+          city: city,
+          state: stateName,
+          zip: pinCode
+        }
       }).catch(e => console.error("Auth metadata update error:", e));
 
       await supabase
@@ -322,7 +342,7 @@ export default function CheckoutPage() {
 
 
 
-        <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
           <AnimatePresence mode="wait">
             {orderSuccess ? (
               /* ================= SUCCESS SCREEN ================= */

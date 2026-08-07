@@ -26,6 +26,7 @@ type CartItem = {
   fabric: string;
   color: string;
   slug: string;
+  gsm?: string;
 };
 
 export default function CartPage() {
@@ -171,11 +172,58 @@ export default function CartPage() {
     window.dispatchEvent(new Event("cart-updated"));
   };
 
-  // ================= PRICING =================
+  // ================= PRICING & CROSS SELL =================
+  const hasTshirt = cart.some(item => item.slug === "oversized-tshirts");
+  const hasHoodie = cart.some(item => item.slug === "premium-hoodies");
+
+  const crossSellSlug = hasTshirt && !hasHoodie ? "premium-hoodies" : (!hasTshirt && hasHoodie ? "oversized-tshirts" : null);
+  const crossSellProduct = crossSellSlug ? getCatalog()[crossSellSlug]?.products[0] : null;
+
+  const handleAddCrossSell = () => {
+    if (!crossSellProduct || !crossSellSlug) return;
+    const currentCart = [...cart];
+    const existingIndex = currentCart.findIndex((item: any) => item.id === crossSellProduct.id && item.slug === crossSellSlug);
+    const price = crossSellSlug === "oversized-tshirts" ? 699 : 1499;
+
+    if (existingIndex > -1) {
+      currentCart[existingIndex].quantity += 1;
+    } else {
+      currentCart.push({
+        id: crossSellProduct.id,
+        name: crossSellProduct.name,
+        image: crossSellProduct.image,
+        color: crossSellProduct.color,
+        fabric: crossSellProduct.fabric,
+        gsm: crossSellProduct.gsm,
+        quantity: 1,
+        slug: crossSellSlug,
+        price: price
+      });
+    }
+
+    setCart(currentCart);
+    localStorage.setItem("fadenfab_cart", JSON.stringify(currentCart));
+    window.dispatchEvent(new Event("cart-updated"));
+
+    setModalConfig({
+      isOpen: true,
+      type: "success",
+      title: "Combo Activated!",
+      message: `Added ${crossSellProduct.name} to your cart. Automatic 15% Combo Discount is now applied!`,
+      onConfirm: () => setModalConfig(null),
+    });
+  };
+
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const isComboActive = hasTshirt && hasHoodie;
+  const comboDiscount = isComboActive ? Math.round(subtotal * 0.15) : 0;
+
   const shipping = subtotal > 1000 || subtotal === 0 ? 0 : 100;
   const tax = Math.round(subtotal * 0.05); // 5% GST
-  const discountAmount = appliedCoupon ? Math.round((subtotal * appliedCoupon.discount) / 100) : 0;
+  const couponDiscountAmount = appliedCoupon ? Math.round((subtotal * appliedCoupon.discount) / 100) : 0;
+
+  // Maximize user discount
+  const discountAmount = Math.max(comboDiscount, couponDiscountAmount);
   const total = subtotal + shipping + tax - discountAmount;
 
   return (
@@ -192,7 +240,7 @@ export default function CartPage() {
 
 
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 md:pt-28 pb-10 md:pb-16 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
         {/* Page Title */}
         <div className="mb-10">
           <h1 className="text-4xl font-extrabold text-slate-900">
@@ -324,6 +372,42 @@ export default function CartPage() {
                   ))}
                 </AnimatePresence>
               </div>
+
+              {/* Pairing Cross-sell Recommendation Box */}
+              {crossSellProduct && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 bg-[#FAF9F6] border border-slate-200/60 p-6 flex flex-col sm:flex-row items-center justify-between gap-6"
+                >
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="w-16 h-20 bg-white border border-slate-100 p-1 shrink-0 relative flex items-center justify-center">
+                      {crossSellProduct.image ? (
+                        <img src={crossSellProduct.image} alt={crossSellProduct.name} className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-xl">👕</span>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-serif">
+                        Complete the Look & Save 15%
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed max-w-md font-light">
+                        Pair your order with a matching {crossSellSlug === "oversized-tshirts" ? "Oversized T-Shirt" : "Premium Hoodie"} ({crossSellProduct.name}) to activate the automatic combo discount!
+                      </p>
+                      <span className="text-xs font-bold text-slate-900 block mt-1">
+                        Add for ₹{crossSellSlug === "oversized-tshirts" ? "699" : "1,499"}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleAddCrossSell}
+                    className="bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest px-5 py-3 transition shrink-0 cursor-pointer"
+                  >
+                    Add Pair
+                  </button>
+                </motion.div>
+              )}
             </div>
 
             {/* Sidebar Summary */}
@@ -352,15 +436,28 @@ export default function CartPage() {
                   <span className="font-semibold text-slate-800">₹{tax}</span>
                 </div>
 
-                {appliedCoupon && (
+                 {isComboActive && (
+                  <div className="flex justify-between text-green-600 font-bold">
+                    <span>Combo Discount (15% Off)</span>
+                    <span>-₹{comboDiscount}</span>
+                  </div>
+                )}
+
+                {!isComboActive && appliedCoupon && (
                   <div className="flex justify-between text-green-600 font-bold">
                     <span>Discount ({appliedCoupon.code})</span>
-                    <span>-₹{discountAmount}</span>
+                    <span>-₹{couponDiscountAmount}</span>
+                  </div>
+                )}
+
+                {!isComboActive && subtotal > 0 && (
+                  <div className="bg-amber-500/5 border border-amber-500/10 p-3.5 text-xs text-amber-800 leading-relaxed font-light">
+                    💡 <b>Combo Offer:</b> Add both a <b>T-Shirt</b> and a <b>Hoodie</b> to unlock an automatic <b>15% discount</b> on your order!
                   </div>
                 )}
 
                 {shipping > 0 && (
-                  <div className="bg-[#0D4A86]/5 rounded-xl p-3.5 text-xs text-[#0D4A86] leading-relaxed">
+                  <div className="bg-slate-900/5 p-3.5 text-xs text-slate-700 leading-relaxed font-light">
                     💡 Add <b>₹{Math.max(0, 1000 - subtotal)}</b> more to qualify for <b>FREE shipping</b>!
                   </div>
                 )}
