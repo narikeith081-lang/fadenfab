@@ -705,8 +705,12 @@ function ProfileContent() {
                                     className={`px-3 py-1 rounded-full text-xs font-bold ${
                                       order.status === "Delivered"
                                         ? "bg-green-100 text-green-700"
+                                        : order.status === "Arriving"
+                                        ? "bg-orange-100 text-orange-700"
                                         : order.status === "Shipped"
                                         ? "bg-blue-100 text-blue-700"
+                                        : order.status === "Cancelled"
+                                        ? "bg-red-100 text-red-700"
                                         : "bg-amber-100 text-amber-700"
                                     }`}
                                   >
@@ -762,8 +766,10 @@ function ProfileContent() {
                                         width:
                                           order.status === "Delivered"
                                             ? "calc(100% - 48px)"
+                                            : order.status === "Arriving"
+                                            ? "calc(66% - 32px)"
                                             : order.status === "Shipped"
-                                            ? "calc(50% - 24px)"
+                                            ? "calc(33% - 16px)"
                                             : "0px",
                                       }}
                                     />
@@ -772,13 +778,14 @@ function ProfileContent() {
                                     {[
                                       { name: "Confirmed", status: "Processing", label: "Confirmed" },
                                       { name: "Shipped", status: "Shipped", label: "In Transit" },
+                                      { name: "Arriving", status: "Arriving", label: "Out for Delivery" },
                                       { name: "Delivered", status: "Delivered", label: "Delivered" }
                                     ].map((step, sIdx) => {
-                                      const isCompleted =
-                                        order.status === "Delivered" ||
-                                        (order.status === "Shipped" && step.status !== "Delivered") ||
-                                        (order.status === "Processing" && step.status === "Processing");
-
+                                      const statusOrder = ["Processing", "Shipped", "Arriving", "Delivered"];
+                                      const currentStatusIdx = statusOrder.indexOf(order.status);
+                                      const stepStatusIdx = statusOrder.indexOf(step.status);
+                                      
+                                      const isCompleted = stepStatusIdx <= currentStatusIdx && currentStatusIdx !== -1;
                                       const isActive = order.status === step.status;
 
                                       return (

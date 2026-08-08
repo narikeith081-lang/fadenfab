@@ -720,16 +720,24 @@ export default function Home() {
             {simSilhouette === "Oversized Tee" && (
               <svg className="w-44 h-44 md:w-52 md:h-52 transition-all duration-300 drop-shadow-lg" viewBox="0 0 100 100" fill="none">
                 <defs>
+                  {/* Textile grain weave filter simulation */}
+                  <filter id="tee-fabric-bump" x="0%" y="0%" width="100%" height="100%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" result="noise" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.08 0" result="coloredNoise" />
+                    <feComposite operator="in" in2="SourceGraphic" result="texture" />
+                    <feBlend mode="multiply" in="SourceGraphic" in2="texture" />
+                  </filter>
                   <linearGradient id="tee-shading" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.15" />
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
                     <stop offset="50%" stopColor="#000000" stopOpacity="0.0" />
-                    <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0.32" />
                   </linearGradient>
                 </defs>
                 {/* Main Shirt Body */}
                 <path
                   d="M 30,15 C 38,18 62,18 70,15 L 86,26 C 88,27.5 84,36 80,36 C 76,36 75,32 75,32 L 75,88 C 75,91 25,91 25,88 L 25,32 C 25,32 24,36 20,36 C 16,36 12,27.5 14,26 Z"
                   fill={colors.find(c => c.name === simColor)?.hex}
+                  filter="url(#tee-fabric-bump)"
                   stroke="#1e293b"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
@@ -766,16 +774,24 @@ export default function Home() {
             {simSilhouette === "Luxury Hoodie" && (
               <svg className="w-44 h-44 md:w-52 md:h-52 transition-all duration-300 drop-shadow-lg" viewBox="0 0 100 100" fill="none">
                 <defs>
+                  {/* Textile grain weave filter simulation */}
+                  <filter id="hoodie-fabric-bump" x="0%" y="0%" width="100%" height="100%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.08 0" result="coloredNoise" />
+                    <feComposite operator="in" in2="SourceGraphic" result="texture" />
+                    <feBlend mode="multiply" in="SourceGraphic" in2="texture" />
+                  </filter>
                   <linearGradient id="hoodie-shading" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.15" />
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
                     <stop offset="50%" stopColor="#000000" stopOpacity="0.0" />
-                    <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
                   </linearGradient>
                 </defs>
                 {/* Main Hoodie Body */}
                 <path
                   d="M 26,24 C 34,26.5 66,26.5 74,24 L 88,36 C 90,38 86,45 81,45 C 77,45 76,41 76,41 L 76,86 C 76,89 24,89 24,86 L 24,41 C 24,41 23,45 19,45 C 14,45 10,38 12,36 Z"
                   fill={colors.find(c => c.name === simColor)?.hex}
+                  filter="url(#hoodie-fabric-bump)"
                   stroke="#1e293b"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
@@ -790,6 +806,7 @@ export default function Home() {
                 <path
                   d="M 26,24 C 20,8 35,2 50,2 C 65,2 80,8 74,24 C 68,27.5 32,27.5 26,24 Z"
                   fill={colors.find(c => c.name === simColor)?.hex}
+                  filter="url(#hoodie-fabric-bump)"
                   stroke="#1e293b"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
@@ -822,16 +839,24 @@ export default function Home() {
             {simSilhouette === "Classic Polo" && (
               <svg className="w-44 h-44 md:w-52 md:h-52 transition-all duration-300 drop-shadow-lg" viewBox="0 0 100 100" fill="none">
                 <defs>
+                  {/* Textile grain weave filter simulation */}
+                  <filter id="polo-fabric-bump" x="0%" y="0%" width="100%" height="100%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" result="noise" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.08 0" result="coloredNoise" />
+                    <feComposite operator="in" in2="SourceGraphic" result="texture" />
+                    <feBlend mode="multiply" in="SourceGraphic" in2="texture" />
+                  </filter>
                   <linearGradient id="polo-shading" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.15" />
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
                     <stop offset="50%" stopColor="#000000" stopOpacity="0.0" />
-                    <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0.32" />
                   </linearGradient>
                 </defs>
                 {/* Main Polo Body */}
                 <path
                   d="M 30,17 C 38,20 62,20 70,17 L 85,28 C 87,29.5 83,37 79,37 C 76,37 75,34 75,34 L 75,88 C 75,91 25,91 25,88 L 25,34 C 25,34 24,37 20,37 C 17,37 13,29.5 15,28 Z"
                   fill={colors.find(c => c.name === simColor)?.hex}
+                  filter="url(#polo-fabric-bump)"
                   stroke="#1e293b"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
@@ -846,6 +871,7 @@ export default function Home() {
                 <path
                   d="M 30,17 L 42,26 L 50,20 L 58,26 L 70,17 C 62,21 38,21 30,17 Z"
                   fill={colors.find(c => c.name === simColor)?.hex}
+                  filter="url(#polo-fabric-bump)"
                   stroke="#1e293b"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
