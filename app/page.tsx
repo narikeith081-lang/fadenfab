@@ -445,15 +445,27 @@ export default function Home() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/30" />
     </div>
 
-    {/* Text Overlay with responsive glassmorphism card wrapper on mobile to block storefront image clutter */}
-    <div className="relative z-10 p-6 sm:p-8 md:p-16 max-w-2xl text-left text-white bg-slate-950/60 sm:bg-transparent backdrop-blur-[3px] sm:backdrop-blur-none border border-white/10 sm:border-none m-4 sm:m-0 rounded-2xl">
-      <span className="text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-slate-300 block mb-3">
+    {/* Text Overlay - blended directly over the dark bottom area of the background photo with luxury drop shadows */}
+    <div className="relative z-10 p-8 sm:p-12 md:p-16 max-w-2xl text-left text-white">
+      <span 
+        className="text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-slate-350 block mb-3"
+        style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
+      >
         The Autumn Edit
       </span>
-      <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-white mb-6" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+      <h1 
+        className="text-3xl md:text-5xl font-extrabold leading-tight text-white mb-6" 
+        style={{ 
+          fontFamily: '"American Typewriter","American Typewriter Std",serif',
+          textShadow: '0 3px 12px rgba(0,0,0,0.6)'
+        }}
+      >
         Premium Custom Apparel.<br />Refined Craftsmanship.
       </h1>
-      <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-8 max-w-lg font-light">
+      <p 
+        className="text-slate-200 text-sm md:text-base leading-relaxed mb-8 max-w-lg font-light"
+        style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}
+      >
         Elevate your team’s presence with luxury heavyweight coordinates. Engineered with organic combed cotton, durable precision stitching, and high-fidelity dye prints.
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
