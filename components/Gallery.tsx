@@ -88,9 +88,8 @@ export default function Gallery() {
       className="relative py-4 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto relative z-10">
-
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 md:px-6">
           {products.map((item, i) => (
             <motion.div
               key={i}
@@ -106,50 +105,48 @@ export default function Gallery() {
                 duration: 0.6,
                 delay: i * 0.1,
               }}
-              className={`group flex flex-col transition-all duration-300 ${
-                item.comingSoon ? "cursor-not-allowed opacity-75" : "cursor-pointer"
+              className={`group relative aspect-[4/3] w-full overflow-hidden rounded-[24px] md:rounded-[32px] border border-slate-200/50 shadow-md ${
+                item.comingSoon ? "cursor-not-allowed opacity-85" : "cursor-pointer"
               }`}
             >
-              {/* Image Wrapper */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100/60 rounded-none border border-slate-100">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
-                  className={`object-cover transition-transform duration-1000 ease-out ${
-                    item.comingSoon ? "grayscale brightness-90" : "group-hover:scale-105"
-                  }`}
-                  priority
-                />
+              {/* Image */}
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+                className={`object-cover transition-transform duration-1000 ease-out ${
+                  item.comingSoon ? "grayscale brightness-90" : "group-hover:scale-105"
+                }`}
+                priority
+              />
 
-                {item.comingSoon && (
-                  <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                    <span className="bg-white/95 text-slate-800 tracking-widest uppercase font-bold px-5 py-2.5 text-xs border border-slate-200">
-                      Coming Soon
-                    </span>
-                  </div>
-                )}
-              </div>
+              {/* Luxury dark gradient overlay for blending typography */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 transition-opacity duration-300 group-hover:from-black/90 group-hover:via-black/40" />
 
-              {/* Text Description Below Image (Luxury Storefront Style) */}
-              <div className="pt-4 pb-2 text-left">
-                <span className="text-[10px] font-bold tracking-[0.2em] text-[#0D4A86] uppercase block">
-                  {item.comingSoon ? "Next Season" : "Custom Collection"}
-                </span>
-                <h3 className="text-xl font-bold text-slate-900 mt-1" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+              {/* Top Right "PREMIUM" Badge (or "NEXT SEASON") */}
+              <span className="absolute top-4 right-4 md:top-5 md:right-5 bg-white/95 text-slate-800 text-[9px] md:text-[10px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+                {item.comingSoon ? "NEXT SEASON" : "PREMIUM"}
+              </span>
+
+              {/* Overlaid Typography at Bottom Left */}
+              <div className="absolute bottom-5 left-5 right-5 md:bottom-7 md:left-7 md:right-7 text-left text-white z-10 pointer-events-none">
+                <h3 
+                  className="text-xl md:text-2xl font-extrabold text-white font-serif leading-tight"
+                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
+                >
                   {item.title}
                 </h3>
-                <p className="text-slate-500 text-sm mt-1 leading-relaxed">
+                <p 
+                  className="text-slate-200 text-xs mt-1 md:mt-2 font-light leading-relaxed max-w-[85%]"
+                  style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+                >
                   {item.comingSoon
-                    ? "Premium corporate outerwear & tailored workwear coordinates"
-                    : "Premium combed cotton, customized prints & embroidery"}
+                    ? "Premium corporate outerwear & tailored workwear"
+                    : item.slug === "oversized-tshirts"
+                    ? "Premium quality custom printing"
+                    : "Premium combed fleece fabric"}
                 </p>
-                {!item.comingSoon && (
-                  <span className="inline-block mt-3 text-xs font-semibold tracking-wider text-slate-800 border-b border-slate-800 pb-0.5 hover:text-[#0D4A86] hover:border-[#0D4A86] transition">
-                    Explore Collection →
-                  </span>
-                )}
               </div>
             </motion.div>
           ))}

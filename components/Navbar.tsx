@@ -22,6 +22,8 @@ export default function Navbar({
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+  const [timeoutSecondsLeft, setTimeoutSecondsLeft] = useState(60);
   
   const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
   const mobileMenuOpen = controlledMobileMenuOpen !== undefined ? controlledMobileMenuOpen : internalMobileMenuOpen;
@@ -175,32 +177,61 @@ export default function Navbar({
   }, [mobileMenuOpen]);
 
   // ================= INACTIVITY TIMEOUT LOGOUT =================
+  // ================= INACTIVITY TIMEOUT LOGOUT =================
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setShowTimeoutModal(false);
+      return;
+    }
 
-    let timer: any;
+    // Set initial active timestamp if missing
+    if (!localStorage.getItem("fadenfab_last_active")) {
+      localStorage.setItem("fadenfab_last_active", Date.now().toString());
+    }
 
     const resetTimer = () => {
       localStorage.setItem("fadenfab_last_active", Date.now().toString());
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(async () => {
-        await supabase.auth.signOut();
-        localStorage.removeItem("fadenfab_cart");
-        localStorage.removeItem("fadenfab_wishlist");
-        localStorage.removeItem("fadenfab_last_active");
-        window.location.href = "/?expired=true";
-      }, 60 * 60 * 1000); // 1 hour
+      setShowTimeoutModal(false);
     };
 
+    // Listen to user activity events to update last active timestamp
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
     events.forEach(event => {
       window.addEventListener(event, resetTimer);
     });
 
-    resetTimer();
+    // Check inactivity status across all tabs every 2 seconds
+    const interval = setInterval(async () => {
+      const lastActiveStr = localStorage.getItem("fadenfab_last_active");
+      if (!lastActiveStr) return;
+
+      const lastActive = parseInt(lastActiveStr, 10);
+      const difference = Date.now() - lastActive;
+
+      const TOTAL_TIMEOUT = 60 * 60 * 1000; // 60 minutes
+      const WARNING_TIMEOUT = 55 * 60 * 1000; // 55 minutes (5 min warning window)
+
+      if (difference >= TOTAL_TIMEOUT) {
+        // Log out immediately
+        clearInterval(interval);
+        await supabase.auth.signOut();
+        localStorage.removeItem("fadenfab_cart");
+        localStorage.removeItem("fadenfab_wishlist");
+        localStorage.removeItem("fadenfab_last_active");
+        window.location.href = "/?expired=true";
+      } else if (difference >= WARNING_TIMEOUT) {
+        // Show timeout modal and countdown remaining seconds
+        const secondsLeft = Math.max(0, Math.ceil((TOTAL_TIMEOUT - difference) / 1000));
+        setTimeoutSecondsLeft(secondsLeft);
+        setShowTimeoutModal(true);
+      } else {
+        // User is active, ensure modal is hidden
+        setShowTimeoutModal(false);
+      }
+    }, 2000);
 
     return () => {
-      if (timer) clearTimeout(timer);
+      clearInterval(interval);
       events.forEach(event => {
         window.removeEventListener(event, resetTimer);
       });
@@ -570,6 +601,66 @@ export default function Navbar({
           </div>
         </div>
       </div>
+      {/* ================= INACTIVITY TIMEOUT MODAL ================= */}
+      <AnimatePresence>
+        {showTimeoutModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-950/65 backdrop-blur-sm"
+              onClick={() => {
+                localStorage.setItem("fadenfab_last_active", Date.now().toString());
+                setShowTimeoutModal(false);
+              }}
+            />
+            {/* Modal box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-md bg-white border border-slate-200 p-8 shadow-2xl text-left rounded-3xl z-10"
+            >
+              <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase block mb-3">
+                Security Alert
+              </span>
+              <h3 className="text-xl font-bold text-slate-900 font-serif mb-3">
+                Inactivity Warning
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed mb-6 font-light">
+                You have been inactive for a while. For your security, you will be logged out in <span className="font-bold text-red-600">{timeoutSecondsLeft} seconds</span>.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    localStorage.setItem("fadenfab_last_active", Date.now().toString());
+                    setShowTimeoutModal(false);
+                  }}
+                  className="flex-1 bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest py-3.5 transition cursor-pointer text-center rounded-none"
+                >
+                  Stay Logged In
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowTimeoutModal(false);
+                    await supabase.auth.signOut();
+                    localStorage.removeItem("fadenfab_cart");
+                    localStorage.removeItem("fadenfab_wishlist");
+                    localStorage.removeItem("fadenfab_last_active");
+                    window.location.href = "/?expired=true";
+                  }}
+                  className="flex-1 border border-slate-350 bg-white hover:bg-slate-50 text-slate-850 text-xs font-bold uppercase tracking-widest py-3.5 transition cursor-pointer text-center rounded-none"
+                >
+                  Logout
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <style dangerouslySetInnerHTML={{ __html: `
         body.mobile-menu-active .floating-whatsapp {
           opacity: 0 !important;
