@@ -1027,6 +1027,7 @@ export default function AdminPage() {
                               >
                                 <option value="Processing" className="text-yellow-600">🟡 Processing</option>
                                 <option value="Shipped" className="text-blue-600">🔵 Shipped</option>
+                                <option value="Arriving" className="text-orange-600">🟠 Arriving</option>
                                 <option value="Delivered" className="text-green-600">🟢 Delivered</option>
                               </select>
                             ) : (
