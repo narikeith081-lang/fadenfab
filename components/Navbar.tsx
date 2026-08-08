@@ -240,7 +240,7 @@ export default function Navbar({
       className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/95 border-b border-slate-200/60 text-slate-900 shadow-sm"
     >
       {/* Top Ticker Ticker Bar */}
-      <div className="bg-slate-950 text-white py-2.5 text-[9px] md:text-xs font-bold tracking-[0.25em] uppercase text-center overflow-hidden border-b border-slate-900 px-4">
+      <div className="bg-slate-950 text-white py-2.5 text-[8px] md:text-xs font-bold tracking-wider md:tracking-[0.25em] uppercase text-center overflow-hidden border-b border-slate-900 px-4 whitespace-nowrap text-ellipsis">
         <div className="transition-all duration-500">
           {tickers[tickerIndex]}
         </div>
@@ -308,7 +308,7 @@ export default function Navbar({
               </Link>
 
               {/* Hi, Name Dropdown */}
-              <div className="relative">
+              <div className="relative hidden md:block">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="user-menu-btn flex items-center gap-1.5 text-[#0D4A86] hover:text-[#083A6B] font-semibold transition cursor-pointer"

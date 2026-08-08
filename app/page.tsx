@@ -442,12 +442,12 @@ export default function Home() {
         className="w-full h-full object-cover object-center opacity-85 transition-transform duration-10000 ease-out hover:scale-105"
       />
       {/* Subtle overlay gradient to keep text readable */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/30" />
     </div>
 
-    {/* Text Overlay */}
-    <div className="relative z-10 p-8 md:p-16 max-w-2xl text-left text-white">
-      <span className="text-xs font-bold tracking-[0.3em] uppercase text-slate-300 block mb-3">
+    {/* Text Overlay with responsive glassmorphism card wrapper on mobile to block storefront image clutter */}
+    <div className="relative z-10 p-6 sm:p-8 md:p-16 max-w-2xl text-left text-white bg-slate-950/60 sm:bg-transparent backdrop-blur-[3px] sm:backdrop-blur-none border border-white/10 sm:border-none m-4 sm:m-0 rounded-2xl">
+      <span className="text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-slate-300 block mb-3">
         The Autumn Edit
       </span>
       <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-white mb-6" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
