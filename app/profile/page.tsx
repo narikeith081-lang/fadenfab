@@ -15,7 +15,8 @@ import {
   LockClosedIcon,
   TrashIcon,
   CheckIcon,
-  MapPinIcon
+  MapPinIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
@@ -829,9 +830,18 @@ function ProfileContent() {
                   {/* ================= WISHLIST TAB ================= */}
                   {activeTab === "wishlist" && (
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <HeartIcon className="w-6 h-6 text-[#0D4A86]" /> My Wishlist
-                      </h2>
+                      <div className="flex items-center gap-3 mb-6">
+                        <button
+                          onClick={() => router.back()}
+                          className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
+                          title="Go Back"
+                        >
+                          <ArrowLeftIcon className="w-4 h-4" />
+                        </button>
+                        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                          <HeartIcon className="w-6 h-6 text-[#0D4A86]" /> My Wishlist
+                        </h2>
+                      </div>
 
                       {loadingWishlist ? (
                         <div className="text-center py-12 text-slate-500">
