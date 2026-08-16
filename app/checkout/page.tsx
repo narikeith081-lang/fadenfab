@@ -25,6 +25,7 @@ type CartItem = {
   fabric: string;
   color: string;
   slug: string;
+  size?: string;
 };
 
 export default function CheckoutPage() {
@@ -342,7 +343,7 @@ export default function CheckoutPage() {
 
 
 
-        <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-10 w-full flex-grow">
           <AnimatePresence mode="wait">
             {orderSuccess ? (
               /* ================= SUCCESS SCREEN ================= */
@@ -411,7 +412,7 @@ export default function CheckoutPage() {
                 className="grid lg:grid-cols-12 gap-8 items-start"
               >
                 {/* Checkout form */}
-                <div className="lg:col-span-8 bg-white rounded-3xl border border-slate-200 p-8 shadow-xl">
+                <div className="lg:col-span-8 bg-white rounded-2xl xs:rounded-3xl border border-slate-200 p-4 xs:p-8 shadow-xl">
                   {/* Back button */}
                   <Link
                     href="/cart"
@@ -572,7 +573,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Summary Panel */}
-                <div className="lg:col-span-4 bg-white rounded-3xl border border-slate-200 p-6 shadow-xl space-y-6">
+                <div className="lg:col-span-4 bg-white rounded-2xl xs:rounded-3xl border border-slate-200 p-4 xs:p-6 shadow-xl space-y-6">
                   <h2 className="font-bold text-slate-900 text-xl pb-4 border-b border-slate-100">
                     Order Summary
                   </h2>
@@ -597,7 +598,7 @@ export default function CheckoutPage() {
                             {item.name}
                           </h4>
                           <span className="text-[10px] text-slate-400 block mt-0.5">
-                            Qty: {item.quantity} | ₹{item.price} each
+                            Qty: {item.quantity} | Size: <span className="font-extrabold text-slate-600">{item.size || "L"}</span> | ₹{item.price} each
                           </span>
                         </div>
                         <span className="font-bold text-slate-800 text-sm shrink-0">

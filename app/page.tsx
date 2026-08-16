@@ -86,6 +86,10 @@ export default function Home() {
   const [simWeight, setSimWeight] = useState("220 GSM Combed Cotton");
   const [simColor, setSimColor] = useState("Off-White");
   const [configStep, setConfigStep] = useState(1);
+  const [selectedDesignerSize, setSelectedDesignerSize] = useState("L");
+  const [customDesignFile, setCustomDesignFile] = useState<string | null>(null);
+  const [comboTshirtSize, setComboTshirtSize] = useState("L");
+  const [comboHoodieSize, setComboHoodieSize] = useState("L");
 
 
   const colors = useMemo(() => [
@@ -286,14 +290,14 @@ export default function Home() {
         return;
       }
 
-      const currentCart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+      const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
       const prod1 = getCatalog()["oversized-tshirts"]?.products?.[0];
       const prod2 = getCatalog()["premium-hoodies"]?.products?.[0];
 
       if (!prod1 || !prod2) return;
 
       // Add T-Shirt
-      const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === "oversized-tshirts");
+      const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === "oversized-tshirts" && item.size === comboTshirtSize);
       if (idx1 > -1) {
         currentCart[idx1].quantity += 1;
       } else {
@@ -306,12 +310,13 @@ export default function Home() {
           gsm: prod1.gsm,
           quantity: 1,
           slug: "oversized-tshirts",
-          price: 699
+          price: 699,
+          size: comboTshirtSize
         });
       }
 
       // Add Hoodie
-      const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === "premium-hoodies");
+      const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === "premium-hoodies" && item.size === comboHoodieSize);
       if (idx2 > -1) {
         currentCart[idx2].quantity += 1;
       } else {
@@ -324,7 +329,8 @@ export default function Home() {
           gsm: prod2.gsm,
           quantity: 1,
           slug: "premium-hoodies",
-          price: 1499
+          price: 1499,
+          size: comboHoodieSize
         });
       }
 
@@ -335,7 +341,7 @@ export default function Home() {
         isOpen: true,
         type: "success",
         title: "Combo Added!",
-        message: "The premium coordinate combo look has been added to your cart with a 15% discount applied!",
+        message: `Success! Added the ${prod1.name} (Size ${comboTshirtSize}) and ${prod2.name} (Size ${comboHoodieSize}) to your cart. 15% Combo Discount is automatically applied!`,
         onConfirm: () => setModalConfig(null),
       });
     });
@@ -348,19 +354,20 @@ export default function Home() {
         return;
       }
 
-      const currentCart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+      const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
       const mockId = Date.now();
 
       currentCart.push({
         id: mockId,
         name: `Custom ${simSilhouette}`,
-        image: "",
+        image: customDesignFile || "",
         color: simColor,
         fabric: simWeight,
         gsm: simWeight.split(" ")[0] || "220",
         quantity: 1,
         slug: simSilhouette === "Oversized Tee" ? "oversized-tshirts" : "premium-hoodies",
-        price: simSilhouette === "Oversized Tee" ? 699 : simSilhouette === "Luxury Hoodie" ? 1499 : 899
+        price: simSilhouette === "Oversized Tee" ? 699 : simSilhouette === "Luxury Hoodie" ? 1499 : 899,
+        size: selectedDesignerSize
       });
 
       localStorage.setItem("fadenfab_cart", JSON.stringify(currentCart));
@@ -370,7 +377,7 @@ export default function Home() {
         isOpen: true,
         type: "success",
         title: "Spec Added to Cart!",
-        message: `Success! Added your custom-configured ${simSilhouette} (${simColor}, ${simWeight}) to your cart.`,
+        message: `Success! Added your custom-configured ${simSilhouette} (${simColor}, ${simWeight}, Size ${selectedDesignerSize}) to your cart.`,
         onConfirm: () => setModalConfig(null),
       });
     });
@@ -432,8 +439,8 @@ export default function Home() {
 
 
 {/* ================= HERO ================= */}
-<section className="relative px-6 pt-28 md:pt-32 pb-8 overflow-hidden">
-  <div className="relative max-w-7xl mx-auto h-[550px] md:h-[700px] overflow-hidden bg-slate-950 flex items-end">
+<section className="relative px-4 pt-24 md:pt-32 pb-4 md:pb-8 overflow-hidden">
+  <div className="relative max-w-7xl mx-auto h-[480px] xs:h-[530px] md:h-[700px] overflow-hidden bg-slate-950 flex items-end">
     {/* Background Image */}
     <div className="absolute inset-0 z-0">
       <img
@@ -446,15 +453,15 @@ export default function Home() {
     </div>
 
     {/* Text Overlay - blended directly over the dark bottom area of the background photo with luxury drop shadows */}
-    <div className="relative z-10 p-8 sm:p-12 md:p-16 max-w-2xl text-left text-white">
+    <div className="relative z-10 p-5 xs:p-8 sm:p-12 md:p-16 max-w-2xl text-left text-white">
       <span 
-        className="text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-slate-350 block mb-3"
+        className="text-[10px] xs:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-slate-350 block mb-2 xs:mb-3"
         style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
       >
         The Autumn Edit
       </span>
       <h1 
-        className="text-3xl md:text-5xl font-extrabold leading-tight text-white mb-6" 
+        className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight text-white mb-4 xs:mb-6" 
         style={{ 
           fontFamily: '"American Typewriter","American Typewriter Std",serif',
           textShadow: '0 3px 12px rgba(0,0,0,0.6)'
@@ -463,12 +470,12 @@ export default function Home() {
         Premium Custom Apparel.<br />Refined Craftsmanship.
       </h1>
       <p 
-        className="text-slate-200 text-sm md:text-base leading-relaxed mb-8 max-w-lg font-light"
+        className="text-slate-200 text-[11px] xs:text-xs sm:text-sm md:text-base leading-relaxed mb-6 xs:mb-8 max-w-lg font-light"
         style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}
       >
         Elevate your team’s presence with luxury heavyweight coordinates. Engineered with organic combed cotton, durable precision stitching, and high-fidelity dye prints.
       </p>
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <button
           onClick={() => scrollToSection("contact")}
           className="bg-white hover:bg-slate-100 text-slate-900 px-8 py-3.5 text-xs font-bold uppercase tracking-widest transition cursor-pointer shadow-md rounded-none"
@@ -485,6 +492,162 @@ export default function Home() {
     </div>
   </div>
 </section>
+
+      {/* ================= COLLECTION ================= */}
+      <section
+        id="collection"
+        className="relative py-10 md:py-16 scroll-mt-24 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
+      >
+        {/* Background Glow */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Section Heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-3xl mx-auto mb-8 md:mb-12"
+          >
+            <span className="text-[#0D4A86] font-semibold tracking-[4px] uppercase">
+              Our Collection
+            </span>
+
+            <h2 className="text-4xl md:text-6xl font-extrabold mt-4 text-slate-900">
+              Crafted For Every
+              <span className="text-[#0D4A86]"> Occasion</span>
+            </h2>
+
+            <p className="mt-6 text-lg text-slate-600 leading-8">
+              Explore our premium collection of custom apparel designed for corporations, universities, startups, events, and growing brands.
+            </p>
+          </motion.div>
+
+          {/* Gallery Component */}
+          <Gallery />
+        </div>
+      </section>
+
+      {/* ================= THE PERFECT PAIR COMBO DEAL BANNER ================= */}
+      <section className="max-w-7xl mx-auto px-4 py-10 md:py-20">
+        <div className="relative bg-[#FAF9F6] border border-slate-200/60 rounded-[24px] md:rounded-[32px] overflow-hidden p-5 xs:p-8 md:p-16 flex flex-col lg:flex-row gap-8 md:gap-12 items-center shadow-sm">
+          {/* Background glow */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[80px]" />
+          
+          {/* Left Side: Combo Offer details */}
+          <div className="w-full lg:w-1/2 text-left z-10 flex flex-col justify-center">
+            <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase block mb-3">
+              Exclusive Set Offer
+            </span>
+            <h2 
+              className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4"
+              style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+            >
+              The Perfect Pair<br />Combo Deal
+            </h2>
+            <p className="text-slate-500 text-sm md:text-base leading-relaxed font-light mb-8 max-w-lg">
+              Complete your collection coordinates. Purchase the Heavyweight Oversized Tee and the Fleece Hoodie together to automatically claim a <span className="font-extrabold text-slate-800">15% discount</span> on the bundle.
+            </p>
+
+            {/* Sizing options */}
+            <div className="space-y-4 mb-8 max-w-md bg-white border border-slate-200/60 p-5 rounded-2xl">
+              {/* Tshirt Size select */}
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">T-Shirt Size</span>
+                <div className="flex gap-1.5">
+                  {["S", "M", "L", "XL", "XXL"].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setComboTshirtSize(size)}
+                      className={`w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all cursor-pointer rounded-none ${
+                        comboTshirtSize === size
+                          ? "bg-slate-950 border-slate-950 text-white"
+                          : "bg-white border-slate-200 text-slate-600 hover:border-slate-400"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hoodie Size select */}
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">Hoodie Size</span>
+                <div className="flex gap-1.5">
+                  {["S", "M", "L", "XL", "XXL"].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setComboHoodieSize(size)}
+                      className={`w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all cursor-pointer rounded-none ${
+                        comboHoodieSize === size
+                          ? "bg-slate-950 border-slate-950 text-white"
+                          : "bg-white border-slate-200 text-slate-600 hover:border-slate-400"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing indicator */}
+            <div className="flex items-end gap-4 mb-6 pt-2 border-t border-slate-200/50">
+              <div>
+                <span className="text-[10px] text-slate-400 font-extrabold uppercase block mb-0.5">Combo Price</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-extrabold text-[#0D4A86]">₹1,868</span>
+                  <span className="text-sm text-slate-400 line-through">₹2,198</span>
+                </div>
+              </div>
+              <span className="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider mb-0.5">
+                Save 15% Instantly
+              </span>
+            </div>
+
+            {/* CTA Action button */}
+            <button
+              onClick={handleAddLookToCart}
+              className="w-full sm:w-auto bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest px-10 py-4 transition cursor-pointer rounded-none text-center shadow-lg shadow-slate-950/10"
+            >
+              Add Combo Set to Cart
+            </button>
+          </div>
+
+          {/* Right Side: Visual product representation */}
+          <div className="w-full lg:w-1/2 flex items-center justify-center gap-3 sm:gap-6 relative select-none">
+            {/* Card 1: Hoodie */}
+            <div className="bg-white border border-slate-100 p-2 sm:p-4 shadow-md rounded-2xl sm:rounded-3xl w-[44%] max-w-[200px] sm:w-44 md:w-52 transition-transform duration-500 hover:-translate-y-2">
+              <div className="relative aspect-[3/4] bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl overflow-hidden mb-2 sm:mb-3">
+                <img
+                  src="/FutureVision_1.webp"
+                  alt="Future Vision Hoodie"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">Future Vision Hoodie</h4>
+              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹1,499</span>
+            </div>
+
+            <span className="text-slate-450 font-black text-xl shrink-0">+</span>
+
+            {/* Card 2: Tee */}
+            <div className="bg-white border border-slate-100 p-2 sm:p-4 shadow-md rounded-2xl sm:rounded-3xl w-[44%] max-w-[200px] sm:w-44 md:w-52 transition-transform duration-500 hover:-translate-y-2">
+              <div className="relative aspect-[3/4] bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl overflow-hidden mb-2 sm:mb-3">
+                <img
+                  src="/classicneverdies.webp"
+                  alt="Classic Never Dies Tee"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">Classic Never Dies Tee</h4>
+              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹699</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ================= SERVICES ================= */}
 {/* ================= BESPOKE CAPABILITIES ================= */}
@@ -549,152 +712,48 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: i * 0.1, duration: 0.6 }}
-        className="group bg-[#FAF9F6] border border-slate-100 p-8 sm:p-10 transition-all duration-300 rounded-none flex flex-col justify-between"
+        className="group bg-transparent md:bg-[#FAF9F6] border-b border-slate-100 last:border-b-0 md:border md:border-slate-100 p-4 py-8 md:p-10 transition-all duration-300 rounded-none flex flex-col justify-between text-left"
       >
         <div>
           {/* Icon */}
-          <div className="w-14 h-14 bg-white border border-slate-100 flex items-center justify-center mb-8 transition-colors group-hover:bg-slate-900 group-hover:text-white">
+          <div className="w-14 h-14 bg-white border border-slate-100 flex items-center justify-center mb-4 md:mb-8 transition-colors group-hover:bg-slate-900 group-hover:text-white">
             <div className="transition-transform duration-500 group-hover:scale-110 group-hover:invert">
               {service.icon}
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+          <h3 className="text-lg md:text-xl font-bold text-slate-900" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
             {service.title}
           </h3>
 
           {/* Desc */}
-          <p className="text-slate-500 mt-4 text-sm leading-relaxed font-light">
+          <p className="text-slate-500 mt-2 md:mt-4 text-sm leading-relaxed font-light">
             {service.desc}
           </p>
         </div>
 
         {/* Bottom Underline */}
-        <div className="mt-8 h-[1px] w-8 bg-[#0D4A86] group-hover:w-full transition-all duration-500 ease-out" />
+        <div className="hidden md:block mt-8 h-[1px] w-8 bg-[#0D4A86] group-hover:w-full transition-all duration-500 ease-out" />
       </motion.div>
     ))}
   </div>
 </section>
 
-{/* ================= COLLECTION ================= */}
-<section
-  id="collection"
-  className="relative py-10 md:py-16 scroll-mt-24 bg-gradient-to-b from-slate-100 via-white to-slate-50 overflow-hidden"
->
 
-  {/* Background Glow */}
-  <div className="absolute top-0 right-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
-  <div className="absolute top-0 left-0 w-96 h-96 bg-[#0D4A86]/2 blur-[160px] rounded-full pointer-events-none" />
-
-  <div className="max-w-7xl mx-auto px-6">
-
-    {/* Section Heading */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="text-center max-w-3xl mx-auto mb-8 md:mb-12"
-    >
-      <span className="text-[#0D4A86] font-semibold tracking-[4px] uppercase">
-        Our Collection
-      </span>
-
-      <h2 className="text-4xl md:text-6xl font-extrabold mt-4 text-slate-900">
-        Crafted For Every
-        <span className="text-[#0D4A86]">
-          {" "}Occasion
-        </span>
-      </h2>
-
-      <p className="mt-6 text-lg text-slate-600 leading-8">
-        Explore our premium collection of custom apparel
-        designed for corporations, universities, startups,
-        events, and growing brands.
-      </p>
-    </motion.div>
-
-    {/* Gallery Component */}
-    <Gallery />
-
-    {/* ================= FEATURED COMBO SETS ================= */}
-    {/* <div className="mt-28 border-t border-slate-100 pt-20">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center max-w-3xl mx-auto mb-16"
-      >
-        <span className="text-[#0D4A86] text-xs font-bold tracking-[0.3em] uppercase block">
-          Featured Combo Sets
-        </span>
-        <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-slate-900" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
-          Coordinate Sets
-        </h2>
-        <p className="mt-4 text-slate-500 text-sm leading-relaxed font-light">
-          Get a matching T-Shirt + Hoodie combo set and automatically save 15% on your custom coordinates.
-        </p>
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-        {[
-          {
-            image: "/luxury_hoodies.jpg",
-            title: "01 / The Premium Coordinates Set",
-            details: "Featuring the 350 GSM Loopback Cotton Hoodie paired with structured knit trousers. Colored in Muted Beige.",
-          },
-          {
-            image: "/classicneverdies.webp",
-            title: "02 / The Heavyweight Oversized Tee Look",
-            details: "Featuring the 220 GSM Combed Cotton Drop-Shoulder Silhouette. Finished with precise flat-lock seams in Off-White.",
-          }
-        ].map((look, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: idx * 0.1 }}
-            className="group flex flex-col text-left"
-          >
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 border border-slate-100">
-              <img
-                src={look.image}
-                alt={look.title}
-                className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105"
-              />
-            </div>
-            <h4 className="text-lg font-bold text-slate-900 mt-5 font-serif">
-              {look.title}
-            </h4>
-            <p className="text-slate-500 text-sm mt-2 font-light leading-relaxed">
-              {look.details}
-            </p>
-            <div className="mt-5">
-              <button
-                onClick={handleAddLookToCart}
-                className="bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 transition cursor-pointer rounded-none"
-              >
-                Add Combo Set to Cart
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div> */}
 
     {/* ================= BESPOKE FITTING ROOM SIMULATOR ================= */}
-    <div id="designer" className="mt-28 border-t border-slate-100 pt-20 scroll-mt-24">
+    <div id="designer" className="mt-12 md:mt-28 border-t border-slate-100 pt-10 md:pt-20 scroll-mt-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center max-w-3xl mx-auto mb-16"
+        className="text-center max-w-3xl mx-auto mb-8 md:mb-16"
       >
         <span className="text-[#0D4A86] text-xs font-bold tracking-[0.3em] uppercase block">
           Design Studio
         </span>
-        <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-slate-900" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+        <h2 className="text-2xl xs:text-3xl md:text-5xl font-extrabold mt-4 text-slate-900" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
           Interactive Mockup Designer
         </h2>
         <p className="mt-4 text-slate-500 text-sm leading-relaxed font-light">
@@ -702,9 +761,9 @@ export default function Home() {
         </p>
       </motion.div>
 
-      <div className="bg-[#FAF9F6] border border-slate-100 p-6 md:p-12 grid lg:grid-cols-12 gap-10 items-stretch">
+      <div className="bg-transparent md:bg-[#FAF9F6] border-0 md:border md:border-slate-100 p-0 xs:p-2 md:p-12 grid lg:grid-cols-12 gap-6 md:gap-10 items-stretch">
         {/* Left Side: Mockup Live Canvas Preview */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-between p-8 bg-white border border-slate-100 relative min-h-[380px] md:min-h-[440px]">
+        <div className="lg:col-span-5 flex flex-col items-center justify-between p-4 xs:p-8 bg-white border border-slate-200/50 md:border-slate-100 relative min-h-[350px] md:min-h-[440px] rounded-2xl md:rounded-none shadow-sm">
           <span className="text-[9px] font-bold tracking-[0.25em] text-[#0D4A86] uppercase bg-blue-50 px-3 py-1 self-start">
             Live Design Preview
           </span>
@@ -929,7 +988,7 @@ export default function Home() {
         </div>
 
         {/* Right Side: Step Configurator Panel */}
-        <div className="lg:col-span-7 bg-white border border-slate-200/50 p-6 md:p-8 flex flex-col justify-between text-left relative min-h-[440px]">
+        <div className="lg:col-span-7 bg-white border border-slate-200/50 p-4 xs:p-8 flex flex-col justify-between text-left relative min-h-[420px] md:min-h-[440px] rounded-2xl md:rounded-none shadow-sm">
           <div>
             {/* Step Indicators */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
@@ -974,23 +1033,23 @@ export default function Home() {
                     <h3 className="text-lg font-bold text-slate-800 font-serif">Choose Garment Silhouette</h3>
                     <p className="text-xs text-slate-400 leading-relaxed font-light mb-4">Select the design cut format for your custom project.</p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                   <div className="grid grid-cols-3 gap-1.5 xs:gap-2">
                     {[
-                      { name: "Oversized Tee", sub: "220 GSM Relaxed Fit" },
-                      { name: "Luxury Hoodie", sub: "350 GSM Loopback Terry" },
-                      { name: "Classic Polo", sub: "240 GSM Refined Knit" }
+                      { name: "Oversized Tee", sub: "220 GSM Relaxed" },
+                      { name: "Luxury Hoodie", sub: "350 GSM Fleece" },
+                      { name: "Classic Polo", sub: "240 GSM Knit" }
                     ].map((item) => (
                       <button
                         key={item.name}
                         onClick={() => setSimSilhouette(item.name)}
-                        className={`p-4 border transition cursor-pointer text-left rounded-none flex flex-col justify-between min-h-[85px] ${
+                        className={`p-2 xs:p-2.5 sm:p-4 border transition cursor-pointer text-left rounded-none flex flex-col justify-between min-h-[95px] md:min-h-[105px] whitespace-normal break-words ${
                           simSilhouette === item.name
                             ? "border-[#0D4A86] bg-[#0D4A86]/5 text-[#0D4A86]"
                             : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"
                         }`}
                       >
-                        <span className="text-xs font-bold uppercase tracking-wider">{item.name}</span>
-                        <span className="text-[9px] mt-2 block opacity-70 font-light">{item.sub}</span>
+                        <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold uppercase tracking-wider block leading-tight">{item.name}</span>
+                        <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] mt-2 block opacity-70 font-light leading-tight">{item.sub}</span>
                       </button>
                     ))}
                   </div>
@@ -1011,22 +1070,22 @@ export default function Home() {
                     <h3 className="text-lg font-bold text-slate-800 font-serif">Choose Fabric Weight</h3>
                     <p className="text-xs text-slate-400 leading-relaxed font-light mb-4">Select the fabric weight (GSM) and coordinate material knit profile.</p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-1.5 xs:gap-2">
                     {[
-                      { name: "220 GSM Combed Cotton", desc: "Organic Combed Cotton - Light & Soft" },
-                      { name: "350 GSM Loopback Terry", desc: "French Terry Knit - Heavy & Premium" }
+                      { name: "220 GSM Combed Cotton", desc: "Organic Cotton - Soft & Light" },
+                      { name: "350 GSM Loopback Terry", desc: "French Terry - Heavy & Warm" }
                     ].map((weight) => (
                       <button
                         key={weight.name}
                         onClick={() => setSimWeight(weight.name)}
-                        className={`p-4 border transition cursor-pointer text-left rounded-none flex flex-col justify-between min-h-[85px] ${
+                        className={`p-2 xs:p-2.5 sm:p-4 border transition cursor-pointer text-left rounded-none flex flex-col justify-between min-h-[95px] md:min-h-[105px] whitespace-normal break-words ${
                           simWeight === weight.name
                             ? "border-[#0D4A86] bg-[#0D4A86]/5 text-[#0D4A86]"
                             : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"
                         }`}
                       >
-                        <span className="text-xs font-bold uppercase tracking-wider">{weight.name.split(" ")[0]} {weight.name.split(" ")[1]}</span>
-                        <span className="text-[9px] mt-2 block opacity-70 font-light">{weight.desc}</span>
+                        <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold uppercase tracking-wider block leading-tight">{weight.name.split(" ")[0]} {weight.name.split(" ")[1]}</span>
+                        <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] mt-2 block opacity-70 font-light leading-tight">{weight.desc}</span>
                       </button>
                     ))}
                   </div>
@@ -1099,6 +1158,87 @@ export default function Home() {
                       <span className="text-slate-400 uppercase tracking-widest">Dye Shade</span>
                       <span className="font-bold text-slate-800 uppercase tracking-wider">{simColor}</span>
                     </div>
+                    <div className="flex justify-between items-center text-xs border-b border-slate-200 pb-2">
+                      <span className="text-slate-400 uppercase tracking-widest">Select Size</span>
+                      <div className="flex gap-1">
+                        {["S", "M", "L", "XL", "XXL"].map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedDesignerSize(size)}
+                            className={`w-6 h-6 flex items-center justify-center text-[9px] font-bold border transition-all cursor-pointer ${
+                              selectedDesignerSize === size
+                                ? "bg-slate-950 border-slate-950 text-white"
+                                : "bg-white border-slate-200 text-slate-600 hover:border-slate-400"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2 border-b border-slate-200 pb-3">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-400 uppercase tracking-widest">Design Graphic (Optional)</span>
+                        {customDesignFile ? (
+                          <button
+                            onClick={() => setCustomDesignFile(null)}
+                            className="text-red-500 hover:text-red-650 text-[10px] font-bold uppercase transition cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        ) : (
+                          <span className="text-slate-400 text-[10px] italic">No file chosen</span>
+                        )}
+                      </div>
+                      <div className="flex gap-4 items-center mt-1">
+                        <label className="bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 cursor-pointer transition">
+                          Choose File
+                          <input
+                            type="file"
+                            accept="image/png, image/jpeg, image/jpg"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 5 * 1024 * 1024) {
+                                  setModalConfig({
+                                    isOpen: true,
+                                    type: "error",
+                                    title: "File Too Large",
+                                    message: "Please choose a design graphic file under 5MB.",
+                                    onConfirm: () => setModalConfig(null)
+                                  });
+                                  return;
+                                }
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  const img = new Image();
+                                  img.src = reader.result as string;
+                                  img.onload = () => {
+                                    const canvas = document.createElement("canvas");
+                                    const MAX_WIDTH = 200;
+                                    const scale = MAX_WIDTH / img.width;
+                                    canvas.width = MAX_WIDTH;
+                                    canvas.height = img.height * scale;
+                                    const ctx = canvas.getContext("2d");
+                                    if (ctx) {
+                                      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                      setCustomDesignFile(canvas.toDataURL("image/png", 0.8));
+                                    }
+                                  };
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </label>
+                        {customDesignFile && (
+                          <div className="relative w-10 h-10 border border-slate-200 rounded-lg p-0.5 overflow-hidden flex items-center justify-center bg-white animate-fadeIn">
+                            <img src={customDesignFile} alt="Preview" className="object-contain w-full h-full" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                     <div className="flex justify-between text-sm pt-1">
                       <span className="text-slate-500 font-bold uppercase tracking-widest">Estimated Price</span>
                       <span className="font-extrabold text-[#0D4A86]">
@@ -1155,8 +1295,6 @@ export default function Home() {
         </div>
       </div>
     </div>
-  </div>
-</section>
       
 
 

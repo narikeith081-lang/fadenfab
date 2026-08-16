@@ -91,14 +91,14 @@ if (!res.ok) {
 
   return (
     <section
-      className="bg-slate-950 text-white px-6 md:px-8 py-20 border-t border-slate-900"
+      className="bg-slate-950 text-white px-4 md:px-8 py-10 md:py-20 border-t border-slate-900"
     >
       {/* Heading */}
-      <div id="contact" className="text-center mb-16 scroll-mt-24">
+      <div id="contact" className="text-center mb-8 md:mb-16 scroll-mt-24">
         <span className="text-slate-400 text-xs font-bold tracking-[0.3em] uppercase block mb-3">
           Commissions
         </span>
-        <h2 className="text-3xl md:text-5xl font-extrabold text-white" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+        <h2 className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-white" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
           Request a Custom Quote
         </h2>
 

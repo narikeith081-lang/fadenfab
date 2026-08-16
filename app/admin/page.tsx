@@ -1397,7 +1397,7 @@ export default function AdminPage() {
                               <div className="min-w-0 flex-grow">
                                 <p className="text-xs font-bold text-slate-700 truncate">{item.name}</p>
                                 <p className="text-[10px] text-slate-400 mt-0.5">
-                                  Qty: {item.quantity} | {item.fabric || "Premium Fabric"}
+                                  Qty: {item.quantity} | Size: <span className="font-extrabold text-slate-600">{item.size || "L"}</span> | {item.fabric || "Premium Fabric"}
                                 </p>
                                 <p className="text-[10px] text-slate-500">{item.color || "Selected Color"}</p>
                               </div>

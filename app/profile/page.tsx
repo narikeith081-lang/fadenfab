@@ -739,7 +739,7 @@ function ProfileContent() {
                                         {item.name}
                                       </h4>
                                       <p className="text-xs text-slate-500 mt-1">
-                                        Qty: {item.quantity} | {item.fabric || "Premium Fabric"} | {item.color || "Standard"}
+                                        Qty: {item.quantity} | Size: <span className="font-extrabold text-slate-700">{item.size || "L"}</span> | {item.fabric || "Premium Fabric"} | {item.color || "Standard"}
                                       </p>
                                     </div>
                                     <div className="text-right shrink-0">

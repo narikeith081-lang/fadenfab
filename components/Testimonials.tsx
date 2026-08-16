@@ -89,15 +89,15 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="relative py-20 px-6 bg-white overflow-hidden border-t border-slate-100">
+    <section className="relative py-10 md:py-20 px-4 md:px-6 bg-white overflow-hidden border-t border-slate-100">
       <div className="relative max-w-4xl mx-auto">
         {/* Heading */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-16">
           <span className="text-[#0D4A86] uppercase tracking-[0.3em] font-bold text-xs">
             Client Voices
           </span>
 
-          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mt-3" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
+          <h2 className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-slate-900 mt-3" style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}>
             Trusted by the Best
           </h2>
 
@@ -111,14 +111,14 @@ export default function Testimonials() {
           {/* Left Arrow Button */}
           <button
             onClick={handlePrev}
-            className="flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
+            className="hidden md:flex flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-12 h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 items-center justify-center cursor-pointer hover:scale-105 z-10"
             aria-label="Previous Testimonial"
           >
             <ChevronLeftIcon className="w-5 h-5" style={{ width: "20px", height: "20px" }} />
           </button>
 
           {/* Slideshow Card Slot */}
-          <div className="flex-grow min-w-0 max-w-2xl h-[280px] md:h-[220px] relative overflow-hidden">
+          <div className="flex-grow min-w-0 max-w-2xl h-[210px] xs:h-[180px] md:h-[220px] relative overflow-hidden touch-pan-y select-none">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={activeIndex}
@@ -127,10 +127,20 @@ export default function Testimonials() {
                 initial="enter"
                 animate="center"
                 exit="exit"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(e, info) => {
+                  if (info.offset.x < -50) {
+                    handleNext();
+                  } else if (info.offset.x > 50) {
+                    handlePrev();
+                  }
+                }}
                 onAnimationStart={() => setIsAnimating(true)}
                 onAnimationComplete={() => setIsAnimating(false)}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute inset-0 w-full bg-[#FAF9F6] border border-slate-100 p-6 md:p-8 flex flex-col justify-between h-full hover:border-slate-200 transition-all duration-300 rounded-none"
+                className="absolute inset-0 w-full bg-[#FAF9F6] border border-slate-100 p-4 md:p-8 flex flex-col justify-between h-full hover:border-slate-200 transition-all duration-300 rounded-none cursor-grab active:cursor-grabbing"
               >
                 <div>
                   {/* Stars */}
@@ -163,7 +173,7 @@ export default function Testimonials() {
           {/* Right Arrow Button */}
           <button
             onClick={handleNext}
-            className="flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-10 h-10 md:w-12 md:h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 z-10"
+            className="hidden md:flex flex-shrink-0 bg-white hover:bg-slate-900 text-slate-700 hover:text-white w-12 h-12 rounded-none border border-slate-200 shadow-sm transition-all duration-300 items-center justify-center cursor-pointer hover:scale-105 z-10"
             aria-label="Next Testimonial"
           >
             <ChevronRightIcon className="w-5 h-5" style={{ width: "20px", height: "20px" }} />

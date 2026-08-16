@@ -146,8 +146,9 @@ const handleForgotPassword = async () => {
     return;
   }
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://fadenfab.vercel.app";
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "http://localhost:3000/reset-password",
+    redirectTo: `${origin}/reset-password`,
   });
 
   if (error) {

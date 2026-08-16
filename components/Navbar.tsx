@@ -271,16 +271,16 @@ export default function Navbar({
       className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/95 border-b border-slate-200/60 text-slate-900 shadow-sm"
     >
       {/* Top Ticker Ticker Bar */}
-      <div className="bg-slate-950 text-white py-2.5 text-[8px] md:text-xs font-bold tracking-wider md:tracking-[0.25em] uppercase text-center overflow-hidden border-b border-slate-900 px-4 whitespace-nowrap text-ellipsis">
+      <div className="bg-slate-950 text-white py-2 text-[8px] md:text-xs font-bold tracking-wider md:tracking-[0.25em] uppercase text-center overflow-hidden border-b border-slate-900 px-4 whitespace-nowrap text-ellipsis">
         <div className="transition-all duration-500">
           {tickers[tickerIndex]}
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between">
         {/* Logo */}
         <button
           onClick={() => router.push("/")}
-          className="text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86] cursor-pointer"
+          className="text-2xl xs:text-3xl md:text-4xl font-bold tracking-wide text-[#0D4A86] cursor-pointer"
           style={{
             fontFamily: '"American Typewriter","American Typewriter Std",serif',
           }}

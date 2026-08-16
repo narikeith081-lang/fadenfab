@@ -78,6 +78,9 @@ export default function CollectionPage() {
   const [user, setUser] = useState<any>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedSizes, setSelectedSizes] = useState<Record<number, string>>({});
+  const [comboTshirtSize, setComboTshirtSize] = useState("L");
+  const [comboHoodieSize, setComboHoodieSize] = useState("L");
 
   // Professional Modal State
   const [modalConfig, setModalConfig] = useState<{
@@ -166,8 +169,9 @@ export default function CollectionPage() {
       return;
     }
 
-    const currentCart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
-    const existingIndex = currentCart.findIndex((item: any) => item.id === product.id && item.slug === slug);
+    const chosenSize = selectedSizes[product.id] || "L";
+    const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+    const existingIndex = currentCart.findIndex((item: any) => item.id === product.id && item.slug === slug && item.size === chosenSize);
     const price = slug === "oversized-tshirts" ? 699 : 1499;
 
     if (existingIndex > -1) {
@@ -178,7 +182,7 @@ export default function CollectionPage() {
           isOpen: true,
           type: "info",
           title: "Removed",
-          message: `${product.name} removed from your cart.`,
+          message: `${product.name} (${chosenSize}) removed from your cart.`,
           onConfirm: () => setModalConfig(null),
         });
       } else {
@@ -215,13 +219,14 @@ export default function CollectionPage() {
           fabric: product.fabric,
           color: product.color,
           slug,
+          size: chosenSize
         });
 
         setModalConfig({
           isOpen: true,
           type: "success",
           title: "Added to Cart",
-          message: `${product.name} has been added to your shopping cart.`,
+          message: `${product.name} (${chosenSize}) has been added to your shopping cart.`,
           onConfirm: () => setModalConfig(null),
         });
       }
@@ -283,10 +288,13 @@ export default function CollectionPage() {
 
     if (!prod1 || !prod2) return;
 
-    const currentCart = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+    const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
+    
+    const size1 = slug === "oversized-tshirts" ? comboTshirtSize : comboHoodieSize;
+    const size2 = pairedSlug === "oversized-tshirts" ? comboTshirtSize : comboHoodieSize;
 
     // Add Item 1 (current collection item)
-    const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === slug);
+    const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === slug && item.size === size1);
     if (idx1 > -1) {
       currentCart[idx1].quantity += 1;
     } else {
@@ -299,12 +307,13 @@ export default function CollectionPage() {
         gsm: prod1.gsm,
         quantity: 1,
         slug: slug,
-        price: slug === "oversized-tshirts" ? 699 : 1499
+        price: slug === "oversized-tshirts" ? 699 : 1499,
+        size: size1
       });
     }
 
     // Add Item 2 (paired collection item)
-    const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === pairedSlug);
+    const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === pairedSlug && item.size === size2);
     if (idx2 > -1) {
       currentCart[idx2].quantity += 1;
     } else {
@@ -317,7 +326,8 @@ export default function CollectionPage() {
         gsm: prod2.gsm,
         quantity: 1,
         slug: pairedSlug,
-        price: pairedSlug === "oversized-tshirts" ? 699 : 1499
+        price: pairedSlug === "oversized-tshirts" ? 699 : 1499,
+        size: size2
       });
     }
 
@@ -408,20 +418,20 @@ export default function CollectionPage() {
       </div>
 
       {/* ================= HERO ================= */}
-      <section className="max-w-7xl mx-auto px-6 pt-10 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-10 md:pb-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div>
-            <span className="text-[#0D4A86] font-semibold uppercase tracking-wider">
+            <span className="text-[#0D4A86] text-xs font-bold uppercase tracking-wider">
               Our Collection
             </span>
-            <h1 className="text-5xl font-extrabold mt-4 text-black">
+            <h1 className="text-3xl xs:text-4xl md:text-5xl font-extrabold mt-3 text-black">
               {collection.title}
             </h1>
-            <p className="mt-6 text-lg text-slate-600">
+            <p className="mt-4 text-sm md:text-lg text-slate-600 leading-relaxed">
               {collection.description}
             </p>
           </div>
-          <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-xl">
+          <div className="relative h-[250px] xs:h-[320px] md:h-[450px] rounded-3xl overflow-hidden shadow-xl">
             {collection.banner && (
               <Image
                 src={collection.banner}
@@ -435,7 +445,7 @@ export default function CollectionPage() {
       </section>
 
       {/* ================= PRODUCTS GRID ================= */}
-      <section className="max-w-7xl mx-auto px-6 pb-24">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 pb-12 md:pb-24">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-black">
           Available Designs
         </h2>
@@ -447,7 +457,8 @@ export default function CollectionPage() {
             </div>
           ) : (
             collection.products.map((product: any) => {
-              const cartItem = cart.find((item: any) => item.id === product.id && item.slug === slug);
+              const chosenSize = selectedSizes[product.id] || "L";
+              const cartItem = cart.find((item: any) => item.id === product.id && item.slug === slug && item.size === chosenSize);
               const currentQty = cartItem ? cartItem.quantity : 0;
 
               return (
@@ -500,6 +511,34 @@ export default function CollectionPage() {
                         <span>⚠️</span> Only {product.stock} left!
                       </p>
                     )}
+
+                    {/* Size Selector */}
+                    <div className="mt-4">
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Select Size</span>
+                      <div className="flex gap-1.5">
+                        {["S", "M", "L", "XL", "XXL"].map((size) => {
+                          const activeSize = selectedSizes[product.id] || "L";
+                          return (
+                            <button
+                              key={size}
+                              onClick={() => {
+                                setSelectedSizes({
+                                  ...selectedSizes,
+                                  [product.id]: size
+                                });
+                              }}
+                              className={`w-7 h-7 flex items-center justify-center text-[10px] font-bold transition-all border rounded-none cursor-pointer ${
+                                activeSize === size
+                                  ? "bg-slate-950 border-slate-950 text-white"
+                                  : "bg-white border-slate-200 text-slate-600 hover:border-slate-450 hover:text-slate-900"
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
 
                     <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
                       <span className="text-xl sm:text-2xl font-extrabold text-slate-900">
@@ -612,6 +651,49 @@ export default function CollectionPage() {
 
             {/* Price Calculations */}
             <div className="mt-8 border-t border-slate-200/80 pt-6">
+              {/* Sizing options */}
+              <div className="space-y-3.5 max-w-xs mx-auto mb-6 bg-slate-50 border border-slate-100 p-4 text-left">
+                {/* Tshirt Size select */}
+                <div className="flex justify-between items-center gap-4">
+                  <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">T-Shirt Size</span>
+                  <div className="flex gap-1">
+                    {["S", "M", "L", "XL", "XXL"].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setComboTshirtSize(size)}
+                        className={`w-6 h-6 flex items-center justify-center text-[9px] font-bold border transition-all cursor-pointer rounded-none ${
+                          comboTshirtSize === size
+                            ? "bg-slate-950 border-slate-950 text-white"
+                            : "bg-white border-slate-200 text-slate-650 hover:border-slate-400"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hoodie Size select */}
+                <div className="flex justify-between items-center gap-4">
+                  <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Hoodie Size</span>
+                  <div className="flex gap-1">
+                    {["S", "M", "L", "XL", "XXL"].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setComboHoodieSize(size)}
+                        className={`w-6 h-6 flex items-center justify-center text-[9px] font-bold border transition-all cursor-pointer rounded-none ${
+                          comboHoodieSize === size
+                            ? "bg-slate-950 border-slate-950 text-white"
+                            : "bg-white border-slate-200 text-slate-650 hover:border-slate-400"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <p className="text-xs text-slate-400 uppercase tracking-widest">Combo Price</p>
               <div className="flex items-center justify-center gap-3 mt-1">
                 <span className="text-slate-400 line-through text-sm">₹{699 + 1499}</span>

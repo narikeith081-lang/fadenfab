@@ -27,6 +27,7 @@ type CartItem = {
   color: string;
   slug: string;
   gsm?: string;
+  size?: string;
 };
 
 export default function CartPage() {
@@ -240,13 +241,13 @@ export default function CartPage() {
 
 
 
-      <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-10 w-full flex-grow">
         {/* Page Title */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold text-slate-900">
+        <div className="mb-6 md:mb-10">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
             Shopping Cart
           </h1>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-sm text-slate-650">
             Review your custom designs and proceed to secure checkout.
           </p>
         </div>
@@ -323,7 +324,7 @@ export default function CartPage() {
                             {item.slug === "oversized-tshirts" ? "Oversized T-Shirt" : "Premium Hoodie"}
                           </span>
                           <p className="text-xs text-slate-500 mt-1">
-                            {item.color} | {item.fabric || "Premium Fabric"}
+                            Size: <span className="font-extrabold text-slate-800">{item.size || "L"}</span> | {item.color} | {item.fabric || "Premium Fabric"}
                           </p>
                         </div>
                       </div>
