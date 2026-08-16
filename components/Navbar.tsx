@@ -247,12 +247,27 @@ export default function Navbar({
     // avoiding iOS/WebKit graphics thread collisions and browser lockups.
     setTimeout(() => {
       if (pathname === "/") {
+        const isSafari = typeof navigator !== "undefined" && (
+          /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || 
+          /iPad|iPhone|iPod/.test(navigator.userAgent)
+        );
+
         if (sectionId === "home") {
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          if (isSafari) {
+            window.scrollTo({ top: 0 });
+          } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
         } else {
           const el = document.getElementById(sectionId);
           if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            if (isSafari) {
+              const yOffset = -96; // Matches scroll-mt-24
+              const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y });
+            } else {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           } else {
             router.push(href);
           }

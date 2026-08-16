@@ -382,7 +382,7 @@ export default function CartPage() {
 
               <div className="divide-y divide-slate-100">
                 <AnimatePresence>
-                  {cart.map((item) => (
+                  {cart.map((item, index) => (
                     <motion.div
                       key={`${item.id}-${item.slug}`}
                       initial={{ opacity: 1 }}
@@ -411,9 +411,30 @@ export default function CartPage() {
                           <span className="text-xs text-[#0D4A86] font-bold mt-1 inline-block uppercase tracking-wider">
                             {item.slug === "oversized-tshirts" ? "Oversized T-Shirt" : "Premium Hoodie"}
                           </span>
-                          <p className="text-xs text-slate-500 mt-1">
-                            Size: <span className="font-extrabold text-slate-800">{item.size || "L"}</span> | {item.color} | {item.fabric || "Premium Fabric"}
-                          </p>
+                          <div className="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
+                            <span>Size:</span>
+                            <select
+                              value={item.size || "L"}
+                              onChange={(e) => {
+                                const newSize = e.target.value;
+                                const updatedCart = cart.map((cartItem, idx) => 
+                                  idx === index ? { ...cartItem, size: newSize } : cartItem
+                                );
+                                setCart(updatedCart);
+                                localStorage.setItem("fadenfab_cart", JSON.stringify(updatedCart));
+                                window.dispatchEvent(new Event("cart-updated"));
+                              }}
+                              className="font-extrabold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded px-1 py-0.5 text-[10px] focus:outline-none focus:border-[#0D4A86] transition cursor-pointer"
+                            >
+                              {["S", "M", "L", "XL", "XXL"].map((sz) => (
+                                <option key={sz} value={sz}>{sz}</option>
+                              ))}
+                            </select>
+                            <span className="text-slate-300">|</span>
+                            <span>{item.color}</span>
+                            <span className="text-slate-300">|</span>
+                            <span>{item.fabric || "Premium Fabric"}</span>
+                          </div>
                         </div>
                       </div>
 

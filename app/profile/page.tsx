@@ -37,6 +37,72 @@ type WishlistItem = {
   product_image: string;
 };
 
+function CustomGarmentThumbnail({ name, color, logo }: { name: string; color: string; logo?: string }) {
+  const isTee = name.toLowerCase().includes("tee") || name.toLowerCase().includes("t-shirt") || name.toLowerCase().includes("tshirt");
+  const isHoodie = name.toLowerCase().includes("hoodie") || name.toLowerCase().includes("jacket");
+  const isPolo = name.toLowerCase().includes("polo");
+
+  const colorMap: Record<string, string> = {
+    "Off-White": "#FCFBFA",
+    "Obsidian Black": "#1C1C1C",
+    "Muted Beige": "#D6CFC4",
+    "Vintage Sage": "#9EAA9B",
+    "faded black": "#2A2A2A",
+    "faded olive green": "#5F665C",
+    "faded orange": "#D97B56",
+    "faded sand beige": "#C9BFA8",
+    "white": "#FFFFFF",
+    "faded navy": "#3B4D61",
+    "sand beige": "#E6DEC9",
+    "forest green": "#2D4C3A",
+    "charcoal black": "#333333",
+    "burgundy": "#5C2C35",
+    "midnight navy": "#1F2937",
+    "olive green": "#556B2F"
+  };
+
+  const cleanColor = color ? color.replace("Color: ", "").trim() : "Off-White";
+  const colorHex = colorMap[cleanColor] || colorMap[cleanColor.toLowerCase()] || "#E2E8F0";
+
+  const renderSVG = () => {
+    if (isHoodie) {
+      return (
+        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+          <path d="M25 25 L35 15 L45 20 L55 20 L65 15 L75 25 L82 40 L73 44 L70 34 L70 85 L30 85 L30 34 L27 44 L18 40 Z" fill={colorHex} stroke="#1E293B" strokeWidth="2.5" strokeLinejoin="round" />
+          <path d="M35 15 C35 5, 65 5, 65 15 C65 25, 35 25, 35 15 Z" fill={colorHex} stroke="#1E293B" strokeWidth="2" />
+          <path d="M38 65 L62 65 L58 78 L42 78 Z" fill="none" stroke="#1E293B" strokeWidth="2" />
+        </svg>
+      );
+    }
+    if (isPolo) {
+      return (
+        <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+          <path d="M25 15 L35 10 L45 13 L55 13 L65 10 L75 15 L82 30 L73 34 L70 26 L70 85 L30 85 L30 26 L27 34 L18 30 Z" fill={colorHex} stroke="#1E293B" strokeWidth="2.5" strokeLinejoin="round" />
+          <path d="M40 10 L50 22 L60 10" stroke="#1E293B" strokeWidth="2" />
+          <path d="M45 13 L50 25 L55 13" stroke="#1E293B" strokeWidth="2" />
+        </svg>
+      );
+    }
+    return (
+      <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+        <path d="M25 15 L35 10 L45 13 L55 13 L65 10 L75 15 L82 30 L73 34 L70 26 L70 85 L30 85 L30 26 L27 34 L18 30 Z" fill={colorHex} stroke="#1E293B" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M45 13 C45 20 55 20 55 13" stroke="#1E293B" strokeWidth="2" strokeLinejoin="round" />
+      </svg>
+    );
+  };
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center bg-slate-50 p-1">
+      {renderSVG()}
+      {logo && logo.startsWith("data:image/") && (
+        <div className="absolute top-[35%] left-[38%] w-[24%] h-[18%] flex items-center justify-center overflow-hidden">
+          <img src={logo} alt="Branding" className="object-contain max-w-full max-h-full" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -366,27 +432,73 @@ function ProfileContent() {
   // ================= WISHLIST ACTIONS =================
   const handleRemoveFromWishlist = async (id: string, productId: number, productSlug: string) => {
     try {
+      // Always remove from local storage regardless of auth status to keep synced
+      const local = JSON.parse(localStorage.getItem("fadenfab_wishlist") || "[]");
+      const filtered = local.filter((item: any) => item.product_id !== productId);
+      localStorage.setItem("fadenfab_wishlist", JSON.stringify(filtered));
+
       if (user) {
         await supabase
           .from("leads")
           .delete()
-          .eq("id", id)
+          .eq("id", parseInt(id))
           .eq("status", "wishlist");
-        
-        setWishlist(wishlist.filter(item => item.id !== id));
-      } else {
-        // Fallback
-        const local = JSON.parse(localStorage.getItem("fadenfab_wishlist") || "[]");
-        const filtered = local.filter((item: any) => item.product_id !== productId);
-        localStorage.setItem("fadenfab_wishlist", JSON.stringify(filtered));
-        setWishlist(wishlist.filter(item => item.id !== id));
       }
+      setWishlist(wishlist.filter(item => item.id !== id));
       
       // Notify components
       window.dispatchEvent(new Event("wishlist-updated"));
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleCancelOrder = (orderId: string) => {
+    setModalConfig({
+      isOpen: true,
+      type: "confirm",
+      title: "Cancel Order?",
+      message: "Are you sure you want to cancel this order? This action cannot be undone.",
+      onConfirm: async () => {
+        setModalConfig(null);
+        try {
+          if (user) {
+            const { error } = await supabase
+              .from("leads")
+              .update({ message: "Cancelled" })
+              .eq("id", parseInt(orderId));
+            if (error) throw error;
+          }
+          
+          // Always update local cache fallback
+          const localOrders = JSON.parse(localStorage.getItem("fadenfab_orders") || "[]");
+          const updatedLocal = localOrders.map((ord: any) => 
+            ord.id === orderId ? { ...ord, status: "Cancelled" } : ord
+          );
+          localStorage.setItem("fadenfab_orders", JSON.stringify(updatedLocal));
+          
+          // Refresh order list
+          fetchOrders();
+          
+          setModalConfig({
+            isOpen: true,
+            type: "success",
+            title: "Order Cancelled",
+            message: "Your order has been successfully cancelled.",
+            onConfirm: () => setModalConfig(null)
+          });
+        } catch (err) {
+          console.error("Cancel order error:", err);
+          setModalConfig({
+            isOpen: true,
+            type: "error",
+            title: "Cancellation Failed",
+            message: "Something went wrong while cancelling your order. Please try again.",
+            onConfirm: () => setModalConfig(null)
+          });
+        }
+      }
+    });
   };
 
   const handleAddToCart = (product: any) => {
@@ -702,21 +814,31 @@ function ProfileContent() {
                                   <span className="text-xs text-slate-400 font-bold uppercase block mb-1">
                                     Status
                                   </span>
-                                  <span
-                                    className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                      order.status === "Delivered"
-                                        ? "bg-green-100 text-green-700"
-                                        : order.status === "Arriving"
-                                        ? "bg-orange-100 text-orange-700"
-                                        : order.status === "Shipped"
-                                        ? "bg-blue-100 text-blue-700"
-                                        : order.status === "Cancelled"
-                                        ? "bg-red-100 text-red-700"
-                                        : "bg-amber-100 text-amber-700"
-                                    }`}
-                                  >
-                                    {order.status}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                        order.status === "Delivered"
+                                          ? "bg-green-100 text-green-700"
+                                          : order.status === "Arriving"
+                                          ? "bg-orange-100 text-orange-700"
+                                          : order.status === "Shipped"
+                                          ? "bg-blue-100 text-blue-700"
+                                          : order.status === "Cancelled"
+                                          ? "bg-red-100 text-red-700"
+                                          : "bg-amber-100 text-amber-700"
+                                      }`}
+                                    >
+                                      {order.status}
+                                    </span>
+                                    {order.status !== "Shipped" && order.status !== "Arriving" && order.status !== "Delivered" && order.status !== "Cancelled" && (
+                                      <button
+                                        onClick={() => handleCancelOrder(order.id)}
+                                        className="px-2.5 py-1 border border-red-200 hover:border-red-500 hover:bg-red-50 text-red-650 hover:text-red-750 text-[10px] font-bold uppercase tracking-wider transition cursor-pointer"
+                                      >
+                                        Cancel Order
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
 
@@ -724,12 +846,14 @@ function ProfileContent() {
                               <div className="space-y-4">
                                 {order.items.map((item: any, idx: number) => (
                                   <div key={idx} className="flex gap-4 items-center">
-                                    <div className="relative w-16 h-16 bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0 flex items-center justify-center p-1">
-                                      {item.image ? (
+                                    <div className="relative w-16 h-16 bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
+                                      {item.name.startsWith("Custom") ? (
+                                        <CustomGarmentThumbnail name={item.name} color={item.color} logo={item.image} />
+                                      ) : item.image ? (
                                         <img
                                           src={item.image}
                                           alt={item.name}
-                                          className="object-contain w-full h-full"
+                                          className="object-contain w-full h-full p-1"
                                         />
                                       ) : (
                                         <span className="text-2xl">👕</span>
@@ -750,6 +874,16 @@ function ProfileContent() {
                                     </div>
                                   </div>
                                 ))}
+                              </div>
+
+                              {/* Shipping / Delivery Details */}
+                              <div className="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-1.5 text-left bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                <span className="font-bold text-slate-700 uppercase tracking-wider block mb-1">Shipping Destination</span>
+                                <p><span className="font-semibold text-slate-700">Recipient:</span> {order.shipping_address?.fullName || order.shipping_address?.name || "Customer"}</p>
+                                <p><span className="font-semibold text-slate-700">Contact:</span> {order.shipping_address?.mobile || "N/A"}</p>
+                                <p><span className="font-semibold text-slate-700">Address:</span> {order.shipping_address?.street || "No address provided"}</p>
+                                <p><span className="font-semibold text-slate-700">Location:</span> {order.shipping_address?.city || ""}, {order.shipping_address?.state || ""}</p>
+                                <p><span className="font-semibold text-slate-700">PIN Code:</span> <span className="font-extrabold text-slate-900 bg-slate-200/60 px-2 py-0.5 rounded">{order.shipping_address?.pincode || order.shipping_address?.zip || "Not Set"}</span></p>
                               </div>
 
                               {/* Order Tracking Progress Stepper */}
@@ -832,7 +966,13 @@ function ProfileContent() {
                     <div>
                       <div className="flex items-center gap-3 mb-6">
                         <button
-                          onClick={() => router.back()}
+                          onClick={() => {
+                            if (window.history.length > 1) {
+                              router.back();
+                            } else {
+                              router.push("/");
+                            }
+                          }}
                           className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
                           title="Go Back"
                         >
@@ -871,12 +1011,18 @@ function ProfileContent() {
                               className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/30 flex gap-4 p-4 hover:shadow-lg transition-all duration-300 hover:border-[#0D4A86]/20"
                             >
                               {/* Product Image */}
-                              <div className="relative w-24 h-28 bg-white rounded-xl border border-slate-200 shrink-0 flex items-center justify-center p-2">
-                                <img
-                                  src={item.product_image}
-                                  alt={item.product_name}
-                                  className="object-contain w-full h-full"
-                                />
+                              <div className="relative w-24 h-28 bg-white rounded-xl border border-slate-200 shrink-0 flex items-center justify-center">
+                                {item.product_name.startsWith("Custom") ? (
+                                  <CustomGarmentThumbnail name={item.product_name} color={"Off-White"} logo={item.product_image} />
+                                ) : item.product_image ? (
+                                  <img
+                                    src={item.product_image}
+                                    alt={item.product_name}
+                                    className="object-contain w-full h-full p-2"
+                                  />
+                                ) : (
+                                  <span className="text-2xl">👕</span>
+                                )}
                               </div>
 
                               {/* Details & Actions */}
