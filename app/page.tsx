@@ -592,6 +592,22 @@ export default function Home() {
           {/* Background glow */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[80px]" />
           
+          {/* 1. Header Title Block (Full width, text-left) */}
+          <div className="text-left w-full z-10">
+            <span className="text-[#0D4A86] text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase block mb-1">
+              Exclusive Set Offer
+            </span>
+            <h2 
+              className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-3 md:mb-5"
+              style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
+            >
+              {combos[selectedComboIndex].name}<br />Combo Deal
+            </h2>
+            <p className="hidden sm:block text-slate-500 text-sm md:text-base leading-relaxed font-light mb-8 max-w-lg">
+              {combos[selectedComboIndex].desc}
+            </p>
+          </div>
+
           {/* Combo tabs (Spans top of card) */}
           <div className="flex gap-1.5 pb-1.5 border-b border-slate-200/40 w-full max-w-md z-10">
             {combos.map((c, idx) => (
@@ -612,19 +628,6 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-8 md:gap-12 items-center w-full z-10">
             {/* Left Side: Combo Offer details */}
             <div className="w-full lg:w-1/2 text-left flex flex-col justify-center order-2 lg:order-1">
-              <span className="text-[#0D4A86] text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase block mb-1">
-                Exclusive Set Offer
-              </span>
-              <h2 
-                className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-3 md:mb-5"
-                style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
-              >
-                {combos[selectedComboIndex].name}<br />Combo Deal
-              </h2>
-              <p className="hidden sm:block text-slate-500 text-sm md:text-base leading-relaxed font-light mb-8 max-w-lg">
-                {combos[selectedComboIndex].desc}
-              </p>
-
               {/* Sizing options */}
               <div className="space-y-3.5 mb-6 max-w-md bg-white border border-slate-200/60 p-4 sm:p-5 rounded-2xl shadow-sm">
                 {/* Tshirt Size select */}
