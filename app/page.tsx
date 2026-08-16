@@ -90,6 +90,64 @@ export default function Home() {
   const [customDesignFile, setCustomDesignFile] = useState<string | null>(null);
   const [comboTshirtSize, setComboTshirtSize] = useState("L");
   const [comboHoodieSize, setComboHoodieSize] = useState("L");
+  const [selectedComboIndex, setSelectedComboIndex] = useState(0);
+
+  const combos = useMemo(() => {
+    const catalog = getCatalog();
+    const tshirts = catalog["oversized-tshirts"]?.products || [];
+    const hoodies = catalog["hoodies"]?.products || [];
+
+    return [0, 1, 2].map((idx) => {
+      const hoodie = hoodies[idx] || hoodies[0] || {
+        id: 1001 + idx,
+        name: "Future Vision",
+        price: 1499,
+        image: "/FutureVision_1.webp",
+        color: "Off-White",
+        fabric: "French Terry",
+        gsm: "350 GSM"
+      };
+
+      const tshirt = tshirts[idx] || tshirts[0] || {
+        id: 1002 + idx,
+        name: "Classic Never Dies",
+        price: 699,
+        image: "/classicneverdies.webp",
+        color: "Charcoal",
+        fabric: "Organic Cotton",
+        gsm: "220 GSM"
+      };
+
+      const name = idx === 0 ? "Neutral Coordinates" : idx === 1 ? "Minimalist Lounge" : "Athleisure Precision";
+      const desc = `Complete your collection coordinates. Purchase the ${tshirt.name.replace("Color: ", "")} and ${hoodie.name} together to claim a 15% discount.`;
+
+      return {
+        id: idx + 1,
+        name,
+        desc,
+        item1: {
+          id: hoodie.id,
+          name: hoodie.name.toLowerCase().includes("hoodie") || hoodie.name.toLowerCase().includes("jacket") ? hoodie.name : `${hoodie.name} Hoodie`,
+          price: (hoodie as any).price || 1499,
+          image: hoodie.image,
+          slug: "premium-hoodies",
+          color: hoodie.color.replace("Color: ", ""),
+          fabric: hoodie.fabric.replace("Material: ", ""),
+          gsm: hoodie.gsm
+        },
+        item2: {
+          id: tshirt.id,
+          name: tshirt.name.toLowerCase().includes("tee") || tshirt.name.toLowerCase().includes("t-shirt") ? tshirt.name : `${tshirt.name} Tee`,
+          price: (tshirt as any).price || 699,
+          image: tshirt.image,
+          slug: "oversized-tshirts",
+          color: tshirt.color.replace("Color: ", ""),
+          fabric: tshirt.fabric.replace("Material: ", ""),
+          gsm: tshirt.gsm
+        }
+      };
+    });
+  }, []);
 
 
   const colors = useMemo(() => [
@@ -291,13 +349,12 @@ export default function Home() {
       }
 
       const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
-      const prod1 = getCatalog()["oversized-tshirts"]?.products?.[0];
-      const prod2 = getCatalog()["premium-hoodies"]?.products?.[0];
-
-      if (!prod1 || !prod2) return;
+      const activeCombo = combos[selectedComboIndex];
+      const prod1 = activeCombo.item2; // Tee
+      const prod2 = activeCombo.item1; // Hoodie
 
       // Add T-Shirt
-      const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === "oversized-tshirts" && item.size === comboTshirtSize);
+      const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === prod1.slug && item.size === comboTshirtSize);
       if (idx1 > -1) {
         currentCart[idx1].quantity += 1;
       } else {
@@ -309,14 +366,14 @@ export default function Home() {
           fabric: prod1.fabric,
           gsm: prod1.gsm,
           quantity: 1,
-          slug: "oversized-tshirts",
-          price: 699,
+          slug: prod1.slug,
+          price: prod1.price,
           size: comboTshirtSize
         });
       }
 
       // Add Hoodie
-      const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === "premium-hoodies" && item.size === comboHoodieSize);
+      const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === prod2.slug && item.size === comboHoodieSize);
       if (idx2 > -1) {
         currentCart[idx2].quantity += 1;
       } else {
@@ -328,8 +385,8 @@ export default function Home() {
           fabric: prod2.fabric,
           gsm: prod2.gsm,
           quantity: 1,
-          slug: "premium-hoodies",
-          price: 1499,
+          slug: prod2.slug,
+          price: prod2.price,
           size: comboHoodieSize
         });
       }
@@ -537,17 +594,34 @@ export default function Home() {
           
           {/* Left Side: Combo Offer details */}
           <div className="w-full lg:w-1/2 text-left z-10 flex flex-col justify-center">
-            <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase block mb-3">
+            {/* Combo tabs */}
+            <div className="flex gap-1.5 mb-5 pb-1.5 overflow-x-auto whitespace-nowrap scrollbar-hide border-b border-slate-200/40 w-full max-w-md">
+              {combos.map((c, idx) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedComboIndex(idx)}
+                  className={`text-[9px] xs:text-[10px] font-bold uppercase tracking-wider px-3.5 py-2 border transition-all cursor-pointer rounded-none ${
+                    selectedComboIndex === idx
+                      ? "bg-slate-950 border-slate-950 text-white"
+                      : "bg-white border-slate-200 text-slate-500 hover:border-slate-400"
+                  }`}
+                >
+                  Set 0{c.id}
+                </button>
+              ))}
+            </div>
+
+            <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase block mb-2">
               Exclusive Set Offer
             </span>
             <h2 
               className="text-2xl xs:text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4"
               style={{ fontFamily: '"American Typewriter","American Typewriter Std",serif' }}
             >
-              The Perfect Pair<br />Combo Deal
+              {combos[selectedComboIndex].name}<br />Combo Deal
             </h2>
             <p className="text-slate-500 text-sm md:text-base leading-relaxed font-light mb-8 max-w-lg">
-              Complete your collection coordinates. Purchase the Heavyweight Oversized Tee and the Fleece Hoodie together to automatically claim a <span className="font-extrabold text-slate-800">15% discount</span> on the bundle.
+              {combos[selectedComboIndex].desc}
             </p>
 
             {/* Sizing options */}
@@ -598,8 +672,12 @@ export default function Home() {
               <div>
                 <span className="text-[10px] text-slate-400 font-extrabold uppercase block mb-0.5">Combo Price</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-extrabold text-[#0D4A86]">₹1,868</span>
-                  <span className="text-sm text-slate-400 line-through">₹2,198</span>
+                  <span className="text-3xl font-extrabold text-[#0D4A86]">
+                    ₹{Math.round((combos[selectedComboIndex].item1.price + combos[selectedComboIndex].item2.price) * 0.85)}
+                  </span>
+                  <span className="text-sm text-slate-400 line-through">
+                    ₹{combos[selectedComboIndex].item1.price + combos[selectedComboIndex].item2.price}
+                  </span>
                 </div>
               </div>
               <span className="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider mb-0.5">
@@ -622,13 +700,13 @@ export default function Home() {
             <div className="bg-white border border-slate-100 p-2 sm:p-4 shadow-md rounded-2xl sm:rounded-3xl w-[44%] max-w-[200px] sm:w-44 md:w-52 transition-transform duration-500 hover:-translate-y-2">
               <div className="relative aspect-[3/4] bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl overflow-hidden mb-2 sm:mb-3">
                 <img
-                  src="/FutureVision_1.webp"
-                  alt="Future Vision Hoodie"
+                  src={combos[selectedComboIndex].item1.image}
+                  alt={combos[selectedComboIndex].item1.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">Future Vision Hoodie</h4>
-              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹1,499</span>
+              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">{combos[selectedComboIndex].item1.name}</h4>
+              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹{combos[selectedComboIndex].item1.price}</span>
             </div>
 
             <span className="text-slate-450 font-black text-xl shrink-0">+</span>
@@ -637,13 +715,13 @@ export default function Home() {
             <div className="bg-white border border-slate-100 p-2 sm:p-4 shadow-md rounded-2xl sm:rounded-3xl w-[44%] max-w-[200px] sm:w-44 md:w-52 transition-transform duration-500 hover:-translate-y-2">
               <div className="relative aspect-[3/4] bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl overflow-hidden mb-2 sm:mb-3">
                 <img
-                  src="/classicneverdies.webp"
-                  alt="Classic Never Dies Tee"
+                  src={combos[selectedComboIndex].item2.image}
+                  alt={combos[selectedComboIndex].item2.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">Classic Never Dies Tee</h4>
-              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹699</span>
+              <h4 className="font-bold text-slate-800 text-[10px] sm:text-xs truncate">{combos[selectedComboIndex].item2.name}</h4>
+              <span className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 block">₹{combos[selectedComboIndex].item2.price}</span>
             </div>
           </div>
         </div>

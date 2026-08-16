@@ -69,18 +69,14 @@ export default function CollectionPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const pairedSlug = slug === "oversized-tshirts" ? "premium-hoodies" : "oversized-tshirts";
 
   const [collection, setCollection] = useState<any>(null);
-  const [pairedCollection, setPairedCollection] = useState<any>(null);
   const [wishlistedIds, setWishlistedIds] = useState<number[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedSizes, setSelectedSizes] = useState<Record<number, string>>({});
-  const [comboTshirtSize, setComboTshirtSize] = useState("L");
-  const [comboHoodieSize, setComboHoodieSize] = useState("L");
 
   // Professional Modal State
   const [modalConfig, setModalConfig] = useState<{
@@ -124,11 +120,7 @@ export default function CollectionPage() {
       } else {
         setCollection(null);
       }
-      if (catalog[pairedSlug]) {
-        setPairedCollection(catalog[pairedSlug]);
-      } else {
-        setPairedCollection(null);
-      }
+
     } catch (err) {
       console.error(err);
     } finally {
@@ -281,67 +273,7 @@ export default function CollectionPage() {
     }
   };
 
-  // ================= ADD COMBO DEAL TO CART =================
-  const handleAddComboToCart = () => {
-    const prod1 = collection?.products?.[0];
-    const prod2 = pairedCollection?.products?.[0];
 
-    if (!prod1 || !prod2) return;
-
-    const currentCart: any[] = JSON.parse(localStorage.getItem("fadenfab_cart") || "[]");
-    
-    const size1 = slug === "oversized-tshirts" ? comboTshirtSize : comboHoodieSize;
-    const size2 = pairedSlug === "oversized-tshirts" ? comboTshirtSize : comboHoodieSize;
-
-    // Add Item 1 (current collection item)
-    const idx1 = currentCart.findIndex((item: any) => item.id === prod1.id && item.slug === slug && item.size === size1);
-    if (idx1 > -1) {
-      currentCart[idx1].quantity += 1;
-    } else {
-      currentCart.push({
-        id: prod1.id,
-        name: prod1.name,
-        image: prod1.image,
-        color: prod1.color,
-        fabric: prod1.fabric,
-        gsm: prod1.gsm,
-        quantity: 1,
-        slug: slug,
-        price: slug === "oversized-tshirts" ? 699 : 1499,
-        size: size1
-      });
-    }
-
-    // Add Item 2 (paired collection item)
-    const idx2 = currentCart.findIndex((item: any) => item.id === prod2.id && item.slug === pairedSlug && item.size === size2);
-    if (idx2 > -1) {
-      currentCart[idx2].quantity += 1;
-    } else {
-      currentCart.push({
-        id: prod2.id,
-        name: prod2.name,
-        image: prod2.image,
-        color: prod2.color,
-        fabric: prod2.fabric,
-        gsm: prod2.gsm,
-        quantity: 1,
-        slug: pairedSlug,
-        price: pairedSlug === "oversized-tshirts" ? 699 : 1499,
-        size: size2
-      });
-    }
-
-    localStorage.setItem("fadenfab_cart", JSON.stringify(currentCart));
-    window.dispatchEvent(new Event("cart-updated"));
-
-    setModalConfig({
-      isOpen: true,
-      type: "success",
-      title: "Combo Added!",
-      message: `Success! Added the ${prod1.name} and ${prod2.name} to your cart. 15% Combo Discount is automatically applied!`,
-      onConfirm: () => setModalConfig(null),
-    });
-  };
 
   if (loading) {
     return (
@@ -595,126 +527,6 @@ export default function CollectionPage() {
           )}
         </div>
       </section>
-
-      {/* ================= PERFECT PAIR COMBO DEAL ================= */}
-      {pairedCollection && collection?.products?.[0] && pairedCollection?.products?.[0] && (
-        <section className="max-w-7xl mx-auto px-6 pb-24 border-t border-slate-100 pt-16">
-          <div className="bg-[#FAF9F6] border border-slate-200/60 p-8 md:p-12 text-center max-w-4xl mx-auto">
-            <span className="text-[#0D4A86] text-xs font-bold tracking-[0.25em] uppercase">
-              Exclusive Set Offer
-            </span>
-            <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mt-3 font-serif">
-              The Perfect Pair Combo Deal
-            </h2>
-            <p className="text-slate-500 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed">
-              Complete your collection coordinates. Purchase any Oversized T-Shirt and a Premium Hoodie together to automatically claim a <b>15% discount</b> on both!
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-12 mt-10">
-              {/* Product 1: current collection */}
-              <div className="flex flex-col items-center">
-                <div className="w-32 h-40 bg-white border border-slate-100 p-2 flex items-center justify-center relative">
-                  <img
-                    src={collection.products[0].image}
-                    alt={collection.products[0].name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="text-xs font-bold text-slate-700 mt-3 max-w-[120px] truncate uppercase tracking-wider">
-                  {collection.products[0].name}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  ₹{slug === "oversized-tshirts" ? "699" : "1,499"}
-                </p>
-              </div>
-
-              {/* PLUS SIGN */}
-              <div className="text-2xl text-slate-400 font-light">+</div>
-
-              {/* Product 2: paired collection */}
-              <div className="flex flex-col items-center">
-                <div className="w-32 h-40 bg-white border border-slate-100 p-2 flex items-center justify-center relative">
-                  <img
-                    src={pairedCollection.products[0].image}
-                    alt={pairedCollection.products[0].name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="text-xs font-bold text-slate-700 mt-3 max-w-[120px] truncate uppercase tracking-wider">
-                  {pairedCollection.products[0].name}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  ₹{pairedSlug === "oversized-tshirts" ? "699" : "1,499"}
-                </p>
-              </div>
-            </div>
-
-            {/* Price Calculations */}
-            <div className="mt-8 border-t border-slate-200/80 pt-6">
-              {/* Sizing options */}
-              <div className="space-y-3.5 max-w-xs mx-auto mb-6 bg-slate-50 border border-slate-100 p-4 text-left">
-                {/* Tshirt Size select */}
-                <div className="flex justify-between items-center gap-4">
-                  <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">T-Shirt Size</span>
-                  <div className="flex gap-1">
-                    {["S", "M", "L", "XL", "XXL"].map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setComboTshirtSize(size)}
-                        className={`w-6 h-6 flex items-center justify-center text-[9px] font-bold border transition-all cursor-pointer rounded-none ${
-                          comboTshirtSize === size
-                            ? "bg-slate-950 border-slate-950 text-white"
-                            : "bg-white border-slate-200 text-slate-650 hover:border-slate-400"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Hoodie Size select */}
-                <div className="flex justify-between items-center gap-4">
-                  <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Hoodie Size</span>
-                  <div className="flex gap-1">
-                    {["S", "M", "L", "XL", "XXL"].map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setComboHoodieSize(size)}
-                        className={`w-6 h-6 flex items-center justify-center text-[9px] font-bold border transition-all cursor-pointer rounded-none ${
-                          comboHoodieSize === size
-                            ? "bg-slate-950 border-slate-950 text-white"
-                            : "bg-white border-slate-200 text-slate-650 hover:border-slate-400"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-400 uppercase tracking-widest">Combo Price</p>
-              <div className="flex items-center justify-center gap-3 mt-1">
-                <span className="text-slate-400 line-through text-sm">₹{699 + 1499}</span>
-                <span className="text-xl md:text-2xl font-extrabold text-green-600 font-serif">
-                  ₹{Math.round((699 + 1499) * 0.85)}
-                </span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-none font-bold uppercase">
-                  Save 15%
-                </span>
-              </div>
-
-              <button
-                onClick={handleAddComboToCart}
-                className="mt-6 bg-slate-950 hover:bg-slate-850 text-white text-xs font-bold uppercase tracking-widest px-8 py-3.5 transition cursor-pointer"
-              >
-                Add Combo Set to Cart
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Floating Go to Cart Shortcut */}
       {cart.length > 0 && (

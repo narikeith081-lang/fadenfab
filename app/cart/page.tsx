@@ -216,8 +216,28 @@ export default function CartPage() {
   };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const isComboActive = hasTshirt && hasHoodie;
-  const comboDiscount = isComboActive ? Math.round(subtotal * 0.15) : 0;
+  const cartHoodies: number[] = [];
+  const cartTshirts: number[] = [];
+  cart.forEach(item => {
+    if (item.slug === "premium-hoodies") {
+      for (let i = 0; i < item.quantity; i++) {
+        cartHoodies.push(item.price);
+      }
+    } else if (item.slug === "oversized-tshirts") {
+      for (let i = 0; i < item.quantity; i++) {
+        cartTshirts.push(item.price);
+      }
+    }
+  });
+  cartHoodies.sort((a, b) => b - a);
+  cartTshirts.sort((a, b) => b - a);
+  
+  let comboDiscount = 0;
+  const maxCombos = Math.min(cartHoodies.length, cartTshirts.length, 3);
+  for (let i = 0; i < maxCombos; i++) {
+    comboDiscount += Math.round((cartHoodies[i] + cartTshirts[i]) * 0.15);
+  }
+  const isComboActive = comboDiscount > 0;
 
   const shipping = subtotal > 1000 || subtotal === 0 ? 0 : 100;
   const tax = Math.round(subtotal * 0.05); // 5% GST

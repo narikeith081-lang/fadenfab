@@ -111,9 +111,32 @@ export default function CheckoutPage() {
 
   // ================= PRICING =================
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartHoodies: number[] = [];
+  const cartTshirts: number[] = [];
+  cart.forEach(item => {
+    if (item.slug === "premium-hoodies") {
+      for (let i = 0; i < item.quantity; i++) {
+        cartHoodies.push(item.price);
+      }
+    } else if (item.slug === "oversized-tshirts") {
+      for (let i = 0; i < item.quantity; i++) {
+        cartTshirts.push(item.price);
+      }
+    }
+  });
+  cartHoodies.sort((a, b) => b - a);
+  cartTshirts.sort((a, b) => b - a);
+  
+  let comboDiscount = 0;
+  const maxCombos = Math.min(cartHoodies.length, cartTshirts.length, 3);
+  for (let i = 0; i < maxCombos; i++) {
+    comboDiscount += Math.round((cartHoodies[i] + cartTshirts[i]) * 0.15);
+  }
+
   const shipping = subtotal > 1000 || subtotal === 0 ? 0 : 100;
   const tax = Math.round(subtotal * 0.05); // 5% GST
-  const discountAmount = appliedCoupon ? Math.round((subtotal * appliedCoupon.discount) / 100) : 0;
+  const couponDiscountAmount = appliedCoupon ? Math.round((subtotal * appliedCoupon.discount) / 100) : 0;
+  const discountAmount = Math.max(comboDiscount, couponDiscountAmount);
   const total = subtotal + shipping + tax - discountAmount;
 
   // ================= PLACE ORDER =================
@@ -624,9 +647,9 @@ export default function CheckoutPage() {
                       <span>GST (5%)</span>
                       <span className="font-semibold text-slate-800">₹{tax}</span>
                     </div>
-                    {appliedCoupon && (
+                    {discountAmount > 0 && (
                       <div className="flex justify-between text-green-600 font-medium">
-                        <span>Discount ({appliedCoupon.code})</span>
+                        <span>{appliedCoupon ? `Discount (${appliedCoupon.code})` : "Combo Discount (15% Off)"}</span>
                         <span>-₹{discountAmount}</span>
                       </div>
                     )}
