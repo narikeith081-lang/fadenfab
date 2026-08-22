@@ -122,12 +122,18 @@ export default function Footer() {
 
         {/* ================= BOTTOM ================= */}
 {/* ================= BOTTOM ================= */}
-<div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-  <p className="text-gray-500 text-sm font-light">
-    © 2026 FADENFAB. All rights reserved.
-  </p>
+<div className="border-t border-white/10 mt-12 pt-6 flex flex-col items-center gap-4 text-center">
+  {/* GST & Business Details */}
+  <div className="text-gray-500 text-xs sm:text-sm font-light flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+    <span>© 2026 FADENFAB. All rights reserved.</span>
+    <span className="hidden sm:inline text-gray-700">|</span>
+    <span>GSTIN: <span className="font-bold text-gray-400">33CHAPN1033k1ZP</span></span>
+    <span className="hidden sm:inline text-gray-700">|</span>
+    <span>Reg. Office: Chennai, Tamil Nadu, India</span>
+  </div>
 
-  <div className="flex items-center gap-4 text-sm font-light">
+  {/* Policy Links */}
+  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs sm:text-sm font-light">
     <Link
       href="/privacy-policy"
       className="text-gray-500 hover:text-white transition duration-300"
@@ -140,6 +146,27 @@ export default function Footer() {
       className="text-gray-500 hover:text-white transition duration-300"
     >
       Terms &amp; Conditions
+    </Link>
+    <span className="text-gray-700">|</span>
+    <Link
+      href="/shipping-policy"
+      className="text-gray-500 hover:text-white transition duration-300"
+    >
+      Shipping Policy
+    </Link>
+    <span className="text-gray-700">|</span>
+    <Link
+      href="/refund-policy"
+      className="text-gray-500 hover:text-white transition duration-300"
+    >
+      Return &amp; Refund Policy
+    </Link>
+    <span className="text-gray-700">|</span>
+    <Link
+      href="/cancellation-policy"
+      className="text-gray-500 hover:text-white transition duration-300"
+    >
+      Cancellation Policy
     </Link>
   </div>
 </div>

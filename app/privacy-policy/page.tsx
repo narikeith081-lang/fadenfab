@@ -1,17 +1,42 @@
+"use client";
+
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+
 export default function PrivacyPolicyPage() {
+  const router = useRouter();
+
   return (
-    <main className="min-h-screen bg-slate-50">
-      <div className="max-w-5xl mx-auto px-6 py-20">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+      <Navbar />
+      <main className="flex-grow pt-28 md:pt-32 pb-16">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="flex items-center gap-3 mb-8">
+            <button
+              onClick={() => {
+                if (window.history.length > 1) {
+                  router.back();
+                } else {
+                  router.push("/");
+                }
+              }}
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
+              title="Go Back"
+            >
+              <ArrowLeftIcon className="w-4 h-4" />
+            </button>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-[#0D4A86] font-serif">
+              Privacy Policy
+            </h1>
+          </div>
 
-        <h1 className="text-5xl font-bold text-[#0D4A86] mb-8">
-          Privacy Policy
-        </h1>
+          <p className="text-slate-500 mb-10 text-sm">
+            Last Updated: June 2026
+          </p>
 
-        <p className="text-slate-600 mb-10">
-          Last Updated: June 2026
-        </p>
-
-        <div className="space-y-10 text-slate-700 leading-8">
+          <div className="space-y-10 text-slate-700 leading-8 text-sm md:text-base">
 
           <section>
             <h2 className="text-2xl font-semibold text-black mb-3">
@@ -89,8 +114,9 @@ export default function PrivacyPolicyPage() {
           </section>
 
         </div>
-
       </div>
     </main>
+    <Footer />
+  </div>
   );
 }
