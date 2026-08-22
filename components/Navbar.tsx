@@ -73,20 +73,6 @@ export default function Navbar({
   // Fetch user profile from DB when user changes
   useEffect(() => {
     if (user && user.id) {
-      // Check last active time from previous session
-      const lastActive = localStorage.getItem("fadenfab_last_active");
-      if (lastActive) {
-        const elapsed = Date.now() - parseInt(lastActive);
-        if (elapsed > 60 * 60 * 1000) { // 1 hour
-          supabase.auth.signOut().then(() => {
-            localStorage.removeItem("fadenfab_cart");
-            localStorage.removeItem("fadenfab_wishlist");
-            localStorage.removeItem("fadenfab_last_active");
-            window.location.href = "/?expired=true";
-          });
-          return;
-        }
-      }
       localStorage.setItem("fadenfab_last_active", Date.now().toString());
 
       supabase

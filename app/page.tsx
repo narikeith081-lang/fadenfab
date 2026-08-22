@@ -181,9 +181,8 @@ export default function Home() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("expired") === "true") {
       setShowExpiredModal(true);
-      router.replace("/");
     }
-  }, [router]);   // <-- HERE
+  }, []);   // <-- HERE
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -1450,8 +1449,11 @@ export default function Home() {
           isOpen={showExpiredModal}
           type="info"
           title="Session Expired"
-          message="Your session has expired due to 30 minutes of inactivity. Please login again."
-          onConfirm={() => setShowExpiredModal(false)}
+          message="Your session has expired due to 60 minutes of inactivity. Please login again."
+          onConfirm={() => {
+            setShowExpiredModal(false);
+            router.replace("/");
+          }}
         />
       )}
 

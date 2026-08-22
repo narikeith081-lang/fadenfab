@@ -549,10 +549,25 @@ function ProfileContent() {
         <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-32 pb-10 md:pb-16 w-full flex-grow">
           {/* Header */}
           <div className="mb-6 md:mb-10">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
-              Customer Portal
-            </h1>
-            <p className="mt-2 text-slate-600 text-sm md:text-base">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (window.history.length > 1) {
+                    router.back();
+                  } else {
+                    router.push("/");
+                  }
+                }}
+                className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
+                title="Go Back"
+              >
+                <ArrowLeftIcon className="w-4 h-4" />
+              </button>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
+                Customer Portal
+              </h1>
+            </div>
+            <p className="mt-2 text-slate-600 text-sm md:text-base ml-11 md:ml-0">
               Manage your orders, profile details, and account settings.
             </p>
           </div>
@@ -964,24 +979,9 @@ function ProfileContent() {
                   {/* ================= WISHLIST TAB ================= */}
                   {activeTab === "wishlist" && (
                     <div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <button
-                          onClick={() => {
-                            if (window.history.length > 1) {
-                              router.back();
-                            } else {
-                              router.push("/");
-                            }
-                          }}
-                          className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
-                          title="Go Back"
-                        >
-                          <ArrowLeftIcon className="w-4 h-4" />
-                        </button>
-                        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-                          <HeartIcon className="w-6 h-6 text-[#0D4A86]" /> My Wishlist
-                        </h2>
-                      </div>
+                      <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                        <HeartIcon className="w-6 h-6 text-[#0D4A86]" /> My Wishlist
+                      </h2>
 
                       {loadingWishlist ? (
                         <div className="text-center py-12 text-slate-500">

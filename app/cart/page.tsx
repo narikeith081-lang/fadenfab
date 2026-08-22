@@ -10,7 +10,8 @@ import {
   MinusIcon,
   PlusIcon,
   ArrowRightIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import CustomModal from "@/components/CustomModal";
@@ -330,10 +331,25 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-10 w-full flex-grow">
         {/* Page Title */}
         <div className="mb-6 md:mb-10">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
-            Shopping Cart
-          </h1>
-          <p className="mt-2 text-sm text-slate-650">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (window.history.length > 1) {
+                  router.back();
+                } else {
+                  router.push("/");
+                }
+              }}
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-650 hover:text-slate-900 shadow-sm shrink-0"
+              title="Go Back"
+            >
+              <ArrowLeftIcon className="w-4 h-4" />
+            </button>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
+              Shopping Cart
+            </h1>
+          </div>
+          <p className="mt-2 text-sm text-slate-650 ml-11 md:ml-0">
             Review your custom designs and proceed to secure checkout.
           </p>
         </div>
